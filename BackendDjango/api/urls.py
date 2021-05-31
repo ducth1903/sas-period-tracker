@@ -3,5 +3,5 @@ from . import views
 
 urlpatterns = [
     path('user/<str:userId>', views.getUser),
-    path('imagePresigned/<str:imageId>', views.getImagePresignedUrl),
+    path('imagepresigned/<str:imageId>', views.imagePresignedUrl),
 ]

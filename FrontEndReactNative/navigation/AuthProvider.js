@@ -94,11 +94,12 @@ export const AuthProvider = ({children}) => {
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                     "userId"    : userCredential.user.uid,
-                                    "email"     : inEmail,
+                                    "email"     : userCredential.user.email,
                                     "firstName" : inFirstName,
                                     "lastName"  : inLastName,
                                     "dob"       : inDob,
-                                    "avgDaysPerPeriod" : inAvgDaysPerPeriod
+                                    "avgDaysPerPeriod"  : inAvgDaysPerPeriod,
+                                    "profileImageId"    : "default_profile_women_1.jpg"
                                 })
                             })
                             .then(resp => resp.json())

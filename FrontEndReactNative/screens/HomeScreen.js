@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { render } from 'react-dom';
+// import { render } from 'react-dom';
 import { StyleSheet, Text, View, RefreshControl, ScrollView, SafeAreaView, Pressable, Platform } from 'react-native';
-import { Avatar, FAB } from 'react-native-paper';
+import { Avatar } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -14,11 +14,13 @@ import FormButton from '../components/FormButton';
 import { LOCAL_DEV_IP } from '@env'
 
 const HomeScreen = ({ props }) => {
+    const PROFILE_IMAGE_ROOT = "https://s3-sas-period-tracker.s3.amazonaws.com/profile-images/"
+
     const { userId }                    = useContext(AuthContext);
     const [userObj, setUserObj]         = useState(null);
     const [isLoading, setIsLoading]     = useState(true);
     const [refreshing, setRefreshing]   = useState(false);
-    const [profileImageUri, setProfileImageUri] = useState('https://s3-sas-period-tracker.s3.amazonaws.com/profile-images/default_profile_women_1.jpg');
+    const [profileImageUri, setProfileImageUri] = useState('');     // ../assets/profile_images/default_profile_women_1.jpg
     const bottomSheetRef                = React.useRef(null);
     const fall                          = new Animated.Value(1);
 
@@ -27,8 +29,9 @@ const HomeScreen = ({ props }) => {
         await fetch(`${LOCAL_DEV_IP}/api/user/${userId}`, { method: "GET" })
         .then(resp => resp.json())
         .then(data => {
-            console.log(data);
+            console.log('userObj = ', data);
             setUserObj(data);
+            getImagePresignedUrl(data['profileImageId']);
             setIsLoading(false);
         })
         .catch(error => {console.log(error)})
@@ -38,30 +41,26 @@ const HomeScreen = ({ props }) => {
     // i.e. whenever your functional component re-runs/re-renders
     useEffect(() => {
         console.log('HomeScreen.useEffect()...')
-        let mounted = true;         // to avoid state update on unmounted component issue
-                                    // https://www.debuggr.io/react-update-unmounted-component/
-        if (mounted) {
-            fetchUserData();
-        }
+        // to avoid state update on unmounted component issue
+        // https://www.debuggr.io/react-update-unmounted-component/
+        fetchUserData();
 
         // return in useEffect() specifies how to "clean up" after effects
-        return () => mounted = false;
+        // return () => mounted = false;
     }, []);
 
-    // const wait = (timeout) => {
-    //     return new Promise(resolve => setTimeout(resolve, timeout));
-    // }
+    // Pull down to refresh
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
-        // wait(2000).then(() => setRefreshing(false));
         fetchUserData();
-        setRefreshing(false)
+        setRefreshing(false);
     }, []);
 
-    
-    // --- Bottom sheet for uploading/taking profile image
+    // -----------------------------------------------
+    // Bottom sheet for uploading/taking profile image
+    // -----------------------------------------------
     const onPressProfileImage = () => {
-        bottomSheetRef.current.snapTo(0)
+        bottomSheetRef.current.snapTo(0);
     }
     const renderBottomSheetContent = () => (
         <SafeAreaView>
@@ -75,7 +74,7 @@ const HomeScreen = ({ props }) => {
                 <FormButton 
                     btnTitle="Take Photo"
                     isHighlight={true} 
-                    onPress={ ()=>{console.log("take photo clicked")} } />
+                    onPress={ onPressTakingPhoto } />
                 <FormButton 
                     btnTitle="Upload Photo"
                     isHighlight={true} 
@@ -91,6 +90,32 @@ const HomeScreen = ({ props }) => {
         </View>
     );
 
+    async function onPressTakingPhoto() {
+        if (Platform.OS !== 'web') {
+            const {status} = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+                alert('You may need to change it in Settings if you want to proceed!');
+            }
+        }
+
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.cancelled) {
+            // Upload image to S3 in 2 steps:
+            // 1. Contact server to get presigned URL to S3
+            // 2. Upload image to S3 using presigned URL
+            postImagePresignedUrl(result.uri);
+            updateUserImageInDB();
+            setProfileImageUri( result.uri );
+            bottomSheetRef.current.snapTo(1);
+        }
+    }
+
     async function onPressUploadPhoto() {
         if (Platform.OS !== 'web') {
             const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -100,45 +125,116 @@ const HomeScreen = ({ props }) => {
         }
 
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
         });
 
-        console.log('done upload photo: ', result)
         if (!result.cancelled) {
+            // Upload image to S3 in 2 steps:
+            // 1. Contact server to get presigned URL to S3
+            // 2. Upload image to S3 using presigned URL
+            postImagePresignedUrl(result.uri);
+            updateUserImageInDB();
             setProfileImageUri( result.uri );
+            bottomSheetRef.current.snapTo(1);
         }
     };
-    // ---
+
+    // End Bottom sheet
+    // -----------------------------------------------
     
+    // -----------------------------------------------
+    // Utils
+    const getImagePresignedUrl = async (inImageId) => {
+        try {
+            await fetch(`${LOCAL_DEV_IP}/api/imagepresigned/${inImageId}`, { method: "GET" })
+            .then(resp => resp.json())
+            .then(data => {
+                // console.log('presigned url = ', data);
+                setProfileImageUri(data['presignedUrl']);
+            })
+            .catch(error => console.log(error))
+        } catch {
+            console.log('Error in getImagePresignedUrl', inImageId)
+        } 
+    }
+
+    const uploadImageViaPresignedUrl = async (imageUri, inPresignedUrl) => {
+        // get image blob
+        const inImageUri= Platform.OS === 'ios' ? imageUri.replace('file://', '') : imageUri;
+        const response  = await fetch(inImageUri);
+        const blob      = await response.blob();
+        // const reader = new FileReader();
+        // reader.readAsDataURL(blob)       // convert to base64-encoding?
+        
+        await fetch(inPresignedUrl, {
+            method: "PUT",
+            body: blob,
+            headers: {
+                "Content-Type": "image/jpeg",
+            }
+        })
+        .catch(error => console.log(error))
+    }
+
+    const postImagePresignedUrl = async (imageUri) => {
+        let presignedUrl = ''
+        await fetch(`${LOCAL_DEV_IP}/api/imagepresigned/${userId}.jpg`, { 
+            method: "POST",
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            presignedUrl = data['presignedUrl']
+        })
+        .catch(error => {console.log(error)})
+        
+        if (presignedUrl) {
+            // Now that we have presigned URL -> upload image to S3
+            uploadImageViaPresignedUrl(imageUri, presignedUrl)
+        }
+    }
+
+    async function updateUserImageInDB() {
+        await fetch(`${LOCAL_DEV_IP}/api/user/${userId}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "profileImageId"    : `${userId}.jpg`
+            })
+        })
+        .catch(error => {console.log(error)})
+    }
+
+    // End utils
+    // -----------------------------------------------
+    
+    // Main View return()
     if (isLoading) {
         return (<View><Text>Loading...</Text></View>)
     }
-
     return (
         <SafeAreaView style={styles.container}>
+            <BottomSheet
+                ref={bottomSheetRef}
+                snapPoints={['30%', 0]}
+                initialSnap={1}
+                callbackNode={fall}
+                borderRadius={10}
+                renderContent={renderBottomSheetContent}
+                renderHeader={renderBottomSheetHeader}
+            />
             <ScrollView
                 refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
                 contentContainerStyle={styles.scrollViewStyle}
             >
-                <BottomSheet
-                    ref={bottomSheetRef}
-                    snapPoints={['30%', 0]}
-                    initialSnap={1}
-                    callbackNode={fall}
-                    borderRadius={10}
-                    renderContent={renderBottomSheetContent}
-                    renderHeader={renderBottomSheetHeader}
-                />
                 <Pressable onPress={onPressProfileImage}>
                     {/* <a href="https://www.freepik.com/vectors/woman">Woman vector created by jcomp - www.freepik.com</a> */}
                     <Avatar.Image
                         source={{ uri: profileImageUri }}
                         size={100}
-                        style={{margin: 10}} >
-                    </Avatar.Image>
+                        style={{margin: 10}} />
                     <Feather name="camera" size={24} color="black" />
                 </Pressable>
                 <Text>{userObj['firstName']} {userObj['lastName']}</Text>
@@ -149,6 +245,7 @@ const HomeScreen = ({ props }) => {
     )
 }
 
+// -----------------------------------------------
 const styles = StyleSheet.create({
     container: {
         flex: 1,
