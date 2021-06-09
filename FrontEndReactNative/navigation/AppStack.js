@@ -38,7 +38,7 @@ const AppStack = () => {
                 name="BlogScreen" 
                 component={BlogScreen} 
                 options={{
-                    tabBarLabel: "Blogs",
+                    tabBarLabel: "Resources",
                     tabBarIcon: () => ( <Foundation name="clipboard-notes" size={24} color="white" /> )
                 }} />
             <Tab.Screen 
