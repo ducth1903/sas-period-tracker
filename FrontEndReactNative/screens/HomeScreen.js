@@ -1,7 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 // import { render } from 'react-dom';
-import { StyleSheet, Text, View, RefreshControl, ScrollView, SafeAreaView, Pressable, Platform } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { 
+    StyleSheet, 
+    Text, 
+    View, 
+    RefreshControl, 
+    ScrollView, 
+    SafeAreaView, 
+    Pressable, 
+    Platform, 
+    ImageBackground,
+} from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -9,20 +18,21 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { AuthContext } from '../navigation/AuthProvider';
 import FormButton from '../components/FormButton';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 // Loading env variables
 import { LOCAL_DEV_IP } from '@env'
 
 const HomeScreen = ({ props }) => {
-    const PROFILE_IMAGE_ROOT = "https://s3-sas-period-tracker.s3.amazonaws.com/profile-images/"
+    // const PROFILE_IMAGE_ROOT = "https://s3-sas-period-tracker.s3.amazonaws.com/profile-images/"
 
     const { userId }                    = useContext(AuthContext);
     const [userObj, setUserObj]         = useState(null);
     const [isLoading, setIsLoading]     = useState(true);
     const [refreshing, setRefreshing]   = useState(false);
-    const [profileImageUri, setProfileImageUri] = useState('');     // ../assets/profile_images/default_profile_women_1.jpg
-    const bottomSheetRef                = React.useRef(null);
+    const bottomSheetRef                = useRef(null);
     const fall                          = new Animated.Value(1);
+    const [profileImageUri, setProfileImageUri] = useState('../assets/profile_images/default_profile_women_1.jpg');
 
     // Async function to fetch user data
     async function fetchUserData() {
@@ -59,28 +69,23 @@ const HomeScreen = ({ props }) => {
     // -----------------------------------------------
     // Bottom sheet for uploading/taking profile image
     // -----------------------------------------------
-    const onPressProfileImage = () => {
-        bottomSheetRef.current.snapTo(0);
-    }
     const renderBottomSheetContent = () => (
-        <SafeAreaView>
-            <View
-            style={{
-                backgroundColor: 'white',
-                padding: 20,
-                height: 450,
-            }}
-            >
-                <FormButton 
-                    btnTitle="Take Photo"
-                    isHighlight={true} 
-                    onPress={ onPressTakingPhoto } />
-                <FormButton 
-                    btnTitle="Upload Photo"
-                    isHighlight={true} 
-                    onPress={ onPressUploadPhoto } />
-            </View>
-        </SafeAreaView>
+        <View
+        style={{
+            backgroundColor: 'white',
+            padding: 20,
+            paddingTop: 20,
+        }}
+        >
+            <FormButton 
+                btnTitle="Take Photo"
+                isHighlight={true} 
+                onPress={ onPressTakingPhoto } />
+            <FormButton 
+                btnTitle="Upload Photo"
+                isHighlight={true} 
+                onPress={ onPressUploadPhoto } />
+        </View>
     );
     const renderBottomSheetHeader = () => (
         <View style={styles.bottomSheetHeader}>
@@ -212,7 +217,10 @@ const HomeScreen = ({ props }) => {
     
     // Main View return()
     if (isLoading) {
-        return (<View><Text>Loading...</Text></View>)
+        console.log('[HomeScreen] loading...');
+        return (
+            <LoadingIndicator/>
+        )
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -229,13 +237,22 @@ const HomeScreen = ({ props }) => {
                 refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
                 contentContainerStyle={styles.scrollViewStyle}
             >
-                <Pressable onPress={onPressProfileImage}>
+                <Pressable onPress={() => { bottomSheetRef.current.snapTo(0) }}>
                     {/* <a href="https://www.freepik.com/vectors/woman">Woman vector created by jcomp - www.freepik.com</a> */}
-                    <Avatar.Image
+                    {/* <Avatar.Image
                         source={{ uri: profileImageUri }}
                         size={100}
                         style={{margin: 10}} />
-                    <Feather name="camera" size={24} color="black" />
+                    <Feather name="camera" size={24} color="black" /> */}
+                    <ImageBackground
+                        source={{ uri: profileImageUri }}
+                        style={{margin: 10, height: 100, width: 100}}
+                        imageStyle={{borderRadius: 15}}
+                    >
+                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                            <Feather name="camera" size={24} color="white"/>
+                        </View>
+                    </ImageBackground>
                 </Pressable>
                 <Text>{userObj['firstName']} {userObj['lastName']}</Text>
                 <Text>Email: {userObj['email']}</Text>

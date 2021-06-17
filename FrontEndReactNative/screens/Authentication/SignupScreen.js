@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Linking, Modal, Pressable, Platform } from 'react-native';
+import { Text, View, StyleSheet, Linking, Pressable, Platform } from 'react-native';
 // import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as Animatable from 'react-native-animatable';
 
 import { AuthContext } from '../../navigation/AuthProvider';
 import FormInput from '../../components/FormInput';
@@ -13,62 +14,66 @@ const SignupScreen = ({navigation}) => {
     const initDob = "Date of Birth*"
 
     const {signup, authError, setAuthError}     = useContext(AuthContext);
-    const [email, setEmail]                     = useState();
-    const [password, setPassword]               = useState();
-    const [dob, setDob]                         = useState(initDob);
-    const [firstName, setFirstName]             = useState();
-    const [lastName, setLastName]               = useState();
-    const [confirmPassword, setConfirmPassword] = useState();
-    const [statusPassword, setStatusPassword]   = useState("");
-    const [signupDisabled, setSignupDisabled]   = useState(false);
-    const [avgDaysPerPeriod, setAvgDaysPerPeriod] = useState("");
+    const [inUserData, setInUserData] = useState({
+        email: '',
+        password: '',
+        confirmPassword: '',
+        dob: initDob,
+        firstName: '',
+        lastName: '',
+        avgDaysPerPeriod: '',
+        // isValidUser: true,
+        isValidPassword: true
+    });
 
     const [date, setDate]                       = useState(new Date());
     const [showDateTimePicker, setShowDateTimePicker] = useState(false);
     const handleDobPicker = (event, selectedDate) => {
         const currentDate = selectedDate || date
         currentDateString = JSON.stringify(currentDate).slice(1).split('T')[0].split('-').join('/')
-        setDob( currentDateString )
+        setInUserData({...inUserData, dob: currentDateString})
         setShowDateTimePicker( Platform.OS === 'ios' )
         setDate(currentDate)
     };
     
     handleConfirmPassword = (inConfirmPassword) => {
-        setConfirmPassword(inConfirmPassword)
-        // console.log(password, confirmPassword)
-        // if (confirmPassword === password) {
-        //     setStatusPassword("Password matched!")
-        //     setSignupDisabled(false)
-            
-        // } else {
-        //     setStatusPassword("Password does not match...")
-        //     setSignupDisabled(true)
-        // }
+        // let inConfirmPassword = inConfirmPasswordEvent.nativeEvent.text;
+        let isEqual = false;
+        if (inConfirmPassword !== inUserData.password) {
+            // setSignupDisabled(true)
+            isEqual = false;
+        } else {
+            isEqual = true;
+        }
+        setInUserData({...inUserData, confirmPassword: inConfirmPassword, isValidPassword: isEqual})
     }
 
     handleSignUpClicked = () => {
-        if (email==undefined) {
+        if (inUserData.email==='') {
             setAuthError("Email cannot be empty")
             return
         }
-        if (password==undefined || confirmPassword==undefined) {
+        if (inUserData.password==='' || inUserData.confirmPassword==='') {
             setAuthError("Password cannot be empty")
             return
         }
-        if (firstName==undefined) {
+        if (inUserData.firstName==='') {
             setAuthError("First Name cannot be empty")
             return
         }
-        if (lastName==undefined) {
+        if (inUserData.lastName==='') {
             setAuthError("Last Name cannot be empty")
             return
         }
-        if (dob=="Date of Birth") {
+        if (inUserData.dob===initDob) {
             setAuthError("Date of Birth cannot be empty")
             return
         }
+        if (!inUserData.isValidPassword) {
+            return
+        }
         
-        signup(email, password, firstName, lastName, dob, avgDaysPerPeriod)
+        signup(inUserData.email, inUserData.password, inUserData.firstName, inUserData.lastName, inUserData.dob, inUserData.avgDaysPerPeriod)
     }
 
     useEffect(()=>{
@@ -84,8 +89,10 @@ const SignupScreen = ({navigation}) => {
                 iconType="user"
                 color="black"
                 keyboardType="email-address"
-                value={email}
-                onChangeText={(inEmail)=>{setEmail(inEmail)}}
+                value={inUserData.email}
+                onChangeText={(inEmail) => {
+                    setInUserData({...inUserData, email: inEmail})
+                }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Password"
@@ -95,8 +102,10 @@ const SignupScreen = ({navigation}) => {
                 color="black"
                 // isPassword={true}
                 secureTextEntry={true}
-                value={password}
-                onChangeText={(inPassword)=>{setPassword(inPassword)}}
+                value={inUserData.password}
+                onChangeText={(inPassword) => {
+                    setInUserData({...inUserData, password: inPassword})
+                }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Confirm Password"
@@ -106,17 +115,25 @@ const SignupScreen = ({navigation}) => {
                 color="black"
                 // isPassword={true}
                 secureTextEntry={true}
-                value={confirmPassword}
+                value={inUserData.confirmPassword}
                 onChangeText={ handleConfirmPassword }
+                // onEndEditing={ handleConfirmPassword }
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
+            {inUserData.isValidPassword ? null :
+            <Animatable.View animation="fadeInLeft" duration={500}>
+                <Text style={[styles.centerItems, styles.errTextSyle]}>Password does not match</Text>
+            </Animatable.View>}
+
             <FormInput 
                 labelValue="First Name"
                 placeholderText="First Name"
                 isRequired={true}
                 iconType="user"
                 color="black"
-                value={ firstName }
-                onChangeText={(inName)=>{setFirstName(inName)}}
+                value={inUserData.firstName}
+                onChangeText={(inFirstName) => {
+                    setInUserData({...inUserData, firstName: inFirstName})
+                }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Last Name"
@@ -124,14 +141,16 @@ const SignupScreen = ({navigation}) => {
                 isRequired={true}
                 iconType="user"
                 color="black"
-                value={ lastName }
-                onChangeText={(inName)=>{setLastName(inName)}}
+                value={inUserData.lastName}
+                onChangeText={(inLastName)=>{
+                    setInUserData({...inUserData, lastName: inLastName})
+                }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <Pressable
                 onPress={()=>{ setShowDateTimePicker(true) }} >
                 <View style={stylesFormInput.viewStyle}>
-                    <Text style={[stylesFormInput.textInputStyle, dob==initDob ? styles.dobInitTextStyle : styles.dobTextStyle]} >
-                        {dob}
+                    <Text style={[stylesFormInput.textInputStyle, inUserData.dob==initDob ? styles.dobInitTextStyle : styles.dobTextStyle]} >
+                        {inUserData.dob}
                     </Text>
                 </View>
             </Pressable>
@@ -149,19 +168,25 @@ const SignupScreen = ({navigation}) => {
             <FormInput 
                 labelValue=""
                 placeholderText="On average, how many days is your period?"
-                value={ avgDaysPerPeriod }
+                value={ inUserData.avgDaysPerPeriod }
                 keyboardType={"number-pad"}
-                onChangeText={ (inAvgDaysPerPeriod)=>{setAvgDaysPerPeriod(inAvgDaysPerPeriod)} }
+                onChangeText={ (inAvgDaysPerPeriod) => {
+                    setInUserData({...inUserData, avgDaysPerPeriod: inAvgDaysPerPeriod})
+                }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
-            {/* <Text>{statusPassword}</Text> */}
-            
             <FormButton
                 btnTitle="Sign Up"
                 isHighlight={true}
-                disabled={signupDisabled}
+                // disabled={inUserData.isValidPassword}
                 onPress={ handleSignUpClicked }
             />
+
+            {authError ?
+            <Animatable.View animation="fadeInLeft" duration={500}>
             <Text style={[styles.centerItems, styles.errTextSyle]}>{authError}</Text>
+            </Animatable.View>
+            : null}
+
             <Text style={styles.centerItems}>
                 By signing up, you agree to our 
                 <Text style={styles.underlineStyle} onPress={()=>Linking.openURL('https://google.com')}> Terms of Service </Text> 

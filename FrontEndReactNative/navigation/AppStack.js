@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 // import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator  } from '@react-navigation/material-bottom-tabs';
-import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
 import BlogScreen from '../screens/BlogScreen';
@@ -18,7 +18,7 @@ const AppStack = () => {
         // <Stack.Navigator initialRouteName="Home" screenOptions={headerNavigation}>
         //     <Stack.Screen name="Home" component={Home} options={ {header: ()=>null} } />
         // </Stack.Navigator>
-        <Tab.Navigator initialRouteName="HomeScreen" >
+        <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#694fad' }} >
             <Tab.Screen 
                 name="HomeScreen" 
                 component={HomeScreen} 
@@ -39,7 +39,7 @@ const AppStack = () => {
                 component={BlogScreen} 
                 options={{
                     tabBarLabel: "Blogs",
-                    tabBarIcon: () => ( <Foundation name="clipboard-notes" size={24} color="white" /> )
+                    tabBarIcon: () => ( <Ionicons name="md-newspaper-outline" size={24} color="white" /> )
                 }} />
             <Tab.Screen 
                 name="SettingScreen" 
@@ -53,7 +53,16 @@ const AppStack = () => {
 }
 
 const styles = StyleSheet.create({
-    
+    tabNavigationStyle: {
+        // position: 'absolute',
+        // bottom: 25,
+        // left: 20,
+        // right: 20,
+        // elevation: 0,
+        backgroundColor: '#ffffff',
+        // borderRadius: 15,
+        // height: 90
+    }
 })
 
 const headerNavigation = {

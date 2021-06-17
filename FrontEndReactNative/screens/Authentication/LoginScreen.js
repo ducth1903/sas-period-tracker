@@ -1,20 +1,40 @@
-import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import React, { useContext, useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Dimensions } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+// import { Button, TextInput } from 'react-native-paper';
 
 import { AuthContext } from '../../navigation/AuthProvider';
 import FormInput from '../../components/FormInput';
 import FormButton from '../../components/FormButton';
-import SocialButton from '../../components/SocialButton';
+// import SocialButton from '../../components/SocialButton';
 
 const LoginScreen = ({navigation}) => {
-    const [email, setEmail]         = useState();
-    const [password, setPassword]   = useState();
+    const {login, authError, setAuthError}    = useContext(AuthContext);
     const [hiddenPassword, setHiddenPassword] = useState(true);
-    const {login, authError}                  = useContext(AuthContext);
 
-    handleEmail = (inEmail) => { setEmail(inEmail) }
-    handlePassword = (inPassword) => { setPassword(inPassword) }
+    const [inUserData, setInUserData] = useState({
+        email: '',
+        password: '',
+        // isValidUser: true,
+        // isValidPassword: true
+    });
+
+    useEffect(() => {
+        setAuthError('');
+    }, []);
+
+    handleEmail = (inEmail) => { 
+        setInUserData({
+            ...inUserData,
+            email: inEmail
+        }) 
+    }
+    handlePassword = (inPassword) => { 
+        setInUserData({
+            ...inUserData,
+            password: inPassword
+        })
+    }
     login_with_email = (inEmail, inPassword) => {
         login(inEmail, inPassword);
     }
@@ -29,7 +49,7 @@ const LoginScreen = ({navigation}) => {
                     iconType="user"
                     color="black"
                     keyboardType="email-address"
-                    value={email}
+                    value={inUserData.email}
                     onChangeText={handleEmail} />
                 <FormInput 
                     labelValue="Password"
@@ -38,28 +58,34 @@ const LoginScreen = ({navigation}) => {
                     color="black"
                     isPassword={true}
                     secureTextEntry={hiddenPassword}
-                    value={password}
+                    value={inUserData.password}
                     onChangeText={handlePassword}
                     onPressEyeBtn={handleEyeClicked} />
                 <FormButton 
                     btnTitle="Sign In With Email"
                     isHighlight={true}
-                    onPress={ () => login_with_email(email, password) } />
-                <Text style={[styles.centerItems, styles.textStyle]}>{authError}</Text>
-                <SocialButton 
+                    onPress={ () => login_with_email(inUserData.email, inUserData.password) } />
+
+                {authError ?
+                <Animatable.View animation="fadeInLeft" duration={500}>
+                    <Text style={[styles.centerItems, styles.errorMsg]}>{authError}</Text>
+                </Animatable.View>
+                : null}
+
+                {/* <SocialButton 
                     btnTitle="Sign In With Google"
                     btnType="google"
                     btnColor="#de4d41" 
                     bgColor="#f5e5ea"
-                    onPress={ () => console.log("gmail") } />
-                <SocialButton 
+                    onPress={ () => console.log("gmail") } /> */}
+                {/* <SocialButton 
                     btnTitle="Sign In With Facebook"
                     btnType="facebook-square"
                     btnColor="#4867aa" 
                     bgColor="#e6eaf4"
-                    onPress={ () => console.log("facebook") } />
+                    onPress={ () => console.log("facebook") } /> */}
                 <TouchableOpacity 
-                    onPress={ ()=>{console.log("Forgot password pressed...")} }
+                    onPress={ ()=>{navigation.navigate("ForgotPasswordScreen")} }
                     style={styles.centerItems} >
                     <Text style={[styles.textStyle, styles.textUnderlineStyle, styles.bottomItems]}>Forgot Password?</Text>
                 </TouchableOpacity>
@@ -112,7 +138,11 @@ const styles = StyleSheet.create({
     bottomItems: {
         // flex: 1,
         justifyContent: "flex-end"
-    }
+    },
+    errorMsg: {
+        color: '#FF0000',
+        fontSize: 14,
+    },
 });
 
 export default LoginScreen;

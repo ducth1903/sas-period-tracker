@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import firebase from 'firebase/app';
 import "firebase/auth";
@@ -8,10 +9,9 @@ import AuthStack from './AuthStack';
 import AppStack from './AppStack';
 
 const Routes = () => {
-    const {userId, setUserId, theme} = useContext(AuthContext);
-    const [initializing, setInitializing] = useState(true);
+    const {userId, setUserId, theme}        = useContext(AuthContext);
+    const [initializing, setInitializing]   = useState(true);
 
-    // Similar to componentDidMount(), componentDidUpdate() from class component
     // Authentication State Observer
     useEffect(() => {
         firebase.auth().onAuthStateChanged(function(user) {
@@ -26,21 +26,13 @@ const Routes = () => {
                 setUserId(null);
             }
         });
-
-        if (userId) {
-            console.log("Routes->useEffect(): userId=", userId)
-        } else {
-            console.log("Routes->useEffect(): NULL user")
-        }
     }, []);
 
-    // if (initializing) {
-    //     // To find user token?
-    //     setInitializing(false)
-    //     console.log("Routes->initializing...");
-    //     return (<Text>Loading...</Text>);
-    //     // return null;      // can use loading screen instead
-    // }
+    if (initializing) {
+        // To find user token...
+        console.log("[Routes] initializing...");
+        return (<ActivityIndicator size="large" />)
+    }
 
     return (
         <NavigationContainer theme={theme}>
