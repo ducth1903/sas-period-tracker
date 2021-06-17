@@ -38,8 +38,8 @@ const AppStack = () => {
                 name="BlogScreen" 
                 component={BlogScreen} 
                 options={{
-                    tabBarLabel: "Blogs",
-                    tabBarIcon: () => ( <Ionicons name="md-newspaper-outline" size={24} color="white" /> )
+                    tabBarLabel: "Resources",
+                    tabBarIcon: () => ( <Foundation name="clipboard-notes" size={24} color="white" /> )
                 }} />
             <Tab.Screen 
                 name="SettingScreen" 
