@@ -31,7 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '127.0.0.1',
     os.environ.get("LOCAL_DEV_IP"),
-    'ebsasperiodtrakcer-env.eba-htr9rt6s.us-east-1.elasticbeanstalk.com/'
+    'backenddjango-env.eba-2tg8uqfa.us-east-1.elasticbeanstalk.com'
 ]
 
 # Application definition

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 // import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator  } from '@react-navigation/material-bottom-tabs';
-import { FontAwesome, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
 import BlogScreen from '../screens/BlogScreen';

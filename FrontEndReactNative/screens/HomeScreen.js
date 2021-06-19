@@ -257,6 +257,7 @@ const HomeScreen = ({ props }) => {
                 <Text>{userObj['firstName']} {userObj['lastName']}</Text>
                 <Text>Email: {userObj['email']}</Text>
                 <Text>DoB: {userObj['dob']}</Text>
+                <Text>Server IP: {LOCAL_DEV_IP}</Text>
             </ScrollView>
         </SafeAreaView>
     )

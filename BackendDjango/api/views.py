@@ -9,7 +9,7 @@ load_dotenv()
 
 # Mobile app does not need CSRF. CSRF only needs for Web
 from django.views.decorators.csrf import csrf_exempt
-from Crypto.Cipher import AES
+# from Crypto.Cipher import AES
 
 firebaseConfig = {
     "apiKey":               os.environ.get("FIREBASE_API_KEY"),
@@ -20,15 +20,17 @@ firebaseConfig = {
     "messagingSenderId":    os.environ.get("FIREBASE_MESSAGING_SENDER_ID"),
 }
 cred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
-firebase_admin.initialize_app(cred)
+if not firebase_admin._apps:
+    # To avoid initializing more than once
+    firebase_admin.initialize_app(cred)
 
 # AWS DynamoDB
-dynamodb    = boto3.resource('dynamodb')
+dynamodb    = boto3.resource('dynamodb', region_name='us-east-1')
 userTable   = dynamodb.Table('SasPeriodTrackerUserTable')
 periodTable = dynamodb.Table('SasPeriodTrackerPeriodTable')
 
 # AWS S3
-s3          = boto3.client('s3')
+s3          = boto3.client('s3', region_name='us-east-1')
 S3_BUCKET   = 's3-sas-period-tracker'
 # S3_PROFILE_IMAGE_PATH = 'https://sas-period-tracker.s3.amazonaws.com/profile-images/'
 
