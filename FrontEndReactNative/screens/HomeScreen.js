@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState, useRef} from 'react';
+import React, {useContext, useEffect, useState, useRef, useMemo} from 'react';
 // import { render } from 'react-dom';
 import { 
     StyleSheet, 
@@ -12,9 +12,10 @@ import {
     ImageBackground,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
-import Animated from 'react-native-reanimated';
-import BottomSheet from 'reanimated-bottom-sheet';
 import * as ImagePicker from 'expo-image-picker';
+
+import BottomSheetModal from '@gorhom/bottom-sheet';
+import BottomSheetCustomBackground from '../components/BottomSheetCustomBackground';
 
 import { AuthContext } from '../navigation/AuthProvider';
 import FormButton from '../components/FormButton';
@@ -30,7 +31,7 @@ const HomeScreen = ({ props }) => {
     const [isLoading, setIsLoading]     = useState(true);
     const [refreshing, setRefreshing]   = useState(false);
     const bottomSheetRef                = useRef(null);
-    const fall                          = new Animated.Value(1);
+    const snapPoints                    = useMemo(() => ['30%', 0], []);
     const [profileImageUri, setProfileImageUri] = useState('../assets/profile_images/default_profile_women_1.jpg');
 
     // Async function to fetch user data
@@ -68,31 +69,31 @@ const HomeScreen = ({ props }) => {
     // -----------------------------------------------
     // Bottom sheet for uploading/taking profile image
     // -----------------------------------------------
-    const renderBottomSheetContent = () => (
-        <View
-        style={{
-            backgroundColor: 'white',
-            padding: 20,
-            paddingTop: 20,
-        }}
-        >
-            <FormButton 
-                btnTitle="Take Photo"
-                isHighlight={true} 
-                onPress={ onPressTakingPhoto } />
-            <FormButton 
-                btnTitle="Upload Photo"
-                isHighlight={true} 
-                onPress={ onPressUploadPhoto } />
-        </View>
-    );
-    const renderBottomSheetHeader = () => (
-        <View style={styles.bottomSheetHeader}>
-            <View style={styles.bottomSheetPanelHeader}>
-                <View style={styles.bottomSheetPanelHandle} />
-            </View>
-        </View>
-    );
+    // const renderBottomSheetContent = () => (
+    //     <View
+    //     style={{
+    //         backgroundColor: 'white',
+    //         padding: 20,
+    //         paddingTop: 20,
+    //     }}
+    //     >
+    //         <FormButton 
+    //             btnTitle="Take Photo"
+    //             isHighlight={true} 
+    //             onPress={ onPressTakingPhoto } />
+    //         <FormButton 
+    //             btnTitle="Upload Photo"
+    //             isHighlight={true} 
+    //             onPress={ onPressUploadPhoto } />
+    //     </View>
+    // );
+    // const renderBottomSheetHeader = () => (
+    //     <View style={styles.bottomSheetHeader}>
+    //         <View style={styles.bottomSheetPanelHeader}>
+    //             <View style={styles.bottomSheetPanelHandle} />
+    //         </View>
+    //     </View>
+    // );
 
     async function onPressTakingPhoto() {
         if (Platform.OS !== 'web') {
@@ -116,7 +117,7 @@ const HomeScreen = ({ props }) => {
             postImagePresignedUrl(result.uri);
             updateUserImageInDB();
             setProfileImageUri( result.uri );
-            bottomSheetRef.current.snapTo(1);
+            bottomSheetRef.current?.close();
         }
     }
 
@@ -142,7 +143,7 @@ const HomeScreen = ({ props }) => {
             postImagePresignedUrl(result.uri);
             updateUserImageInDB();
             setProfileImageUri( result.uri );
-            bottomSheetRef.current.snapTo(1);
+            bottomSheetRef.current?.close();
         }
     };
 
@@ -223,7 +224,7 @@ const HomeScreen = ({ props }) => {
     }
     return (
         <SafeAreaView style={styles.container}>
-            <BottomSheet
+            {/* <BottomSheet
                 ref={bottomSheetRef}
                 snapPoints={['30%', 0]}
                 initialSnap={1}
@@ -231,12 +232,15 @@ const HomeScreen = ({ props }) => {
                 borderRadius={10}
                 renderContent={renderBottomSheetContent}
                 renderHeader={renderBottomSheetHeader}
-            />
+            /> */}
             <ScrollView
                 refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
                 contentContainerStyle={styles.scrollViewStyle}
             >
-                <Pressable onPress={() => { bottomSheetRef.current.snapTo(0) }}>
+                <Pressable onPress={() => {
+                    bottomSheetRef.current?.snapTo(0);
+                    console.log('camera pressed...');
+                }}>
                     {/* <a href="https://www.freepik.com/vectors/woman">Woman vector created by jcomp - www.freepik.com</a> */}
                     {/* <Avatar.Image
                         source={{ uri: profileImageUri }}
@@ -258,6 +262,32 @@ const HomeScreen = ({ props }) => {
                 <Text>DoB: {userObj['dob']}</Text>
                 <Text>Server IP: {API_URL}</Text>
             </ScrollView>
+            
+            <BottomSheetModal 
+                ref={bottomSheetRef}
+                index={-1}
+                snapPoints={snapPoints}
+                onChange={() => {}}
+                style={styles.bottomSheetStyle}
+                backgroundComponent={BottomSheetCustomBackground}
+            >
+                {/* <View
+                style={{
+                    backgroundColor: 'blue',
+                    // padding: 20,
+                    // paddingTop: 20,
+                }}
+                > */}
+                    <FormButton 
+                        btnTitle="Take Photo"
+                        isHighlight={true} 
+                        onPress={ onPressTakingPhoto } />
+                    <FormButton 
+                        btnTitle="Upload Photo"
+                        isHighlight={true} 
+                        onPress={ onPressUploadPhoto } />
+                {/* </View> */}
+            </BottomSheetModal>
         </SafeAreaView>
     )
 }
@@ -282,27 +312,39 @@ const styles = StyleSheet.create({
         bottom: 0
     },
 
-    bottomSheetHeader: {
-        backgroundColor: '#FFFFFF',
-        shadowColor: '#333333',
-        shadowOffset: {width: -1, height: -3},
-        shadowRadius: 2,
-        shadowOpacity: 0.4,
-        // elevation: 5,
-        paddingTop: 20,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-    },
-    bottomSheetPanelHeader: {
-        alignItems: 'center',
-    },
-    bottomSheetPanelHandle: {
-        width: 40,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: '#00000040',
-        marginBottom: 10,
-    },
+    // bottomSheetHeader: {
+    //     backgroundColor: '#FFFFFF',
+    //     shadowColor: '#333333',
+    //     shadowOffset: {width: -1, height: -3},
+    //     shadowRadius: 2,
+    //     shadowOpacity: 0.4,
+    //     // elevation: 5,
+    //     paddingTop: 20,
+    //     borderTopLeftRadius: 20,
+    //     borderTopRightRadius: 20,
+    // },
+    // bottomSheetPanelHeader: {
+    //     alignItems: 'center',
+    // },
+    // bottomSheetPanelHandle: {
+    //     width: 40,
+    //     height: 8,
+    //     borderRadius: 4,
+    //     backgroundColor: '#00000040',
+    //     marginBottom: 10,
+    // },
+
+    bottomSheetStyle: {
+        // backgroundColor: 'red',
+        shadowColor: "#333333",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+        elevation: 9,
+    }
 })
 
 export default HomeScreen;
