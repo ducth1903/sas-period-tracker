@@ -21,11 +21,10 @@ import FormButton from '../components/FormButton';
 import LoadingIndicator from '../components/LoadingIndicator';
 
 // Loading env variables
-import { LOCAL_DEV_IP } from '@env'
+import getEnvVars from '../environment';
+const { API_URL } = getEnvVars();
 
 const HomeScreen = ({ props }) => {
-    // const PROFILE_IMAGE_ROOT = "https://s3-sas-period-tracker.s3.amazonaws.com/profile-images/"
-
     const { userId }                    = useContext(AuthContext);
     const [userObj, setUserObj]         = useState(null);
     const [isLoading, setIsLoading]     = useState(true);
@@ -36,7 +35,7 @@ const HomeScreen = ({ props }) => {
 
     // Async function to fetch user data
     async function fetchUserData() {
-        await fetch(`${LOCAL_DEV_IP}/api/user/${userId}`, { method: "GET" })
+        await fetch(`${API_URL}/api/user/${userId}`, { method: "GET" })
         .then(resp => resp.json())
         .then(data => {
             console.log('userObj = ', data);
@@ -154,7 +153,7 @@ const HomeScreen = ({ props }) => {
     // Utils
     const getImagePresignedUrl = async (inImageId) => {
         try {
-            await fetch(`${LOCAL_DEV_IP}/api/imagepresigned/${inImageId}`, { method: "GET" })
+            await fetch(`${API_URL}/api/imagepresigned/${inImageId}`, { method: "GET" })
             .then(resp => resp.json())
             .then(data => {
                 // console.log('presigned url = ', data);
@@ -186,7 +185,7 @@ const HomeScreen = ({ props }) => {
 
     const postImagePresignedUrl = async (imageUri) => {
         let presignedUrl = ''
-        await fetch(`${LOCAL_DEV_IP}/api/imagepresigned/${userId}.jpg`, { 
+        await fetch(`${API_URL}/api/imagepresigned/${userId}.jpg`, { 
             method: "POST",
         })
         .then(resp => resp.json())
@@ -202,7 +201,7 @@ const HomeScreen = ({ props }) => {
     }
 
     async function updateUserImageInDB() {
-        await fetch(`${LOCAL_DEV_IP}/api/user/${userId}`, {
+        await fetch(`${API_URL}/api/user/${userId}`, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -257,7 +256,7 @@ const HomeScreen = ({ props }) => {
                 <Text>{userObj['firstName']} {userObj['lastName']}</Text>
                 <Text>Email: {userObj['email']}</Text>
                 <Text>DoB: {userObj['dob']}</Text>
-                <Text>Server IP: {LOCAL_DEV_IP}</Text>
+                <Text>Server IP: {API_URL}</Text>
             </ScrollView>
         </SafeAreaView>
     )
