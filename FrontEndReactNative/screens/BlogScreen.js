@@ -1,6 +1,6 @@
 import React, {useContext, useState, Component} from 'react';
 import { render } from 'react-dom';
-import { StyleSheet, Text, View, Button, Alert, FlatList, Pressable } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, FlatList, Pressable, SafeAreaView, ScrollView, StatusBar } from 'react-native';
 import { Card, FAB } from 'react-native-paper';
 
 import { AuthContext } from '../navigation/AuthProvider'; 
@@ -11,10 +11,6 @@ const BlogScreen = ({ props }) => {
   return (
     <View style={styles.container}>
       <View>
-        <Text h1 style={styles.heading}>
-          Resources
-        </Text>
-
         <View style={styles.menurow}>
           <View style={[styles.menubox]}>
             <Pressable style={styles.button} onPress={() => Alert.alert("Simple button pressed")}>
@@ -51,12 +47,23 @@ const BlogScreen = ({ props }) => {
           <View style={[styles.menubox]}>
           </View>
         </View>
-
       </View>
-
     </View>
   )
 }
+
+function ResourceScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Test Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate('Details')}
+      />
+    </View>
+  );
+}
+
 
 /* Scratch */
 //<Pressable style={styles.button} onPress={() => Alert.alert("Simple button pressed")}>
@@ -71,19 +78,27 @@ const BlogScreen = ({ props }) => {
       //    Blog Page: {userId}
       //  </Text>
       //</View>
-
+//
+        /*<Text h1 style={styles.heading}>
+          Resources
+        </Text>*/
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
     alignContent: 'center',
-    backgroundColor: 'steelblue',
+    backgroundColor: 'white',
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
   },
   heading: {
     fontSize: 40,
     fontWeight: "bold",
-    color: "#fdd835",
+    color: "#ff7120",
     textAlign: "center",
     marginTop: 50,
   },
@@ -103,20 +118,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
-    color: "steelblue",
+    color: "white",
   },
   menurow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     //alignSelf: 'center',
     width: '100%',
-    height: '85%',
+    height: '100%',
     justifyContent: 'center',
     alignContent: 'center',
-    //margin: '5%',
+    //marginTop: 10,
     //borderWidth: 2,
     //borderColor: 'black',
     //backgroundColor: 'skyblue',
+    //backgroundColor: 'pink',
+    //marginHorizontal: 20,
   },
   menubox: {
     //flex: 1,
@@ -128,7 +145,8 @@ const styles = StyleSheet.create({
     marginBottom: '2%',
     marginLeft: '3%',
     marginRight: '3%',
-    backgroundColor: '#fdd835',
+    backgroundColor: '#ff7120',
+    borderRadius: 20,
   },
   footnote: {
     flex: 1,
