@@ -219,7 +219,12 @@ const HomeScreen = ({ props }) => {
     if (isLoading) {
         console.log('[HomeScreen] loading...');
         return (
-            <LoadingIndicator/>
+            <ScrollView
+                refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
+                contentContainerStyle={styles.scrollViewStyle}
+            >
+                <LoadingIndicator/>
+            </ScrollView>
         )
     }
     return (
