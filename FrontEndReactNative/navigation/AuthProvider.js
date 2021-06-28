@@ -15,7 +15,7 @@ import {
 
 // Loading env variables
 import {
-    LOCAL_DEV_IP,
+    // LOCAL_DEV_IP,
     REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN,
     REACT_APP_FIREBASE_PROJECT_ID,
@@ -24,6 +24,10 @@ import {
     REACT_APP_FIREBASE_APP_ID,
     REACT_APP_FIREBASE_MEASUREMENT_ID
 } from '@env'
+
+// Loading env variables
+import getEnvVars from '../environment';
+const { API_URL } = getEnvVars();
 
 // https://docs.expo.io/guides/using-firebase/
 // Initialize Firebase
@@ -121,7 +125,7 @@ export const AuthProvider = ({children}) => {
                     try {
                         await firebase_auth.createUserWithEmailAndPassword(inEmail, inPassword)
                         .then((userCredential) => {
-                            fetch(`${LOCAL_DEV_IP}/api/user/${userCredential.user.uid}`, {
+                            fetch(`${API_URL}/api/user/${userCredential.user.uid}`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
@@ -136,7 +140,6 @@ export const AuthProvider = ({children}) => {
                             })
                             .then(resp => resp.json())
                             .then(userData => {
-                                console.log('userData = ', userData)
                                 setUserId(userData);
                             })
                         });

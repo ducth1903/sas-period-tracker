@@ -52,7 +52,7 @@ def getUser(request, userId=None):
             return JsonResponse(resp['Item'], safe=False)
         else:
             # user is not in User table
-            return __error_json_response()
+            return __error_json_response(userId)
         
     elif request.method == 'POST':
         # cipher = AES.new('secret key 123', AES.MODE_EAX, nonce=nonce)
@@ -82,7 +82,6 @@ def getUser(request, userId=None):
             return JsonResponse(user_obj["userId"], safe=False)
 
         except Exception as e:
-            print('Error: ', e)
             return __error_json_response(e)
 
     elif request.method == 'PUT':
@@ -100,7 +99,6 @@ def getUser(request, userId=None):
             )
             return __ok_json_response()
         except Exception as e:
-            print('Error: ', e)
             return __error_json_response(e)
 
     elif request.method == 'DELETE':
@@ -120,7 +118,6 @@ def getUser(request, userId=None):
             auth.delete_user(uid=userId)
             return __ok_json_response()
         except Exception as e:
-            print('Error: ', e)
             return __error_json_response(e)
 
 @csrf_exempt
