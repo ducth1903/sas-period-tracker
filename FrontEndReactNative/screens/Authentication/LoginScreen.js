@@ -41,7 +41,8 @@ const LoginScreen = ({navigation}) => {
     handleEyeClicked = () => { setHiddenPassword( !hiddenPassword ) }
 
     return (
-        <View style={styles.container}>
+        // <View style={styles.container}>
+        <View>
             <View>
                 <FormInput 
                     labelValue="Email"

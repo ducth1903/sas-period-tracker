@@ -10,16 +10,18 @@ import {
     Pressable, 
     Platform, 
     ImageBackground,
+    Animated
 } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import * as ImagePicker from 'expo-image-picker';
-
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import BottomSheetModal from '@gorhom/bottom-sheet';
 import BottomSheetCustomBackground from '../components/BottomSheetCustomBackground';
 
 import { AuthContext } from '../navigation/AuthProvider';
 import FormButton from '../components/FormButton';
-import LoadingIndicator from '../components/LoadingIndicator';
+// import LoadingIndicator from '../components/LoadingIndicator';
+// import ProgressiveImage from '../components/ProgressiveImage';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -33,13 +35,15 @@ const HomeScreen = ({ props }) => {
     const bottomSheetRef                = useRef(null);
     const snapPoints                    = useMemo(() => ['30%', 0], []);
     const [profileImageUri, setProfileImageUri] = useState('../assets/profile_images/default_profile_women_1.jpg');
+    const fall                          = useRef(new Animated.Value(1)).current;    // useRef = mutable object
+    let fall_ctrl                       = 1;
 
     // Async function to fetch user data
     async function fetchUserData() {
         await fetch(`${API_URL}/api/user/${userId}`, { method: "GET" })
         .then(resp => resp.json())
         .then(data => {
-            console.log('userObj = ', data);
+            // console.log('userObj = ', data);
             setUserObj(data);
             getImagePresignedUrl(data['profileImageId']);
             setIsLoading(false);
@@ -50,7 +54,7 @@ const HomeScreen = ({ props }) => {
     // This will be run after the component is mounted and after every render cycle
     // i.e. whenever your functional component re-runs/re-renders
     useEffect(() => {
-        console.log('HomeScreen.useEffect()...')
+        console.log('[HomeScreen] useEffect()')
         // to avoid state update on unmounted component issue
         // https://www.debuggr.io/react-update-unmounted-component/
         fetchUserData();
@@ -94,6 +98,16 @@ const HomeScreen = ({ props }) => {
     //         </View>
     //     </View>
     // );
+
+    const bottomSheetModalFunc = () => {
+        fall_ctrl = fall_ctrl ^ 1;
+        Animated.timing(fall, {
+            toValue: fall_ctrl,
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+        // console.log('here...', fall_ctrl)
+    }
 
     async function onPressTakingPhoto() {
         if (Platform.OS !== 'web') {
@@ -163,7 +177,7 @@ const HomeScreen = ({ props }) => {
             .catch(error => console.log(error))
         } catch {
             console.log('Error in getImagePresignedUrl', inImageId)
-        } 
+        }
     }
 
     const uploadImageViaPresignedUrl = async (imageUri, inPresignedUrl) => {
@@ -223,56 +237,69 @@ const HomeScreen = ({ props }) => {
                 refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
                 contentContainerStyle={styles.scrollViewStyle}
             >
-                <LoadingIndicator/>
+                {/* <LoadingIndicator/> */}
+                <SkeletonPlaceholder>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <View style={{ width: 60, height: 60, borderRadius: 50 }} />
+                    <View style={{ marginLeft: 20 }}>
+                    <View style={{ width: 120, height: 20, borderRadius: 4 }} />
+                    <View
+                        style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+                    />
+                    </View>
+                </View>
+                </SkeletonPlaceholder>
             </ScrollView>
         )
     }
     return (
         <SafeAreaView style={styles.container}>
-            {/* <BottomSheet
-                ref={bottomSheetRef}
-                snapPoints={['30%', 0]}
-                initialSnap={1}
-                callbackNode={fall}
-                borderRadius={10}
-                renderContent={renderBottomSheetContent}
-                renderHeader={renderBottomSheetHeader}
-            /> */}
             <ScrollView
-                refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
-                contentContainerStyle={styles.scrollViewStyle}
+            refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
+            contentContainerStyle={styles.scrollViewStyle}
             >
-                <Pressable onPress={() => {
-                    bottomSheetRef.current?.snapTo(0);
-                    console.log('camera pressed...');
-                }}>
-                    {/* <a href="https://www.freepik.com/vectors/woman">Woman vector created by jcomp - www.freepik.com</a> */}
-                    {/* <Avatar.Image
-                        source={{ uri: profileImageUri }}
-                        size={100}
-                        style={{margin: 10}} />
-                    <Feather name="camera" size={24} color="black" /> */}
-                    <ImageBackground
-                        source={{ uri: profileImageUri }}
-                        style={{margin: 10, height: 100, width: 100}}
-                        imageStyle={{borderRadius: 15}}
-                    >
-                        <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-                            <Feather name="camera" size={24} color="white"/>
-                        </View>
-                    </ImageBackground>
-                </Pressable>
-                <Text>{userObj['firstName']} {userObj['lastName']}</Text>
-                <Text>Email: {userObj['email']}</Text>
-                <Text>DoB: {userObj['dob']}</Text>
-                <Text>Server IP: {API_URL}</Text>
+                <Animated.View style={[
+                    styles.scrollViewStyle,
+                    {opacity: Animated.add(0.2, Animated.multiply(fall, 1.0))}
+                ]}>
+                    <Pressable onPress={() => {
+                        bottomSheetRef.current?.snapTo(0);
+                    }}>
+                        {/* <Avatar.Image
+                            source={{ uri: profileImageUri }}
+                            size={100}
+                            style={{margin: 10}} />
+                        <Feather name="camera" size={24} color="black" /> */}
+                        <ImageBackground
+                            source={{ uri: profileImageUri }}
+                            style={{margin: 10, height: 100, width: 100}}
+                            imageStyle={{borderRadius: 15}}
+                        >
+                            <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
+                                <Feather name="camera" size={24} color="white"/>
+                            </View>
+                        </ImageBackground>
+
+                        {/* <ProgressiveImage
+                            defaultImageSrc={ require('../assets/profile_images/default_img.png') }
+                            imageSrc={{ uri: profileImageUri }}
+                            style={{margin: 10, height: 100, width: 100}}
+                        /> */}
+
+                    </Pressable>
+                    
+                    <Text>{userObj['firstName']} {userObj['lastName']}</Text>
+                    <Text>Email: {userObj['email']}</Text>
+                    <Text>DoB: {userObj['dob']}</Text>
+                    <Text>Server IP: {API_URL}</Text>
+                </Animated.View>
             </ScrollView>
             
             <BottomSheetModal 
                 ref={bottomSheetRef}
                 index={-1}
                 snapPoints={snapPoints}
-                onChange={() => {}}
+                onChange={bottomSheetModalFunc}
                 style={styles.bottomSheetStyle}
                 backgroundComponent={BottomSheetCustomBackground}
             >

@@ -8,9 +8,10 @@ import HomeScreen from '../screens/HomeScreen';
 import BlogScreen from '../screens/BlogScreen';
 import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
 import SettingScreen from '../screens/SettingScreen';
+// import TestScreen from '../screens/TestScreen';
 
 // const Stack = createStackNavigator();
-const Tab = createMaterialBottomTabNavigator ();
+const Tab = createMaterialBottomTabNavigator();
 
 const AppStack = () => {
     console.log("in AppStack...");
@@ -18,36 +19,43 @@ const AppStack = () => {
         // <Stack.Navigator initialRouteName="Home" screenOptions={headerNavigation}>
         //     <Stack.Screen name="Home" component={Home} options={ {header: ()=>null} } />
         // </Stack.Navigator>
-        <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#694fad' }} >
+        <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#E1EEDD' }} >
             <Tab.Screen 
                 name="HomeScreen" 
                 component={HomeScreen} 
                 options={{
                     // header: ()=>null, 
                     tabBarLabel: "Home",
-                    tabBarIcon: () => ( <FontAwesome name="home" size={24} color="white" /> )
+                    tabBarIcon: () => (<FontAwesome name="home" size={24} color="#183A1D" />)
                 }} />
             <Tab.Screen 
                 name="PeriodCalendarScreen" 
                 component={PeriodCalendarScreen} 
                 options={{ 
                     tabBarLabel: "My Period",
-                    tabBarIcon: () => ( <FontAwesome name="calendar" size={24} color="white" /> )
+                    tabBarIcon: () => (<FontAwesome name="calendar" size={24} color="#183A1D" />)
                 }} />
             <Tab.Screen 
                 name="BlogScreen" 
                 component={BlogScreen} 
                 options={{
                     tabBarLabel: "Resources",
-                    tabBarIcon: () => ( <Foundation name="clipboard-notes" size={24} color="white" /> )
+                    tabBarIcon: () => (<Foundation name="clipboard-notes" size={24} color="#183A1D" />)
                 }} />
             <Tab.Screen 
                 name="SettingScreen" 
                 component={SettingScreen} 
                 options={{
                     tabBarLabel: "Settings",
-                    tabBarIcon: () => ( <MaterialIcons name="settings" size={24} color="white" /> )
+                    tabBarIcon: () => (<MaterialIcons name="settings" size={24} color="#183A1D" />)
                 }} />
+            {/* <Tab.Screen 
+                name="TestScreen" 
+                component={TestScreen} 
+                options={{
+                    tabBarLabel: "Test",
+                    tabBarIcon: () => (<MaterialIcons name="settings" size={24} color="#183A1D" />)
+                }} /> */}
         </Tab.Navigator>
     );
 }

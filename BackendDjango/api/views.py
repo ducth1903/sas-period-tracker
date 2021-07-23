@@ -3,7 +3,9 @@ import firebase_admin
 from firebase_admin import auth, credentials
 import json
 import boto3
+from boto3.dynamodb.conditions import Key
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -34,12 +36,15 @@ s3          = boto3.client('s3', region_name='us-east-1')
 S3_BUCKET   = 's3-sas-period-tracker'
 # S3_PROFILE_IMAGE_PATH = 'https://sas-period-tracker.s3.amazonaws.com/profile-images/'
 
+# Period page to fetch for GET method
+NUM_MONTHS_TO_FETCH = 1
+
 @csrf_exempt
-def getUser(request, userId=None):
+def user(request, userId=None):
     if request.method == 'GET':
         resp = userTable.get_item(Key={'userId': userId})
-        print('[getUser][GET] response =', resp)
-        if 'Item' in resp:
+        print('[user][GET] response =', resp)
+        if 'Item' in resp or resp['HTTPStatusCode']==200:
             # valid user
             # return JsonResponse({
             #     "userId"    : resp['Item']["userId"],
@@ -61,7 +66,7 @@ def getUser(request, userId=None):
 
         data = request.body.decode('utf-8') 
         received_json_data = json.loads(data)
-        print('[getUser][POST] received_json_data = ', received_json_data)
+        print('[user][POST] received_json_data = ', received_json_data)
         # email       = request.POST.get('email')
     
         try:
@@ -87,7 +92,7 @@ def getUser(request, userId=None):
     elif request.method == 'PUT':
         data = request.body.decode('utf-8') 
         received_json_data = json.loads(data)
-        print('[getUser][PUT] received_json_data = ', received_json_data)
+        print('[user][PUT] received_json_data = ', received_json_data)
 
         data2update = dict()
         for k,v in received_json_data.items():
@@ -116,6 +121,58 @@ def getUser(request, userId=None):
                 Key=f'profile-images/{userId}.jpg'
             )
             auth.delete_user(uid=userId)
+            return __ok_json_response()
+        except Exception as e:
+            return __error_json_response(e)
+
+@csrf_exempt
+def period(request, userId=None, inDateStr=None):
+    if request.method == 'GET':
+        try:
+            # resp = periodTable.get_item(Key={'userId': userId, 'timestamp': '2021-07-20T00:00:00.000Z'})
+            # start_date = '2021-07-01T00:00:00.000Z'
+            # end_date = '2021-07-31T00:00:00.000Z'
+            # startEpoch = __convert_dateStr_epoch(start_date)
+            # endEpoch   = __convert_dateStr_epoch(end_date)
+
+            inEpoch = __convert_dateStr_epoch(inDateStr)
+            startEpoch = inEpoch - NUM_MONTHS_TO_FETCH * (30*24*3600)
+            endEpoch   = inEpoch + NUM_MONTHS_TO_FETCH * (30*24*3600)
+
+            resp = periodTable.query(
+                KeyConditionExpression=Key('userId').eq(userId) & \
+                    Key('timestamp').between(startEpoch, endEpoch)
+            )
+            # print('[period][GET]', resp)
+            if __is_resp_valid(resp):
+                return JsonResponse(resp['Items'], safe=False)
+        except Exception as e:
+            return __error_json_response(e)
+
+    elif request.method == 'POST':
+        data = request.body.decode('utf-8') 
+        received_json_data = json.loads(data)
+        print('[period][POST] received_json_data = ', received_json_data)
+
+        for rec in received_json_data:
+            # i.e. rec['date'] = '2021-07-20T00:00:00.000Z'
+            # 'T' is jusut a literal to separate the date from the time
+            # 'Z' means 'zero hour offset', a.k.a. 'Zulu time' (UTC) 
+            period_obj = {
+                'userId': userId,
+                'timestamp': __convert_dateStr_epoch(rec['date']),
+                'dateStr': rec['date'],
+                'symptoms': rec['symptomIds']
+            }
+            print(period_obj)
+            periodTable.put_item(Item=period_obj)
+
+        return __ok_json_response()
+
+    elif request.method == 'DELETE':
+        try:
+            inDateEpoch = __convert_dateStr_epoch(inDateStr)
+            periodTable.delete_item( Key={'userId': userId, 'timestamp': inDateEpoch} )
             return __ok_json_response()
         except Exception as e:
             return __error_json_response(e)
@@ -150,6 +207,13 @@ def imagePresignedUrl(request, imageId):
             return JsonResponse({'presignedUrl': url}, safe=False)
 
     return __error_json_response()
+
+def __convert_dateStr_epoch(dateStr):
+    # return int( datetime.strptime(dateStr.split('T')[0], '%Y-%m-%d').timestamp() )
+    return int( datetime.strptime(dateStr.strip(), '%Y-%m-%d').timestamp() )
+
+def __is_resp_valid(resp):
+    return True if resp['ResponseMetadata']['HTTPStatusCode']==200 else False
 
 def __ok_json_response():
     return JsonResponse({

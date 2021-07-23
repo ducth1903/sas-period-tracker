@@ -184,22 +184,42 @@ export const AuthProvider = ({children}) => {
 const CustomDefaultTheme = {
     ...NavigationDefaultTheme,
     ...PaperDefaultTheme,
+    roundness: 50,
     colors: {
-        ...NavigationDefaultTheme.colors,
-        ...PaperDefaultTheme.colors,
-        background: '#ffffff',
-        text: '#333333'
+        // ...NavigationDefaultTheme.colors,
+        // ...PaperDefaultTheme.colors,
+        primary: '#F56A37',
+        accent: '#FFFBEE',
+        background: '#FFFBEE',
+        text: '#F56A37',
+        fonts: 'regular',
+        placeholder: 'black'
+    },
+
+    btnTextHighlight: {
+        text: 'white'
+    },
+    btnText: {
+        text: 'yellow'
     }
 }
 
 const CustomDarkTheme = {
     ...NavigationDarkTheme,
     ...PaperDarkTheme,
+    roundness: 50,
     colors: {
         ...NavigationDarkTheme.colors,
         ...PaperDarkTheme.colors,
         background: '#333333',
         text: '#ffffff'
+    },
+
+    btnTextHighlight: {
+        text: 'white'
+    },
+    btnText: {
+        text: 'yellow'
     }
 }
 // ----------------------------------------------------------------------------

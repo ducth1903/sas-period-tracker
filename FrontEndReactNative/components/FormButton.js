@@ -1,8 +1,11 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Text, StyleSheet, View, Pressable } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
 
 const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
+    const { btnTextHighlight, btnText } = useTheme();
+
     return (
         <View style={styles.container}>
             <Pressable {...restProps}>
@@ -13,6 +16,9 @@ const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
                     <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>{btnTitle}</Text>
                 </LinearGradient>
             </Pressable>
+            {/* <Button mode="contained" {...restProps}>
+                <Text style={[styles.commonTxtStyle, isHighlight ? btnTextHighlight.text : btnText.text]}>{btnTitle}</Text>
+            </Button> */}
         </View>
     )
 }
@@ -29,7 +35,7 @@ const styles = StyleSheet.create({
     commonBtnStyle: {
         width: '100%',
         height: 50,
-        borderRadius: 9,
+        borderRadius: 25,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -37,7 +43,7 @@ const styles = StyleSheet.create({
     formBtnStyle: {
         borderWidth: 2,
         borderColor: '#F59B3F',
-        borderRadius: 9
+        borderRadius: 25
     },
     formTxtStyle: {
         color: '#F59B3F'

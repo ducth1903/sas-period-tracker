@@ -26,7 +26,7 @@ const SignupScreen = ({navigation}) => {
         isValidPassword: true
     });
 
-    const [date, setDate]                       = useState(new Date());
+    const [date, setDate] = useState(new Date());
     const [showDateTimePicker, setShowDateTimePicker] = useState(false);
     const handleDobPicker = (event, selectedDate) => {
         const currentDate = selectedDate || date
