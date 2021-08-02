@@ -13,25 +13,21 @@ import {
     Alert,
     StatusBar
 } from 'react-native';
-import { Snackbar } from 'react-native-paper';
 
 // https://github.com/wix/react-native-calendars
 import { Calendar, CalendarList } from 'react-native-calendars';
-import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { Entypo, FontAwesome } from '@expo/vector-icons';
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import CalendarCard from '../components/CalendarCard';
 import Modal from 'react-native-modal';
-// import ScalingDot from '../components/ScalingDot';
+import ScalingDot from '../components/ScalingDot';
 // import { Checkbox } from 'react-native-paper';
-// import BouncyCheckbox from "react-native-bouncy-checkbox";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
-import PeriodSymptomCard from '../components/PeriodSymptomCard';
-import FormButton from '../components/FormButton';
 
 // Loading env variables
 import getEnvVars from '../environment';
-import { color } from 'react-native-reanimated';
 const { API_URL } = getEnvVars();
 
 const { width } = Dimensions.get('screen');
@@ -56,11 +52,7 @@ var currPeriodDate = null;
 const PeriodCalendarScreen = ({ props }) => {
     const { userId }                            = useContext(AuthContext);
     const [modalVisible, setModalVisible]       = useState(false);
-    const [modalVisibleScrollCal, setmodalVisibleScrollCal]   = useState(false);
-    const [modalInfoVisible, setModalInfoVisible]             = useState(false);
-    const [modalInfo, setModalInfo]             = useState("");
-    const [snackBarVisible, setSnackBarVisible] = useState(false);
-    const [snackBarText, setSnackBarText]       = useState("");
+    const [modalVisible_2, setModalVisible_2]   = useState(false);
     const [statusBarHidden, setStatusBarHidden] = useState(false);
     const [refreshing, setRefreshing]           = useState(false);
 
@@ -150,36 +142,47 @@ const PeriodCalendarScreen = ({ props }) => {
     // let flatListRef = React.useRef(null);
     const renderModalItem = useCallback(({item}) => {
         return (
-            <View style={styles.modalItemView}>
-                <View style={{flex: 1, flexDirection: 'row'}}>
-                    <View style={[styles.wrapperTitleStyle, {backgroundColor: `${item.titleColor}`, borderRadius: 15}]}>
-                        <Text style={styles.titleStyle}>{item.title}</Text>
+            <View style={[styles.modalItemView]}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>{item.title}</Text>
+                { item['availableOptions'].map( (ele, index) => {
+                    return (
+                    <View key={index} style={{flexDirection: 'row'}}>
+                        <BouncyCheckbox
+                        size={25}
+                        fillColor="red"
+                        unfillColor="#FFFFFF"
+                        iconStyle={{ borderColor: "red" }}
+                        isChecked={item['isChecked'][index]}
+                        onPress={(isChecked) => {
+                            currPeriodDate.setSymptom(
+                                item['key'],
+                                item['availableOptions_id'][index], 
+                                isChecked
+                            )
+                        }}
+                        />
+                        <Text>{ele}</Text>
                     </View>
-                    <View style={styles.wrapperInfoButton}>
-                        <Pressable
-                        onPress={()=>{ 
-                            console.log(item['description'])
-                            setModalInfo(item['description'])
-                            setModalInfoVisible(true)
-                        }}>
-                            <Ionicons name="information-circle-outline" size={24} color="black" />
-                        </Pressable>
-                    </View>
-                </View>
-                <PeriodSymptomCard inData={item} periodDateObject={currPeriodDate} />
+                )})}
             </View>
         )
     }, []);
 
     const modalItemSubmitPressed = async () => {
-        setSnackBarText("Submitting your data...");
-        setSnackBarVisible(true);
-
         userPeriods.push(currPeriodDate);
         await postUserPeriodDates(userPeriods);
-
-        setSnackBarVisible(false);
         setModalVisible(!modalVisible);
+        
+        // if (!(lastMarkedDate in markedDates)) {
+        //     // if not exists, add the date
+        //     let newMarkedDate = {};
+        //     newMarkedDate[lastMarkedDate] = {
+        //         customStyles: markedDateStyle
+        //     }
+        //     setMarkedDates(
+        //         Object.assign({}, markedDates, newMarkedDate)
+        //     )
+        // }
     }
 
     const postUserPeriodDates = async(inUserPeriods) => {
@@ -226,11 +229,9 @@ const PeriodCalendarScreen = ({ props }) => {
             contentContainerStyle={styles.scrollViewStyle}
             >
                 <View style={{flex:1, justifyContent: 'space-around', alignItems: 'flex-end'}}>
-                    <TouchableOpacity 
-                    style={{marginRight: '5%', marginTop: '5%'}}
-                    onPress={()=>{
+                    <TouchableOpacity onPress={()=>{
                         setStatusBarHidden(!statusBarHidden)
-                        setmodalVisibleScrollCal(!modalVisibleScrollCal)
+                        setModalVisible_2(!modalVisible_2)
                     }}>
                         <FontAwesome name="calendar" size={24} color="black" />
                     </TouchableOpacity>
@@ -239,91 +240,82 @@ const PeriodCalendarScreen = ({ props }) => {
                     <Modal
                         animationIn="slideInLeft"
                         animationOut="slideOutRight"
-                        transparent={false}
+                        transparent={true}
                         isVisible={modalVisible}
                         onRequestClose={() => {
                             setModalVisible(!modalVisible);
                         }}
                         statusBarTranslucent={true}
-                        style={{margin: 0, backgroundColor: '#ADCDFF'}}
+                        style={{marginLeft: MODAL_MARGIN, marginRight: MODAL_MARGIN}}
                     >
-                        <SafeAreaView style={{flex: 1}}>
-                            <View style={{flex: 1}}/>
-                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: '4%'}}>
-                                <View style={{flex: 1}}>
-                                    <TouchableOpacity onPress={() => {
-                                        setModalVisible(!modalVisible)
-                                    }}>
-                                        <Entypo name="cross" size={24} color="black" />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={{flex: 2}}>
-                                    <Text style={{marginBottom: 15, textAlign: "center", fontSize: 25, fontWeight: "bold"}}>
-                                        {lastMarkedDate}
-                                    </Text>
-                                </View>
-                                <View style={{flex: 1}}/>
-                            </View>
-
-                            <View style={{flex: 8, backgroundColor: '#ADCDFF'}}>
-                            {lastMarkedDate in fetchedData ? 
-                            <Animated.FlatList
-                            data={fetchedData[lastMarkedDate].renderSymptom()}
-                            renderItem={renderModalItem}
-                            keyExtractor={keyExtractor}
-                            // pagingEnabled
-                            horizontal={false}
-                            showsHorizontalScrollIndicator={false}
-                            decelerationRate={'normal'}
-                            scrollEventThrottle={16}
-                            onScroll={Animated.event(
-                                [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                                {
-                                useNativeDriver: false,
-                                }
-                            )}
-                            />
-                            :
-                            <Animated.FlatList
-                            // ref={flatListRef}
-                            // onViewableItemsChanged={onViewRef.current}
-                            data={new MODAL_TEMPLATE().default_template}
-                            renderItem={renderModalItem}
-                            keyExtractor={keyExtractor}
-                            // pagingEnabled
-                            horizontal={false}
-                            showsHorizontalScrollIndicator={false}
-                            decelerationRate={'normal'}
-                            scrollEventThrottle={16}
-                            onScroll={Animated.event(
-                                [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                                {
-                                useNativeDriver: false,
-                                }
-                            )}
-                            />
-                            }
-                            </View>
-
-                            <View style={{flex: 1, margin: '2%'}}>
-                                {snackBarVisible ? 
-                                <Snackbar
-                                visible={snackBarVisible}
-                                onDismiss={() => {setSnackBarVisible(false)}}
-                                duration={Infinity}
-                                style={{backgroundColor: '#F3692B'}}
-                                >
-                                    <Text style={styles.titleStyle}>{snackBarText}</Text>
-                                </Snackbar>
+                        <View style={styles.modalCenteredView}>
+                            <View style={styles.modalView}>
+                                <TouchableOpacity onPress={() => {setModalVisible(!modalVisible)}}>
+                                    <Entypo name="cross" size={24} color="black" />
+                                </TouchableOpacity>
+                                <Text style={{marginBottom: 15, textAlign: "center", fontSize: 25, fontWeight: "bold"}}>{lastMarkedDate}</Text>
+                                
+                                {lastMarkedDate in fetchedData ? 
+                                <Animated.FlatList
+                                data={fetchedData[lastMarkedDate].renderSymptom()}
+                                renderItem={renderModalItem}
+                                keyExtractor={keyExtractor}
+                                pagingEnabled
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                decelerationRate={'normal'}
+                                scrollEventThrottle={16}
+                                onScroll={Animated.event(
+                                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                                    {
+                                    useNativeDriver: false,
+                                    }
+                                )}
+                                />
                                 :
-                                <FormButton
-                                btnTitle="Submit"
-                                isHighlight={true}
-                                onPress={modalItemSubmitPressed}
+                                <Animated.FlatList
+                                // ref={flatListRef}
+                                // onViewableItemsChanged={onViewRef.current}
+                                data={new MODAL_TEMPLATE().default_template}
+                                renderItem={renderModalItem}
+                                keyExtractor={keyExtractor}
+                                pagingEnabled
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                decelerationRate={'normal'}
+                                scrollEventThrottle={16}
+                                onScroll={Animated.event(
+                                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                                    {
+                                    useNativeDriver: false,
+                                    }
+                                )}
                                 />
                                 }
+
+                                <ScalingDot 
+                                data={new MODAL_TEMPLATE().default_template}
+                                expandingDotWidth={30}
+                                scrollX={scrollX}
+                                inActiveDotOpacity={0.6}
+                                dotStyle={{
+                                    width: 10,
+                                    height: 10,
+                                    backgroundColor: '#347af0',
+                                    borderRadius: 5,
+                                    marginHorizontal: 5
+                                }}
+                                containerStyle={{
+                                    // top: 30,
+                                }}
+                                />
+                                <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={modalItemSubmitPressed}>
+                                    <Text style={styles.textStyle}>Submit</Text>
+                                </Pressable>
                             </View>
-                        </SafeAreaView>
+                        </View>
                     </Modal>
                     
                     <Calendar
@@ -387,9 +379,9 @@ const PeriodCalendarScreen = ({ props }) => {
                         animationIn="slideInLeft"
                         animationOut="slideOutRight"
                         transparent={false}
-                        isVisible={modalVisibleScrollCal}
+                        isVisible={modalVisible_2}
                         onRequestClose={() => {
-                            setModalVisible(!modalVisibleScrollCal);
+                            setModalVisible(!modalVisible_2);
                         }}
                         statusBarTranslucent={true}
                         style={{margin: 0, backgroundColor: "white"}}
@@ -400,7 +392,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             backgroundColor="#61dafb"
                             hidden={statusBarHidden} /> */}
                             <View style={{flex:1, flexDirection: 'column', justifyContent: 'flex-end', paddingLeft: '4%'}}>
-                                <TouchableOpacity onPress={()=>{setmodalVisibleScrollCal(!modalVisibleScrollCal)}}>
+                                <TouchableOpacity onPress={()=>{setModalVisible_2(!modalVisible_2)}}>
                                     <Entypo name="cross" size={30} color="black" />
                                 </TouchableOpacity>
                             </View>
@@ -423,39 +415,12 @@ const PeriodCalendarScreen = ({ props }) => {
                             </View>
                         </SafeAreaView>
                     </Modal>
-
-                    {/* Modal for info */}
-                    <Modal
-                        animationIn="slideInLeft"
-                        animationOut="slideOutRight"
-                        transparent={true}
-                        isVisible={modalInfoVisible}
-                        onRequestClose={() => {
-                            setModalInfoVisible(!modalInfoVisible);
-                        }}
-                        statusBarTranslucent={true}
-                        style={{marginLeft: MODAL_MARGIN, marginRight: MODAL_MARGIN}}
-                    >
-                        <SafeAreaView style={{flex: 1}}>
-                            <View style={styles.modalCenteredView}>
-                                <View style={styles.modalView}>
-                                    <Text style={{marginBottom: '10%'}}>{modalInfo}</Text>
-                                    <Pressable
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => setModalInfoVisible(!modalInfoVisible)}
-                                    >
-                                        <Text style={styles.textStyle}>Hide</Text>
-                                    </Pressable>
-                                </View>
-                            </View>
-                        </SafeAreaView>
-                    </Modal>
                 </View>
-                <View style={[{flex: 1}, styles.card]}>
+                <View style={[{flex:1}, styles.card]}>
                     <CalendarCard leftContent='28' rightContent='Days until your next period'/>
                     <CalendarCard leftContent='14' rightContent='Days until your next ovulation'/>
                 </View>
-                <View style={{flex: 1}}/>
+                <View style={{flex:1}}/>
             </ScrollView>
         </SafeAreaView>
     )
@@ -507,11 +472,10 @@ const styles = StyleSheet.create({
     },
     modalItemView: {
         flex: 1,
-        margin: 10,
-        backgroundColor: 'white',
-        // borderColor: 'black',
-        // borderWidth: 2,
-        borderRadius: 25,
+        flexDirection: 'column',
+        width: width-MODAL_MARGIN*2-MODAL_PADDING*2,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 
     button: {
@@ -525,23 +489,10 @@ const styles = StyleSheet.create({
     buttonClose: {
         backgroundColor: "#2196F3",
     },
-    wrapperTitleStyle: {
-        alignSelf: 'flex-start',
-        marginTop: 10,
-        marginLeft: 20,
-        padding: 10,
-    },
-    titleStyle: {
+    textStyle: {
         color: "white",
-        fontSize: 18,
         fontWeight: "bold",
         textAlign: "center"
-    },
-    wrapperInfoButton: {
-        flex: 1, 
-        flexDirection: 'row-reverse', 
-        alignSelf: 'center', 
-        marginLeft: '4%',
     },
     card: {
         flexDirection: 'row',

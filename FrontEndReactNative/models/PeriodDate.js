@@ -9,26 +9,82 @@ class MODAL_TEMPLATE {
             {
                 key: 'flow',
                 title: 'Flow',
+                titleColor: '#FF6F72',
                 multipleChoices: false,
-                availableOptions: ['Low', 'Medium', 'High'],
-                availableOptions_id: ['low', 'medium', 'high'],
-                isChecked: [false, false, false]
+                availableOptions: ['Light', 'Medium', 'Heavy', 'Unusually Heavy', 'Spotting'],
+                availableOptions_id: ['light', 'medium', 'heavy', 'unusually_heavy', 'spotting'],
+                isChecked: [false, false, false, false, false],
+                description: 'Info for Flow'
             },
             {
                 key: 'collection',
                 title: 'Collection Method',
+                titleColor: '#F3692B',
                 multipleChoices: true,
-                availableOptions: ['Tampon', 'Pad/Napkin', 'Menstrual Cups', 'Underwear'],
-                availableOptions_id: ['tampon', 'pad_napkin', 'menstrual_cups', 'underwear'],
-                isChecked: [false, false, false, false]
+                availableOptions: ['Resuable Pad', 'Disposable Pad', 'Tampon', 'Panty Liner', 'Menstrual Cup', 'Period Underwear'],
+                availableOptions_id: ['reusable_pad', 'disposable_pad', 'tampon', 'panty_liner', 'menstrual_cup', 'period_underwear'],
+                isChecked: [false, false, false, false, false, false],
+                description: 'Info for Collection method'
             },
             {
                 key: 'discharge',
                 title: 'Discharge',
+                titleColor: '#0697FF',
+                multipleChoices: true,
+                availableOptions: ['Thin/clear', 'Stringy/stretchy', 'Thick/creamy', 'Sticky', 'Watery', 'White/clumpy', 'Yellow/green/grey'],
+                availableOptions_id: ['thin_clear', 'stringy_stretchy', 'thick_creamy', 'sticky', 'watery', 'white_clumpy', 'yellow_green_grey'],
+                isChecked: [false, false, false, false, false, false, false],
+                description: 'Info for Discharge'
+            },
+            {
+                key: 'symptoms',
+                title: 'Symptoms',
+                titleColor: '#FF9900',
+                multipleChoices: true,
+                availableOptions: ['Headache', 'Cramps', 'Backache', 'Fatigue', 'Tender Breasts', 'Acne', 'Bloating', 'Gassiness', 'Nausea'],
+                availableOptions_id: ['headache', 'cramps', 'backache', 'fatigue', 'tender_breasts', 'acne', 'bloating', 'gasiness', 'nausea'],
+                isChecked: [false, false, false, false, false, false, false, false, false],
+                description: 'Info for symptoms'
+            },
+            {
+                key: 'mood',
+                title: 'Mood',
+                titleColor: '#006666',
+                multipleChoices: true,
+                availableOptions: ['Content', 'Excited', 'Sad', 'Angry', 'Sensitive', 'Anxious', 'Stressed', 'Self-critical', 'Other'],
+                availableOptions_id: ['content', 'excited', 'sad', 'angry', 'sensitive', 'anxious', 'stressed', 'self_critical', 'other'],
+                isChecked: [false, false, false, false, false, false, false, false, false],
+                description: 'Info for Mood'
+            },
+            {
+                key: 'sexual_drive',
+                title: 'Sexual Drive',
+                titleColor: '#ec03fc',
+                multipleChoices: true,
+                availableOptions: ['Low', 'Moderate', 'High'],
+                availableOptions_id: ['low', 'moderate', 'high'],
+                isChecked: [false, false, false],
+                description: 'Info for Sexual Drive'
+            },
+            {
+                key: 'sexual_activity',
+                title: 'Sexual Activity',
+                titleColor: '#92f01f',
+                multipleChoices: true,
+                availableOptions: ['Protected penetrative sex', 'Unprotected penetrative sex', 'Protected anal sex', 'Unprotected anal sex', 'Protected oral sex', 'Unprotected oral sex', 'Masturbation'],
+                availableOptions_id: ['protected_penetrative_sex', 'unprotected_penetrative_sex', 'protected_anal_sex', 'unprotected_anal_sex', 'protected_oral_sex', 'unprotected_oral_sex', 'masturbation'],
+                isChecked: [false, false, false, false, false, false, false],
+                description: 'Info for Sexual activity'
+            },
+            {
+                key: 'sleep',
+                title: 'Sleep',
+                titleColor: '#cdf01f',
                 multipleChoices: false,
-                availableOptions: ['Type 1', 'Type 2', 'Type 3', 'Type 4'],
-                availableOptions_id: ['type1', 'type2', 'type3', 'type4'],
-                isChecked: [false, false, false, false]
+                availableOptions: ['0-3 hours', '3-6 hours', '6-9 hours', '9+ hours'],
+                availableOptions_id: ['0_3_hours', '3_6_hours', '6_9_hours', '9plus_hours'],
+                isChecked: [false, false, false, false],
+                description: 'Info for Sleep'
             },
         ]
     }
