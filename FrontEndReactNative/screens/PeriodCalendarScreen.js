@@ -13,11 +13,12 @@ import {
     Alert,
     StatusBar
 } from 'react-native';
-import { Snackbar } from 'react-native-paper';
+import { Divider, Snackbar } from 'react-native-paper';
+import Accordion from 'react-native-collapsible/Accordion';
 
 // https://github.com/wix/react-native-calendars
 import { Calendar, CalendarList } from 'react-native-calendars';
-import { Entypo, FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, AntDesign } from '@expo/vector-icons';
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import CalendarCard from '../components/CalendarCard';
@@ -28,10 +29,12 @@ import Modal from 'react-native-modal';
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
 import PeriodSymptomCard from '../components/PeriodSymptomCard';
 import FormButton from '../components/FormButton';
+import Dropdown from '../components/Dropdown';
 
 // Loading env variables
 import getEnvVars from '../environment';
 import { color } from 'react-native-reanimated';
+import FormInput from '../components/FormInput';
 const { API_URL } = getEnvVars();
 
 const { width } = Dimensions.get('screen');
@@ -54,11 +57,15 @@ var userPeriods = [];
 var currPeriodDate = null;
 
 const PeriodCalendarScreen = ({ props }) => {
+    const modal_default_template                = new MODAL_TEMPLATE().default_template;
+
     const { userId }                            = useContext(AuthContext);
     const [modalVisible, setModalVisible]       = useState(false);
     const [modalVisibleScrollCal, setmodalVisibleScrollCal]   = useState(false);
     const [modalInfoVisible, setModalInfoVisible]             = useState(false);
     const [modalInfo, setModalInfo]             = useState("");
+    const [modalHistory, setModalHistory]       = useState(false);
+    const [modalEmailHistory, setModalEmailHistory]           = useState(false);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [snackBarText, setSnackBarText]       = useState("");
     const [statusBarHidden, setStatusBarHidden] = useState(false);
@@ -75,8 +82,15 @@ const PeriodCalendarScreen = ({ props }) => {
         // '2021-05-04': {selected: false, marked: true, selectedColor: 'blue'},
         // '2021-05-31': {marked: true, dotColor: 'red', activeOpacity: 0}
     });
+    const [lastPeriod, setLastPeriod]         = useState(0);
     const [currDateObject, setCurrDateObject] = useState(new Date());
     const [lastMarkedDate, setLastMarkDate]   = useState(null);
+    const [fetchedHistory, setFetchedHistory] = useState([]);
+
+    // ---------------------
+    // For Collapsible History
+    // ---------------------
+    const [activeSections, setActiveSections] = useState([]);
 
     async function fetchPeriodData() {
         // let todayDateEpoch = getDateEpoch(new Date());
@@ -103,9 +117,35 @@ const PeriodCalendarScreen = ({ props }) => {
         .catch(error => {console.log(error)})
     }
 
+    async function fetchLastPeriod() {
+        await fetch(`${API_URL}/api/period/${userId}/lastPeriod`, { method: "GET" })
+        .then(resp => resp.json())
+        .then(data => {
+            let lastPeriodDate = new Date(data[0]['dateStr']);
+            let todayDate = new Date(new Date().toDateString());
+            let diff_ms = todayDate-lastPeriodDate;
+            setLastPeriod( Math.floor(diff_ms/(24*3600*1000)) );
+        })
+        .catch(error => {console.log(error)})
+    }
+
+    async function fetchPeriodHistory() {
+        await fetch(`${API_URL}/api/period/${userId}`, { method: "GET" })
+        .then(resp => resp.json())
+        .then(data => {
+            setFetchedHistory(data);
+        })
+        .catch(error => {console.log(error)})
+    }
+
+    const getKeyFromPeriodHistory = () => {
+        return fetchedHistory.map((ele) => ele['year_month'])
+    }
+
     useEffect(() => {
         console.log('[PeriodCalendarScreen] useEffect()')
         fetchPeriodData();
+        fetchLastPeriod();
     }, [currDateObject]);
 
     // Pull down to refresh
@@ -158,7 +198,6 @@ const PeriodCalendarScreen = ({ props }) => {
                     <View style={styles.wrapperInfoButton}>
                         <Pressable
                         onPress={()=>{ 
-                            console.log(item['description'])
                             setModalInfo(item['description'])
                             setModalInfoVisible(true)
                         }}>
@@ -180,6 +219,7 @@ const PeriodCalendarScreen = ({ props }) => {
 
         setSnackBarVisible(false);
         setModalVisible(!modalVisible);
+        setSnackBarText("");
     }
 
     const postUserPeriodDates = async(inUserPeriods) => {
@@ -203,6 +243,7 @@ const PeriodCalendarScreen = ({ props }) => {
 
     const deleteUserPeriodDates = async(inDateString) => {        
         try {
+            inDateString = inDateString.split('-').join('/');
             await fetch(`${API_URL}/api/period/${userId}/${inDateString}`, { method: "DELETE" })
             .then(resp => resp.json())
             .then(data => {
@@ -213,6 +254,56 @@ const PeriodCalendarScreen = ({ props }) => {
             .catch(error => {console.log(error)})
         } catch(e) {
             console.log('[PeriodCalendarScreen] deleteUserPeriodDates():', e)
+        }
+    }
+
+    // ---------------------
+    // Modal - Period History
+    // ---------------------
+    const renderModalHistory = ({item, index}) => {
+        let tmp = new MODAL_TEMPLATE();
+        return (
+            <View style={styles.historyItemWrapper}>
+                <Divider style={{marginBottom: 10}} inset={false}/>
+                <Text style={styles.historyText}>{item['dateStr']}</Text>
+                { Object.entries(item['symptoms']).map((ele, ele_index) => {
+                    let [curr_title_idx, curr_title] = tmp.getTitleFromKey(ele[0]);
+                    let curr_symptoms = [];
+                    for (let i=0; i<ele[1].length; i++) {
+                        curr_symptoms.push(
+                            tmp.getSymptomFromKey(ele[1][i], curr_title_idx)
+                        )
+                    }
+                    return (
+                        <Text key={ele_index}>{curr_title}: {curr_symptoms.join(', ')}</Text>
+                    )
+                }) }
+            </View>
+        )
+    };
+
+    // ---------------------
+    // For History Email
+    // ---------------------
+    const [toEmail, setToEmail] = useState("");
+    const [emailMonthYear, setEmailMonthYear] = useState("YYYY-MM");
+    const postSendEmailHistory = async(toEmail, emailMonthYear) => {
+        try {
+            await fetch(`${API_URL}/api/period/${userId}/email`, { 
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    "toEmail"           : toEmail,
+                    "emailMonthYear"    : emailMonthYear,
+                })
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                
+            })
+            .catch(error => {console.log(error)})
+        } catch(e) {
+            console.log('[PeriodCalendarScreen] postSendEmailHistory():', e)
         }
     }
 
@@ -247,6 +338,33 @@ const PeriodCalendarScreen = ({ props }) => {
                         statusBarTranslucent={true}
                         style={{margin: 0, backgroundColor: '#ADCDFF'}}
                     >
+                        {/* Modal for info */}
+                        <Modal
+                            animationIn="slideInLeft"
+                            animationOut="slideOutRight"
+                            transparent={true}
+                            isVisible={modalInfoVisible}
+                            onRequestClose={() => {
+                                setModalInfoVisible(!modalInfoVisible);
+                            }}
+                            statusBarTranslucent={true}
+                            style={{marginLeft: MODAL_MARGIN, marginRight: MODAL_MARGIN}}
+                        >
+                            <SafeAreaView style={{flex: 1}}>
+                                <View style={styles.modalCenteredView}>
+                                    <View style={styles.modalView}>
+                                        <Text style={{marginBottom: '10%'}}>{modalInfo}</Text>
+                                        <Pressable
+                                        style={[styles.button, styles.buttonClose]}
+                                        onPress={() => setModalInfoVisible(!modalInfoVisible)}
+                                        >
+                                            <Text style={styles.textStyle}>Hide</Text>
+                                        </Pressable>
+                                    </View>
+                                </View>
+                            </SafeAreaView>
+                        </Modal>
+
                         <SafeAreaView style={{flex: 1}}>
                             <View style={{flex: 1}}/>
                             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: '4%'}}>
@@ -254,7 +372,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                     <TouchableOpacity onPress={() => {
                                         setModalVisible(!modalVisible)
                                     }}>
-                                        <Entypo name="cross" size={24} color="black" />
+                                        <AntDesign name="closecircleo" size={24} color="black" />
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{flex: 2}}>
@@ -287,7 +405,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             <Animated.FlatList
                             // ref={flatListRef}
                             // onViewableItemsChanged={onViewRef.current}
-                            data={new MODAL_TEMPLATE().default_template}
+                            data={modal_default_template}
                             renderItem={renderModalItem}
                             keyExtractor={keyExtractor}
                             // pagingEnabled
@@ -401,12 +519,12 @@ const PeriodCalendarScreen = ({ props }) => {
                             hidden={statusBarHidden} /> */}
                             <View style={{flex:1, flexDirection: 'column', justifyContent: 'flex-end', paddingLeft: '4%'}}>
                                 <TouchableOpacity onPress={()=>{setmodalVisibleScrollCal(!modalVisibleScrollCal)}}>
-                                    <Entypo name="cross" size={30} color="black" />
+                                <AntDesign name="closecircleo" size={30} color="black" />
                                 </TouchableOpacity>
                             </View>
                             <View style={{flex: 8}}>
                                 <CalendarList
-                                onVisibleMonthsChange={(months) => {console.log('now these months are visible', months);}}
+                                onVisibleMonthsChange={(months) => {console.log('now these months are visible');}}
                                 // Max amount of months allowed to scroll to the past. Up to -4 years
                                 pastScrollRange={50}
                                 // Max amount of months allowed to scroll to the future. Up to +4 years
@@ -423,39 +541,211 @@ const PeriodCalendarScreen = ({ props }) => {
                             </View>
                         </SafeAreaView>
                     </Modal>
+                </View>
+                <View style={[{flex: 1}, styles.card]}>
+                    <CalendarCard leftContent={lastPeriod} rightContent='Days since your last period'/>
+                    {/* <CalendarCard leftContent='14' rightContent='Days until your next ovulation'/> */}
+                </View>
+                <View style={{flex: 1}}>
+                    <View style={{flex:1, flexDirection: 'row'}}>
+                        <View style={{flex: 1}}/>
+                        <View style={{flex: 2}}>
+                            <FormButton
+                            btnTitle="Period History"
+                            isHighlight={true}
+                            onPress={()=>{
+                                fetchPeriodHistory();
+                                setModalHistory(true);
+                            }}
+                            />
+                        </View>
+                        <View style={{flex: 1}}/>
+                    </View>
 
-                    {/* Modal for info */}
+                    {/* Modal for Period History */}
                     <Modal
-                        animationIn="slideInLeft"
-                        animationOut="slideOutRight"
-                        transparent={true}
-                        isVisible={modalInfoVisible}
-                        onRequestClose={() => {
-                            setModalInfoVisible(!modalInfoVisible);
-                        }}
-                        statusBarTranslucent={true}
-                        style={{marginLeft: MODAL_MARGIN, marginRight: MODAL_MARGIN}}
+                    animationIn="slideInLeft"
+                    animationOut="slideOutRight"
+                    transparent={false}
+                    isVisible={modalHistory}
+                    onRequestClose={() => {
+                        setModalHistory(!modalHistory);
+                    }}
+                    statusBarTranslucent={true}
+                    style={{margin: 0, backgroundColor: "white"}}
                     >
-                        <SafeAreaView style={{flex: 1}}>
-                            <View style={styles.modalCenteredView}>
-                                <View style={styles.modalView}>
-                                    <Text style={{marginBottom: '10%'}}>{modalInfo}</Text>
-                                    <Pressable
-                                    style={[styles.button, styles.buttonClose]}
-                                    onPress={() => setModalInfoVisible(!modalInfoVisible)}
-                                    >
-                                        <Text style={styles.textStyle}>Hide</Text>
-                                    </Pressable>
+                        <SafeAreaView style={{flex: 1, backgroundColor: '#ADCDFF'}}>
+                            <View style={{flex: 1}}/>
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: '4%'}}>
+                                <View style={{flex: 1}}>
+                                </View>
+                                <View style={{flex: 3}}>
+                                    <Text style={{marginBottom: 15, textAlign: "center", fontSize: 22, fontWeight: "bold"}}>
+                                        Your Period History
+                                    </Text>
+                                </View>
+                                <View style={{flex: 1}}/>
+                            </View>
+
+                            <View style={{flex: 10}}>
+                                <View style={styles.historyView}>
+                                    {/* <Animated.FlatList
+                                    data={fetchedHistory}
+                                    renderItem={renderModalHistory}
+                                    keyExtractor={keyExtractor}
+                                    // pagingEnabled
+                                    horizontal={false}
+                                    showsHorizontalScrollIndicator={false}
+                                    decelerationRate={'normal'}
+                                    scrollEventThrottle={16}
+                                    onScroll={Animated.event(
+                                        [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                                        {useNativeDriver: false}
+                                    )}
+                                    /> */}
+                                    <Accordion
+                                    sections={fetchedHistory}
+                                    activeSections={activeSections}
+                                    renderSectionTitle={() => {}}
+                                    renderHeader={(content, index, isActive)=>{
+                                        return (
+                                            <View 
+                                            style={[
+                                                isActive ? styles.historyHeaderWrapperActive : styles.historyHeaderWrapperInactive, 
+                                                {flexDirection: 'row', justifyContent: 'space-between'}
+                                            ]}>
+                                                <View>
+                                                    <Text style={styles.historyHeaderText}>{content['year_month']}</Text>
+                                                </View>
+                                                <View>
+                                                    {isActive ? 
+                                                    <AntDesign name="upcircleo" size={24} color="black" />
+                                                    :
+                                                    <AntDesign name="downcircleo" size={24} color="black" />
+                                                    }
+                                                </View>
+                                            </View>
+                                        )
+                                    }}
+                                    renderContent={(content, index, isActive) => {
+                                        return (
+                                            <View style={styles.historyContentView}>
+                                                <Animated.FlatList
+                                                data={content['details']}
+                                                renderItem={renderModalHistory}
+                                                keyExtractor={keyExtractor}
+                                                horizontal={false}
+                                                showsHorizontalScrollIndicator={false}
+                                                decelerationRate={'normal'}
+                                                scrollEventThrottle={16}
+                                                onScroll={Animated.event(
+                                                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                                                    {useNativeDriver: false}
+                                                )}
+                                                />
+                                            </View>
+                                        )
+                                    }}
+                                    onChange={(activeSections) => {
+                                        setActiveSections(activeSections)
+                                    }}
+                                    renderAsFlatList={true}     // to make it scrollable
+                                    underlayColor=''
+                                    />
                                 </View>
                             </View>
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                <View style={{flex: 3, marginLeft: 10}}>
+                                    <FormButton
+                                    btnTitle="Email PDF"
+                                    isHighlight={true}
+                                    onPress={()=>{setModalEmailHistory(true)}}
+                                    />
+
+                                    {/* Modal for Email PDF History */}
+                                    <Modal
+                                        animationIn="slideInLeft"
+                                        animationOut="slideOutRight"
+                                        transparent={false}
+                                        isVisible={modalEmailHistory}
+                                        onRequestClose={() => {
+                                            setModalEmailHistory(!modalEmailHistory);
+                                        }}
+                                        statusBarTranslucent={true}
+                                        style={{margin: 0, backgroundColor: "white"}}
+                                    >
+                                        <SafeAreaView style={{flex: 1, backgroundColor: '#ADCDFF'}}>
+                                            <View style={{flex: 1}}/>
+                                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: '4%'}}>
+                                                <View style={{flex: 1}}>
+                                                    <TouchableOpacity onPress={() => {
+                                                        setModalEmailHistory(!modalEmailHistory);
+                                                    }}>
+                                                        <AntDesign name="closecircleo" size={24} color="black" />
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <View style={{flex: 3}}>
+                                                    <Text style={{marginBottom: 15, textAlign: "center", fontSize: 22, fontWeight: "bold"}}>
+                                                        Email PDF
+                                                    </Text>
+                                                </View>
+                                                <View style={{flex: 1}}/>
+                                            </View>
+                                            <View style={{flex:8}}>
+                                                <FormInput
+                                                labelValue="Email"
+                                                placeholderText="Emails separated by newline"
+                                                value={toEmail}
+                                                onChangeText={(inEmail)=>{setToEmail(inEmail)}} 
+                                                multiline
+                                                />
+                                                <Dropdown
+                                                inValues={getKeyFromPeriodHistory()}
+                                                onSelect={setEmailMonthYear}
+                                                />
+                                                <FormButton
+                                                btnTitle="Email PDF"
+                                                isHighlight={true}
+                                                onPress={()=>{
+                                                    // Snack bar
+                                                    setSnackBarText("Sending email...")
+                                                    setSnackBarVisible(true);
+
+                                                    let email_list = toEmail.split("\n")
+                                                    email_list = email_list.map((ele) => ele.trim())
+                                                    postSendEmailHistory(email_list, emailMonthYear)
+
+                                                    setSnackBarVisible(false);
+                                                    setModalEmailHistory(!modalEmailHistory);
+                                                    setModalHistory(!modalHistory);
+                                                    setSnackBarText("");
+                                                }}
+                                                />
+                                            </View>
+                                            <View style={{flex: 1}}>
+                                            <Snackbar
+                                            visible={snackBarVisible}
+                                            onDismiss={() => {setSnackBarVisible(false)}}
+                                            duration={Infinity}
+                                            style={{backgroundColor: '#F3692B'}}
+                                            >
+                                                <Text style={styles.titleStyle}>{snackBarText}</Text>
+                                            </Snackbar>
+                                            </View>
+                                        </SafeAreaView>
+                                    </Modal>
+                                </View>
+                                <View style={{flex: 1}}/>
+                                <View style={{flex: 1, alignSelf: 'center'}}>
+                                    <TouchableOpacity onPress={()=>{setModalHistory(!modalHistory)}}>
+                                        <Ionicons name="chevron-back-circle-outline" size={38} color="black" />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View style={{flex: 1}}/>
                         </SafeAreaView>
                     </Modal>
                 </View>
-                <View style={[{flex: 1}, styles.card]}>
-                    <CalendarCard leftContent='28' rightContent='Days until your next period'/>
-                    <CalendarCard leftContent='14' rightContent='Days until your next ovulation'/>
-                </View>
-                <View style={{flex: 1}}/>
             </ScrollView>
         </SafeAreaView>
     )
@@ -548,6 +838,46 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
     },
+    historyView: {
+        margin: 5,
+        padding: 5,
+    },
+    historyItemWrapper: {
+        flex: 1, 
+        padding: 20
+    },
+    historyHeaderWrapperActive: {
+        flex: 1, 
+        margin: 10,
+        marginBottom: 0,
+        padding: 20,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+        backgroundColor: 'white'
+    },
+    historyHeaderWrapperInactive: {
+        flex: 1, 
+        margin: 10,
+        padding: 20,
+        borderRadius: 15,
+        backgroundColor: 'white'
+    },
+    historyHeaderText: {
+        fontWeight: 'bold',
+        fontSize: 20,
+    },
+    historyText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+    historyContentView: {
+        flex: 1, 
+        marginTop: 0,
+        margin: 10,
+        borderBottomLeftRadius: 15,
+        borderBottomRightRadius: 15,
+        backgroundColor: 'white'
+    }
 })
 
 export default PeriodCalendarScreen;

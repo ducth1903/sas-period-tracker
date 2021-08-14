@@ -6,6 +6,10 @@ import boto3
 from boto3.dynamodb.conditions import Key
 import os
 from datetime import datetime
+import calendar
+from collections import OrderedDict
+import api.helperEmail as helperEmail 
+from django.http import HttpRequest
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -35,9 +39,6 @@ periodTable = dynamodb.Table('SasPeriodTrackerPeriodTable')
 s3          = boto3.client('s3', region_name='us-east-1')
 S3_BUCKET   = 's3-sas-period-tracker'
 # S3_PROFILE_IMAGE_PATH = 'https://sas-period-tracker.s3.amazonaws.com/profile-images/'
-
-# Period page to fetch for GET method
-NUM_MONTHS_TO_FETCH = 1
 
 @csrf_exempt
 def user(request, userId=None):
@@ -126,26 +127,74 @@ def user(request, userId=None):
             return __error_json_response(e)
 
 @csrf_exempt
-def period(request, userId=None, inDateStr=None):
+def period(request, userId=None, inYear=None, inMonth=None, inDay=None, returnDict=False):
     if request.method == 'GET':
+        # Period page to fetch for GET method
+        # NUM_MONTHS_TO_FETCH = 1
+
         try:
             # resp = periodTable.get_item(Key={'userId': userId, 'timestamp': '2021-07-20T00:00:00.000Z'})
             # start_date = '2021-07-01T00:00:00.000Z'
             # end_date = '2021-07-31T00:00:00.000Z'
             # startEpoch = __convert_dateStr_epoch(start_date)
             # endEpoch   = __convert_dateStr_epoch(end_date)
+            
+            if not inYear and not inMonth and not inDay:
+                # Query all period history
+                resp = periodTable.query(
+                    KeyConditionExpression=Key('userId').eq(userId),
+                    ScanIndexForward=False,
+                    ProjectionExpression="dateStr, symptoms"
+                )
 
-            inEpoch = __convert_dateStr_epoch(inDateStr)
-            startEpoch = inEpoch - NUM_MONTHS_TO_FETCH * (30*24*3600)
-            endEpoch   = inEpoch + NUM_MONTHS_TO_FETCH * (30*24*3600)
+                # Group by 'YYYY-MM'
+                # i.e. {
+                #   '2021-07': ['2021-07-01': ..., '2021-07-02': ..., ...],
+                #   '2021-08': {'2021-08-05': ..., '2021-08-06': ..., ...},
+                # }
+                if __is_resp_valid(resp):
+                    group_res_dict = OrderedDict()
+                    for item in resp['Items']:
+                        year_month = __extract_year_month(item['dateStr'])
+                        if year_month not in group_res_dict:
+                            group_res_dict[year_month] = []
+                        group_res_dict[year_month].append(item)
 
-            resp = periodTable.query(
-                KeyConditionExpression=Key('userId').eq(userId) & \
-                    Key('timestamp').between(startEpoch, endEpoch)
-            )
-            # print('[period][GET]', resp)
-            if __is_resp_valid(resp):
-                return JsonResponse(resp['Items'], safe=False)
+                    group_res_list = []
+                    for key, value in group_res_dict.items():
+                        group_res_list.append({
+                            'year_month': key,
+                            'details': value
+                        })
+
+                    return JsonResponse(group_res_list, safe=False)
+
+            else:
+                if inYear and not inMonth and not inDay:
+                    # Query for an entire year
+                    startEpoch = __convert_dateStr_epoch(f'{inYear}-1-1')
+                    endEpoch   = __convert_dateStr_epoch(f'{inYear}-12-31')
+                else:
+                    # Query for a month or a day
+                    endDayOfMonth = calendar.monthrange(inYear, inMonth)[1]
+                    startEpoch = __convert_dateStr_epoch(f'{inYear}-{inMonth}-1')
+                    endEpoch   = __convert_dateStr_epoch(f'{inYear}-{inMonth}-{endDayOfMonth}')
+
+                    # NUM_MONTHS_TO_FETCH = 1
+                    # inEpoch = __convert_dateStr_epoch(f'{inYear}-{inMonth}-{inDay}')
+                    # startEpoch = inEpoch - NUM_MONTHS_TO_FETCH * (30*24*3600)
+                    # endEpoch   = inEpoch + NUM_MONTHS_TO_FETCH * (30*24*3600)
+
+                resp = periodTable.query(
+                    KeyConditionExpression=Key('userId').eq(userId) & \
+                        Key('timestamp').between(startEpoch, endEpoch)
+                )
+                # print('[period][GET]', resp)
+                if __is_resp_valid(resp):
+                    if returnDict:
+                        return resp['Items']
+
+                    return JsonResponse(resp['Items'], safe=False)
         except Exception as e:
             return __error_json_response(e)
 
@@ -162,7 +211,10 @@ def period(request, userId=None, inDateStr=None):
                 'userId': userId,
                 'timestamp': __convert_dateStr_epoch(rec['date']),
                 'dateStr': rec['date'],
-                'symptoms': rec['symptomIds']
+                'symptoms': rec['symptomIds'],
+                'year': int(rec['date'].strip().split('-')[0]),
+                'month': int(rec['date'].strip().split('-')[1]),
+                'day': int(rec['date'].strip().split('-')[2])
             }
             print(period_obj)
             periodTable.put_item(Item=period_obj)
@@ -171,11 +223,50 @@ def period(request, userId=None, inDateStr=None):
 
     elif request.method == 'DELETE':
         try:
-            inDateEpoch = __convert_dateStr_epoch(inDateStr)
+            inDateEpoch = __convert_dateStr_epoch(f'{inYear}-{inMonth}-{inDay}')
             periodTable.delete_item( Key={'userId': userId, 'timestamp': inDateEpoch} )
             return __ok_json_response()
         except Exception as e:
             return __error_json_response(e)
+
+@csrf_exempt
+def lastPeriod(request, userId):
+    if request.method == 'GET':
+        try:
+            resp = periodTable.query(
+                KeyConditionExpression=Key('userId').eq(userId),
+                ScanIndexForward=False,
+                Limit=1
+            )
+            if __is_resp_valid(resp):
+                return JsonResponse(resp['Items'], safe=False)
+        except Exception as e:
+            return __error_json_response(e)
+
+@csrf_exempt
+def periodSendEmail(request, userId):
+    if request.method == 'POST':
+        data = request.body.decode('utf-8') 
+        received_json_data = json.loads(data)
+        emailMonthYear = received_json_data['emailMonthYear']       # YYYY-MM
+        innerRequest = HttpRequest()
+        innerRequest.method = 'GET'
+        history = period(innerRequest, userId, \
+            inYear=int(emailMonthYear.split('-')[0]),\
+            inMonth=int(emailMonthYear.split('-')[1]),\
+            returnDict=True)
+        
+        try:
+            helperEmail.send_email(
+                to_addr=received_json_data['toEmail'], 
+                subject=f"Your Period History for {emailMonthYear}", 
+                body=helperEmail.format_period_history(emailMonthYear, history)
+            )
+            return __ok_json_response()
+        except Exception as e:
+            return __error_json_response(f"Failed to send email: {e}")
+    
+    return __error_json_response()
 
 @csrf_exempt
 def imagePresignedUrl(request, imageId):
@@ -209,8 +300,18 @@ def imagePresignedUrl(request, imageId):
     return __error_json_response()
 
 def __convert_dateStr_epoch(dateStr):
+    '''
+    Convert 'YYYY-MM-DD' to epoch
+    '''
     # return int( datetime.strptime(dateStr.split('T')[0], '%Y-%m-%d').timestamp() )
     return int( datetime.strptime(dateStr.strip(), '%Y-%m-%d').timestamp() )
+
+def __extract_year_month(dateStr):
+    '''
+    Input: YYYY-MM-DD
+    Output: YYYY-MM
+    '''
+    return '-'.join( dateStr.split('-')[:-1] )
 
 def __is_resp_valid(resp):
     return True if resp['ResponseMetadata']['HTTPStatusCode']==200 else False

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
+import { MODAL_TEMPLATE } from '../models/PeriodDate';
 import IconButton from './IconButton';
 
 const PeriodSymptomCard = ({inData, periodDateObject, ...restProps }) => {
@@ -13,6 +14,7 @@ const PeriodSymptomCard = ({inData, periodDateObject, ...restProps }) => {
                 <IconButton
                 btnTitle={item}
                 initPressedState={isPressedArray[index]}
+                iconSource={ new MODAL_TEMPLATE().default_icons[inData['key']][inData['availableOptions_id'][index]] }
                 pressedColor={inData['titleColor']}
                 onPress={() => {
                     let tmpArr = [...isPressedArray];       // shallow copy array

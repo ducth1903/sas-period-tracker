@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, View, Pressable, Image } from 'react-native';
 
-const IconButton = ({ btnTitle, initPressedState, ...restProps }) => {
+const IconButton = ({ btnTitle, initPressedState, iconSource, ...restProps }) => {
     const [isPressed, setIsPressed] = useState(initPressedState);
 
     return (
@@ -10,8 +10,7 @@ const IconButton = ({ btnTitle, initPressedState, ...restProps }) => {
             onPress={()=>{ restProps.onPress() ; setIsPressed( !isPressed ) }}
             style={{alignItems: 'center', justifyContent:'center'}}>
                 <Image
-                // source={{ uri: "../assets/profile_images/default_img.png" }}
-                source={ require("../assets/profile_images/default_img.png") }
+                source={iconSource}
                 style={[styles.imageStyle, isPressed ? [styles.imageStylePressed, {borderColor: restProps.pressedColor}] : null]}
                 />
                 <Text 
@@ -41,11 +40,13 @@ const styles = StyleSheet.create({
         margin: 10, 
         height: 60, 
         width: 60, 
+        // resizeMode: 'contain',
         borderRadius: 20, 
-        borderWidth: 0
+        borderWidth: 0,
+        backgroundColor: '#a9d8ff'
     },
     imageStylePressed: {
-        borderWidth: 2,
+        borderWidth: 3,
     }
 })
 
