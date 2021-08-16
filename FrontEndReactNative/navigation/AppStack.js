@@ -5,9 +5,9 @@ import { createMaterialBottomTabNavigator  } from '@react-navigation/material-bo
 import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
-import BlogScreen from '../screens/BlogScreen';
 import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
 import SettingScreen from '../screens/SettingScreen';
+import ResourceStack from '../screens/Resource/ResourceStack';
 // import TestScreen from '../screens/TestScreen';
 
 // const Stack = createStackNavigator();
@@ -35,9 +35,16 @@ const AppStack = () => {
                     tabBarLabel: "My Period",
                     tabBarIcon: () => (<FontAwesome name="calendar" size={24} color="#183A1D" />)
                 }} />
+            {/* <Tab.Screen 
+                name="ResourceScreen" 
+                component={ResourceScreen} 
+                options={{
+                    tabBarLabel: "Resources",
+                    tabBarIcon: () => (<Foundation name="clipboard-notes" size={24} color="#183A1D" />)
+                }} /> */}
             <Tab.Screen 
-                name="BlogScreen" 
-                component={BlogScreen} 
+                name="ResourceStack" 
+                component={ResourceStack} 
                 options={{
                     tabBarLabel: "Resources",
                     tabBarIcon: () => (<Foundation name="clipboard-notes" size={24} color="#183A1D" />)

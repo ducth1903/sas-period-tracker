@@ -152,6 +152,7 @@ const PeriodCalendarScreen = ({ props }) => {
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         fetchPeriodData();
+        fetchLastPeriod();
         setRefreshing(false);
     }, []);
 
@@ -233,6 +234,7 @@ const PeriodCalendarScreen = ({ props }) => {
             .then(data => {
                 if (data['status_code']==200) {
                     fetchPeriodData();
+                    fetchLastPeriod();
                 }
             })
             .catch(error => {console.log(error)})
@@ -249,6 +251,7 @@ const PeriodCalendarScreen = ({ props }) => {
             .then(data => {
                 if (data['status_code']==200) {
                     fetchPeriodData();
+                    fetchLastPeriod();
                 }
             })
             .catch(error => {console.log(error)})

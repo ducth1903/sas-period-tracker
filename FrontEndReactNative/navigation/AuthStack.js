@@ -6,7 +6,7 @@ import { DefaultTheme, Provider as PaperProvider, ActivityIndicator } from "reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import OnboardingScreen from '../screens/Authentication/OnboardingScreen';
-import LandingScreem from '../screens/Authentication/LandingScreen';
+import LandingScreen from '../screens/Authentication/LandingScreen';
 import LoginScreen from '../screens/Authentication/LoginScreen';
 import SignupScreen from '../screens/Authentication/SignupScreen';
 import ForgotPasswordScreen from '../screens/Authentication/ForgotPasswordScreen';
@@ -65,7 +65,7 @@ const AuthStack = () => {
                     options={ {header: ()=>null} }/>
                 <Stack.Screen 
                     name="LandingScreen" 
-                    component={LandingScreem} 
+                    component={LandingScreen} 
                     options={ {header: ()=>null} }/>
                 <Stack.Screen 
                     name="LoginScreen" 

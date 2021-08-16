@@ -4,17 +4,17 @@ import React, {useEffect, useState} from 'react';
 import {Picker} from '@react-native-picker/picker';
 
 export const Dropdown = ({inValues, ...restProps}) => {
-    const [selectedLanguage, setSelectedLanguage] = useState(inValues[0]);
+    const [selected, setSelected] = useState(inValues[0]);
 
     useEffect(() => {
-        restProps.onSelect(selectedLanguage)
-    }, [selectedLanguage]);
+        restProps.onSelect(selected)
+    }, [selected]);
 
     return (
         <Picker
-        selectedValue={selectedLanguage}
+        selectedValue={selected}
         onValueChange={(itemValue, itemIndex) =>
-            setSelectedLanguage(itemValue)            
+            setSelected(itemValue)            
         }>
             {inValues.map((ele, ele_index) => {
                 return <Picker.Item key={ele_index} label={ele} value={ele}/>
