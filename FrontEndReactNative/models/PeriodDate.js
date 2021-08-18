@@ -10,6 +10,7 @@ class MODAL_TEMPLATE {
                 key: 'flow',
                 title: 'Flow',
                 titleColor: '#FF6F72',
+                iconBackgroundColor: '#d8adfe',
                 multipleChoices: false,
                 availableOptions: ['Light', 'Medium', 'Heavy', 'Unusually Heavy', 'Spotting'],
                 availableOptions_id: ['light', 'medium', 'heavy', 'unusually_heavy', 'spotting'],
@@ -20,6 +21,7 @@ class MODAL_TEMPLATE {
                 key: 'collection',
                 title: 'Collection Method',
                 titleColor: '#F3692B',
+                iconBackgroundColor: '#a9d8ff',
                 multipleChoices: true,
                 availableOptions: ['Resuable Pad', 'Disposable Pad', 'Tampon', 'Panty Liner', 'Menstrual Cup', 'Period Underwear'],
                 availableOptions_id: ['reusable_pad', 'disposable_pad', 'tampon', 'panty_liner', 'menstrual_cup', 'period_underwear'],
@@ -30,6 +32,7 @@ class MODAL_TEMPLATE {
                 key: 'discharge',
                 title: 'Discharge',
                 titleColor: '#0697FF',
+                iconBackgroundColor: 'white',
                 multipleChoices: true,
                 availableOptions: ['Thin/clear', 'Stringy/stretchy', 'Thick/creamy', 'Sticky', 'Watery', 'White/clumpy', 'Yellow/green/grey'],
                 availableOptions_id: ['thin_clear', 'stringy_stretchy', 'thick_creamy', 'sticky', 'watery', 'white_clumpy', 'yellow_green_grey'],
@@ -40,9 +43,10 @@ class MODAL_TEMPLATE {
                 key: 'symptoms',
                 title: 'Symptoms',
                 titleColor: '#FF9900',
+                iconBackgroundColor: '#a9d8ff',
                 multipleChoices: true,
-                availableOptions: ['Headache', 'Cramps', 'Backache', 'Fatigue', 'Tender Breasts', 'Acne', 'Bloating', 'Gassiness', 'Nausea'],
-                availableOptions_id: ['headache', 'cramps', 'backache', 'fatigue', 'tender_breasts', 'acne', 'bloating', 'gasiness', 'nausea'],
+                availableOptions: ['Headache', 'Cramps', 'Backache', 'Fatigue', 'Tender Breasts', 'Acne', 'Bloating', 'Craving', 'Nausea'],
+                availableOptions_id: ['headache', 'cramps', 'backache', 'fatigue', 'tender_breasts', 'acne', 'bloating', 'craving', 'nausea'],
                 isChecked: [false, false, false, false, false, false, false, false, false],
                 description: 'Info for symptoms'
             },
@@ -50,6 +54,7 @@ class MODAL_TEMPLATE {
                 key: 'mood',
                 title: 'Mood',
                 titleColor: '#006666',
+                iconBackgroundColor: '#a9d8ff',
                 multipleChoices: true,
                 availableOptions: ['Content', 'Excited', 'Sad', 'Angry', 'Sensitive', 'Anxious', 'Stressed', 'Self-critical', 'Other'],
                 availableOptions_id: ['content', 'excited', 'sad', 'angry', 'sensitive', 'anxious', 'stressed', 'self_critical', 'other'],
@@ -92,19 +97,19 @@ class MODAL_TEMPLATE {
         // Must do this since 'require' does not allow variable path
         this.default_icons = {
             flow: {
-                light: require("../assets/symptom_icons/symptoms_backache.png"),
-                medium: require("../assets/symptom_icons/symptoms_backache.png"),
-                heavy: require("../assets/symptom_icons/symptoms_backache.png"),
-                unusually_heavy: require("../assets/symptom_icons/symptoms_backache.png"),
-                spotting: require("../assets/symptom_icons/symptoms_backache.png")
+                light: require("../assets/symptom_icons/flow_light.png"),
+                medium: require("../assets/symptom_icons/flow_medium.png"),
+                heavy: require("../assets/symptom_icons/flow_heavy.png"),
+                unusually_heavy: require("../assets/symptom_icons/flow_unusually_heavy.png"),
+                spotting: require("../assets/symptom_icons/flow_spotting.png")
             },
             collection: {
-                reusable_pad: require("../assets/symptom_icons/symptoms_backache.png"),
-                disposable_pad: require("../assets/symptom_icons/symptoms_backache.png"),
-                tampon: require("../assets/symptom_icons/symptoms_backache.png"),
-                panty_liner: require("../assets/symptom_icons/symptoms_backache.png"),
-                menstrual_cup: require("../assets/symptom_icons/symptoms_backache.png"),
-                period_underwear: require("../assets/symptom_icons/symptoms_backache.png")
+                reusable_pad: require("../assets/symptom_icons/collection_resuable_pad.png"),
+                disposable_pad: require("../assets/symptom_icons/collection_disposable_pad.png"),
+                tampon: require("../assets/symptom_icons/collection_tampon.png"),
+                panty_liner: require("../assets/symptom_icons/collection_pantry_liner.png"),
+                menstrual_cup: require("../assets/symptom_icons/collection_menstrual_cup.png"),
+                period_underwear: require("../assets/symptom_icons/collection_underwear.png")
             },
             discharge: {
                 thin_clear: require("../assets/symptom_icons/symptoms_backache.png"),
@@ -119,12 +124,12 @@ class MODAL_TEMPLATE {
                 headache: require("../assets/symptom_icons/symptoms_headache.png"),
                 cramps: require("../assets/symptom_icons/symptoms_cramps.png"),
                 backache: require("../assets/symptom_icons/symptoms_backache.png"),
-                fatigue: require("../assets/symptom_icons/symptoms_backache.png"),
-                tender_breasts: require("../assets/symptom_icons/symptoms_backache.png"),
-                acne: require("../assets/symptom_icons/symptoms_backache.png"),
-                bloating: require("../assets/symptom_icons/symptoms_backache.png"),
-                gasiness: require("../assets/symptom_icons/symptoms_backache.png"),
-                nausea: require("../assets/symptom_icons/symptoms_backache.png")
+                fatigue: require("../assets/symptom_icons/symptoms_fatigue.png"),
+                tender_breasts: require("../assets/symptom_icons/symptoms_tender_breast.png"),
+                acne: require("../assets/symptom_icons/symptoms_acne.png"),
+                bloating: require("../assets/symptom_icons/symptoms_bloating.png"),
+                craving: require("../assets/symptom_icons/symptoms_craving.png"),
+                nausea: require("../assets/symptom_icons/symptoms_nausea.png")
             },
             mood: {
                 content: require("../assets/symptom_icons/mood_content.png"),

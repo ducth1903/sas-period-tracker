@@ -11,7 +11,8 @@ const IconButton = ({ btnTitle, initPressedState, iconSource, ...restProps }) =>
             style={{alignItems: 'center', justifyContent:'center'}}>
                 <Image
                 source={iconSource}
-                style={[styles.imageStyle, isPressed ? [styles.imageStylePressed, {borderColor: restProps.pressedColor}] : styles.imageStyleNotPressed]}
+                style={[styles.imageStyle, {backgroundColor: restProps.iconBackgroundColor},
+                    isPressed ? [styles.imageStylePressed, {borderColor: restProps.pressedColor}] : styles.imageStyleNotPressed]}
                 />
                 <Text 
                 style={[styles.commonTxtStyle, isPressed ? [styles.formTxtStyleHighlight, {color: restProps.pressedColor}] : styles.formTxtStyle]}>
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
         // resizeMode: 'contain',
         borderRadius: 20, 
         borderWidth: 0,
-        backgroundColor: '#a9d8ff'
+        // backgroundColor: '#a9d8ff'
     },
     imageStylePressed: {
         borderWidth: 3,

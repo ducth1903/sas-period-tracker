@@ -16,6 +16,7 @@ const PeriodSymptomCard = ({inData, periodDateObject, ...restProps }) => {
                 initPressedState={isPressedArray[index]}
                 iconSource={ new MODAL_TEMPLATE().default_icons[inData['key']][inData['availableOptions_id'][index]] }
                 pressedColor={inData['titleColor']}
+                iconBackgroundColor={inData['iconBackgroundColor']}
                 onPress={() => {
                     let tmpArr = [...isPressedArray];       // shallow copy array
                     tmpArr[index] = !tmpArr[index];
