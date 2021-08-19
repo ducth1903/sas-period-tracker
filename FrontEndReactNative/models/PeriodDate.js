@@ -23,8 +23,8 @@ class MODAL_TEMPLATE {
                 titleColor: '#F3692B',
                 iconBackgroundColor: '#a9d8ff',
                 multipleChoices: true,
-                availableOptions: ['Resuable Pad', 'Disposable Pad', 'Tampon', 'Panty Liner', 'Menstrual Cup', 'Period Underwear'],
-                availableOptions_id: ['reusable_pad', 'disposable_pad', 'tampon', 'panty_liner', 'menstrual_cup', 'period_underwear'],
+                availableOptions: ['Disposable Pad', 'Tampon', 'Menstrual Cup', 'Resuable Pad', 'Period Underwear', 'Panty Liner'],
+                availableOptions_id: ['disposable_pad', 'tampon', 'menstrual_cup', 'reusable_pad', 'period_underwear', 'panty_liner'],
                 isChecked: [false, false, false, false, false, false],
                 description: 'Info for Collection method'
             },
@@ -32,10 +32,10 @@ class MODAL_TEMPLATE {
                 key: 'discharge',
                 title: 'Discharge',
                 titleColor: '#0697FF',
-                iconBackgroundColor: 'white',
+                iconBackgroundColor: '#febccf',
                 multipleChoices: true,
-                availableOptions: ['Thin/clear', 'Stringy/stretchy', 'Thick/creamy', 'Sticky', 'Watery', 'White/clumpy', 'Yellow/green/grey'],
-                availableOptions_id: ['thin_clear', 'stringy_stretchy', 'thick_creamy', 'sticky', 'watery', 'white_clumpy', 'yellow_green_grey'],
+                availableOptions: ['Thin/clear', 'Stringy', 'creamy', 'Sticky', 'Watery', 'Spotting'],
+                availableOptions_id: ['thin_clear', 'stringy', 'creamy', 'sticky', 'watery', 'spotting'],
                 isChecked: [false, false, false, false, false, false, false],
                 description: 'Info for Discharge'
             },
@@ -112,13 +112,12 @@ class MODAL_TEMPLATE {
                 period_underwear: require("../assets/symptom_icons/collection_underwear.png")
             },
             discharge: {
-                thin_clear: require("../assets/symptom_icons/symptoms_backache.png"),
-                stringy_stretchy: require("../assets/symptom_icons/symptoms_backache.png"),
-                thick_creamy: require("../assets/symptom_icons/symptoms_backache.png"),
-                sticky: require("../assets/symptom_icons/symptoms_backache.png"),
-                watery: require("../assets/symptom_icons/symptoms_backache.png"),
-                white_clumpy: require("../assets/symptom_icons/symptoms_backache.png"),
-                yellow_green_grey: require("../assets/symptom_icons/symptoms_backache.png")
+                thin_clear: require("../assets/symptom_icons/discharge_thin.png"),
+                stringy: require("../assets/symptom_icons/discharge_stringy.png"),
+                creamy: require("../assets/symptom_icons/discharge_creamy.png"),
+                sticky: require("../assets/symptom_icons/discharge_sticky.png"),
+                watery: require("../assets/symptom_icons/discharge_watery.png"),
+                spotting: require("../assets/symptom_icons/discharge_spotting.png"),
             },
             symptoms: {
                 headache: require("../assets/symptom_icons/symptoms_headache.png"),
