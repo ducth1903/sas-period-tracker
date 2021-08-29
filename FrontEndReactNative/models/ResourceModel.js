@@ -6,6 +6,7 @@ import {
     Image, 
     Dimensions
 } from 'react-native';
+import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
 
 // STYLE CONSTANTS
 // NEED TO UPDATE IN THE CORRESPONDING RESOURCE PAGE
@@ -91,10 +92,22 @@ Every month, your body prepares for pregnancy. If no pregnancy occurs, the uteru
 The menstrual blood is partly blodd and partly tissue from inside the uterus. It passed out of the body through the vagina."}
                 </Text>
             </View>
-            <Image
-            style={{resizeMode: "contain", width: '100%'}}
-            source={require("../assets/resources_images/what_is_menstruation.jpg")}
-            />
+
+            <View style={{flex: 1}}>
+            <ReactNativeZoomableView
+            maxZoom={1.5}
+            minZoom={0.5}
+            zoomStep={0.5}
+            initialZoom={1}
+            bindToBorders={true}
+            captureEvent={true}
+            >
+                <Image
+                style={{resizeMode: "contain", width: '100%'}}
+                source={require("../assets/resources_images/what_is_menstruation.jpg")}
+                />
+            </ReactNativeZoomableView>
+            </View>
         </View>
     },
     {

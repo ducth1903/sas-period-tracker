@@ -13,12 +13,12 @@ import {
     Alert,
     StatusBar
 } from 'react-native';
-import { Divider, Snackbar } from 'react-native-paper';
+import { Divider, Snackbar, Switch } from 'react-native-paper';
 import Accordion from 'react-native-collapsible/Accordion';
 
 // https://github.com/wix/react-native-calendars
 import { Calendar, CalendarList } from 'react-native-calendars';
-import { FontAwesome, Ionicons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, Ionicons, AntDesign, Entypo } from '@expo/vector-icons';
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import CalendarCard from '../components/CalendarCard';
@@ -53,19 +53,25 @@ const markedDateStyle = {
     }
 }
 
+// Global variables
 var userPeriods = [];
 var currPeriodDate = null;
+var tmpSymptomSetting = new Set();      // a copy of symptomSetting set
 
 const PeriodCalendarScreen = ({ props }) => {
-    const modal_default_template                = new MODAL_TEMPLATE().default_template;
+    const modal_default_template                = new MODAL_TEMPLATE();
 
     const { userId }                            = useContext(AuthContext);
+    const [symptomSetting, setSymptomSetting]   = useState(new Set());
+    const [symptomSettingArray, setSymptomSettingArray]       = useState([]);       // for Switch values (true/false)
+
     const [modalVisible, setModalVisible]       = useState(false);
     const [modalVisibleScrollCal, setmodalVisibleScrollCal]   = useState(false);
     const [modalInfoVisible, setModalInfoVisible]             = useState(false);
     const [modalInfo, setModalInfo]             = useState("");
     const [modalHistory, setModalHistory]       = useState(false);
     const [modalEmailHistory, setModalEmailHistory]           = useState(false);
+    const [modalSetting, setModalSetting]       = useState(false);
     const [snackBarVisible, setSnackBarVisible] = useState(false);
     const [snackBarText, setSnackBarText]       = useState("");
     const [statusBarHidden, setStatusBarHidden] = useState(false);
@@ -91,6 +97,15 @@ const PeriodCalendarScreen = ({ props }) => {
     // For Collapsible History
     // ---------------------
     const [activeSections, setActiveSections] = useState([]);
+
+    async function fetchUserData() {
+        await fetch(`${API_URL}/api/user/${userId}`, { method: "GET" })
+        .then(resp => resp.json())
+        .then(data => {
+            setSymptomSetting(new Set(data['symptomsTrack']));      // convert from Array to Set
+        })
+        .catch(error => {console.log(error)})
+    }
 
     async function fetchPeriodData() {
         // let todayDateEpoch = getDateEpoch(new Date());
@@ -121,10 +136,12 @@ const PeriodCalendarScreen = ({ props }) => {
         await fetch(`${API_URL}/api/period/${userId}/lastPeriod`, { method: "GET" })
         .then(resp => resp.json())
         .then(data => {
-            let lastPeriodDate = new Date(data[0]['dateStr']);
-            let todayDate = new Date(new Date().toDateString());
-            let diff_ms = todayDate-lastPeriodDate;
-            setLastPeriod( Math.floor(diff_ms/(24*3600*1000)) );
+            if (data.length) {
+                let lastPeriodDate = new Date(data[0]['dateStr']);
+                let todayDate = new Date(new Date().toDateString());
+                let diff_ms = todayDate-lastPeriodDate;
+                setLastPeriod( Math.floor(diff_ms/(24*3600*1000)) );
+            }
         })
         .catch(error => {console.log(error)})
     }
@@ -138,6 +155,17 @@ const PeriodCalendarScreen = ({ props }) => {
         .catch(error => {console.log(error)})
     }
 
+    async function updateUserSymptomTracking(inSymp) {
+        await fetch(`${API_URL}/api/user/${userId}`, {
+            method: "PUT",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                "symptomsTrack"    : Array.from(inSymp)
+            })
+        })
+        .catch(error => {console.log(error)})
+    }
+
     const getKeyFromPeriodHistory = () => {
         return fetchedHistory.map((ele) => ele['year_month'])
     }
@@ -146,6 +174,7 @@ const PeriodCalendarScreen = ({ props }) => {
         console.log('[PeriodCalendarScreen] useEffect()')
         fetchPeriodData();
         fetchLastPeriod();
+        fetchUserData();
     }, [currDateObject]);
 
     // Pull down to refresh
@@ -153,6 +182,7 @@ const PeriodCalendarScreen = ({ props }) => {
         setRefreshing(true);
         fetchPeriodData();
         fetchLastPeriod();
+        fetchUserData();
         setRefreshing(false);
     }, []);
 
@@ -319,7 +349,7 @@ const PeriodCalendarScreen = ({ props }) => {
             refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
             contentContainerStyle={styles.scrollViewStyle}
             >
-                <View style={{flex:1, justifyContent: 'space-around', alignItems: 'flex-end'}}>
+                <View style={{flex:1, flexDirection: 'row', justifyContent:'flex-end', alignItems: 'flex-end'}}>
                     <TouchableOpacity 
                     style={{marginRight: '5%', marginTop: '5%'}}
                     onPress={()=>{
@@ -328,8 +358,111 @@ const PeriodCalendarScreen = ({ props }) => {
                     }}>
                         <FontAwesome name="calendar" size={24} color="black" />
                     </TouchableOpacity>
+                    <TouchableOpacity
+                    style={{marginRight: '5%', marginTop: '5%'}}
+                    onPress={()=>{
+                        setStatusBarHidden(!statusBarHidden)
+                        setModalSetting(!modalSetting)
+                        
+                        // Update symptomSettingArray based on symptomSetting set
+                        let tmp = [];
+                        modal_default_template.getKeys().map((ele) => {
+                            if (symptomSetting.has(ele)) {
+                                tmp.push(true)
+                            } else {
+                                tmp.push(false)
+                            }
+                        })
+                        setSymptomSettingArray(tmp)
+                        tmpSymptomSetting = new Set(symptomSetting)
+                    }}>
+                        <Entypo name="dots-three-vertical" size={24} color="black" />
+                    </TouchableOpacity>
+
+                    {/* Modal for symptom settings */}
+                    <Modal
+                        animationIn="slideInLeft"
+                        animationOut="slideOutRight"
+                        transparent={false}
+                        isVisible={modalSetting}
+                        onRequestClose={() => {
+                            setModalSetting(!modalSetting);
+                        }}
+                        statusBarTranslucent={true}
+                        style={{margin: 0, backgroundColor: 'white'}}
+                    >
+                        <SafeAreaView style={{flex: 1}}>
+                            <View style={{flex: 1}}/>
+                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', paddingLeft: '4%'}}>
+                                <View style={{flex: 1}}>
+                                    <TouchableOpacity onPress={() => {
+                                        setModalSetting(!modalSetting);
+                                    }}>
+                                        <AntDesign name="closecircleo" size={24} color="black" />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={{flex: 2}}>
+                                    <Text style={{marginBottom: 15, textAlign: "center", fontSize: 20, fontWeight: "bold"}}>
+                                        Tracking Symptoms
+                                    </Text>
+                                </View>
+                                <View style={{flex: 1}}/>
+                            </View>
+                            <View style={{flex: 8}}>
+                                {modal_default_template.getKeys().map((ele, index) => {
+                                    return (
+                                        <View style={styles.symptomSettingRowWrapper} key={index}>
+                                            <View>
+                                                <Text>{modal_default_template.getTitleFromKey(ele)[1]}</Text>
+                                            </View>
+                                            <Switch 
+                                            // value={symptomSetting.has(ele) ? true : false} 
+                                            value={symptomSettingArray[index]}
+                                            color={'skyblue'}
+                                            onValueChange={()=>{
+                                                let newVal = false;
+                                                if(tmpSymptomSetting.has(ele)) {
+                                                    // setSymptomSetting(() => {
+                                                    //     symptomSetting.delete(ele)
+                                                    //     return symptomSetting
+                                                    // })
+                                                    tmpSymptomSetting.delete(ele)
+                                                    newVal = false
+                                                } else {
+                                                    // setSymptomSetting((currSetting) => {
+                                                    //     let newSet = currSetting.add(ele)
+                                                    //     return newSet
+                                                    // })
+                                                    tmpSymptomSetting = tmpSymptomSetting.add(ele)
+                                                    newVal = true
+                                                }
+
+                                                let tmpArr = [...symptomSettingArray];       // shallow copy array
+                                                tmpArr[index] = newVal;
+                                                setSymptomSettingArray(tmpArr);
+                                            }} />
+                                        </View>
+                                    )
+                                })}
+                            </View>
+                            <View style={{flex: 1}}>
+                                <FormButton
+                                btnTitle="Update"
+                                isHighlight={true}
+                                onPress={() => {
+                                    if (symptomSetting.size !== tmpSymptomSetting.size) {
+                                        updateUserSymptomTracking(tmpSymptomSetting);
+                                        setSymptomSetting(tmpSymptomSetting);
+                                        setModalSetting(!modalSetting);
+                                    }
+                                }}
+                                />
+                            </View>
+                        </SafeAreaView>
+                    </Modal>
                 </View>
                 <View style={styles.calendarContainer}>
+                    {/* Modal for symptoms */}
                     <Modal
                         animationIn="slideInLeft"
                         animationOut="slideOutRight"
@@ -367,6 +500,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                 </View>
                             </SafeAreaView>
                         </Modal>
+                        {/* End modal for info */}
 
                         <SafeAreaView style={{flex: 1}}>
                             <View style={{flex: 1}}/>
@@ -389,7 +523,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             <View style={{flex: 8, backgroundColor: '#ADCDFF'}}>
                             {lastMarkedDate in fetchedData ? 
                             <Animated.FlatList
-                            data={fetchedData[lastMarkedDate].renderSymptom()}
+                            data={fetchedData[lastMarkedDate].renderSymptom(symptomSetting)}
                             renderItem={renderModalItem}
                             keyExtractor={keyExtractor}
                             // pagingEnabled
@@ -408,7 +542,8 @@ const PeriodCalendarScreen = ({ props }) => {
                             <Animated.FlatList
                             // ref={flatListRef}
                             // onViewableItemsChanged={onViewRef.current}
-                            data={modal_default_template}
+                            // data={modal_default_template.default_template}
+                            data={modal_default_template.getDefaultTemplate(symptomSetting)}
                             renderItem={renderModalItem}
                             keyExtractor={keyExtractor}
                             // pagingEnabled
@@ -446,6 +581,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             </View>
                         </SafeAreaView>
                     </Modal>
+                    {/* End modal for symptoms */}
                     
                     <Calendar
                         style={styles.calendar}
@@ -880,6 +1016,13 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 15,
         borderBottomRightRadius: 15,
         backgroundColor: 'white'
+    },
+    symptomSettingRowWrapper: {
+        flexDirection: 'row', 
+        justifyContent:'space-between', 
+        alignItems: 'center', 
+        paddingHorizontal: '20%',
+        paddingVertical: '2%'
     }
 })
 

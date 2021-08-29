@@ -5,61 +5,62 @@
 
 class MODAL_TEMPLATE {
     constructor() {
+        // NOTE: need to manually update on Backend too!!!
         this.default_template = [
             {
-                key: 'flow',
-                title: 'Flow',
-                titleColor: '#FF6F72',
-                iconBackgroundColor: '#d8adfe',
-                multipleChoices: false,
-                availableOptions: ['Light', 'Medium', 'Heavy', 'Unusually Heavy', 'Spotting'],
-                availableOptions_id: ['light', 'medium', 'heavy', 'unusually_heavy', 'spotting'],
-                isChecked: [false, false, false, false, false],
-                description: 'Info for Flow'
+                "key": 'flow',
+                "title": 'Flow',
+                "titleColor": '#FF6F72',
+                "iconBackgroundColor": '#d8adfe',
+                "multipleChoices": false,
+                "availableOptions": ['Light', 'Medium', 'Heavy', 'Unusually Heavy', 'Spotting'],
+                "availableOptions_id": ['light', 'medium', 'heavy', 'unusually_heavy', 'spotting'],
+                "isChecked": [false, false, false, false, false],
+                "description": 'Info for Flow'
             },
             {
-                key: 'collection',
-                title: 'Collection Method',
-                titleColor: '#F3692B',
-                iconBackgroundColor: '#a9d8ff',
-                multipleChoices: true,
-                availableOptions: ['Disposable Pad', 'Tampon', 'Menstrual Cup', 'Resuable Pad', 'Period Underwear', 'Panty Liner'],
-                availableOptions_id: ['disposable_pad', 'tampon', 'menstrual_cup', 'reusable_pad', 'period_underwear', 'panty_liner'],
-                isChecked: [false, false, false, false, false, false],
-                description: 'Info for Collection method'
+                "key": 'collection',
+                "title": 'Collection Method',
+                "titleColor": '#F3692B',
+                "iconBackgroundColor": '#a9d8ff',
+                "multipleChoices": true,
+                "availableOptions": ['Disposable Pad', 'Tampon', 'Menstrual Cup', 'Resuable Pad', 'Period Underwear', 'Panty Liner'],
+                "availableOptions_id": ['disposable_pad', 'tampon', 'menstrual_cup', 'reusable_pad', 'period_underwear', 'panty_liner'],
+                "isChecked": [false, false, false, false, false, false],
+                "description": 'Info for Collection method'
             },
             {
-                key: 'discharge',
-                title: 'Discharge',
-                titleColor: '#0697FF',
-                iconBackgroundColor: '#febccf',
-                multipleChoices: true,
-                availableOptions: ['Thin/clear', 'Stringy', 'creamy', 'Sticky', 'Watery', 'Spotting'],
-                availableOptions_id: ['thin_clear', 'stringy', 'creamy', 'sticky', 'watery', 'spotting'],
-                isChecked: [false, false, false, false, false, false, false],
-                description: 'Info for Discharge'
+                "key": 'discharge',
+                "title": 'Discharge',
+                "titleColor": '#0697FF',
+                "iconBackgroundColor": '#febccf',
+                "multipleChoices": true,
+                "availableOptions": ['Thin/clear', 'Stringy', 'creamy', 'Sticky', 'Watery', 'Spotting', 'Transparent'],
+                "availableOptions_id": ['thin_clear', 'stringy', 'creamy', 'sticky', 'watery', 'spotting', 'transparent'],
+                "isChecked": [false, false, false, false, false, false, false],
+                "description": 'Info for Discharge'
             },
             {
-                key: 'symptoms',
-                title: 'Symptoms',
-                titleColor: '#FF9900',
-                iconBackgroundColor: '#a9d8ff',
-                multipleChoices: true,
-                availableOptions: ['Headache', 'Cramps', 'Backache', 'Fatigue', 'Tender Breasts', 'Acne', 'Bloating', 'Craving', 'Nausea'],
-                availableOptions_id: ['headache', 'cramps', 'backache', 'fatigue', 'tender_breasts', 'acne', 'bloating', 'craving', 'nausea'],
-                isChecked: [false, false, false, false, false, false, false, false, false],
-                description: 'Info for symptoms'
+                "key": 'symptoms',
+                "title": 'Symptoms',
+                "titleColor": '#FF9900',
+                "iconBackgroundColor": '#a9d8ff',
+                "multipleChoices": true,
+                "availableOptions": ['Headache', 'Cramps', 'Backache', 'Fatigue', 'Tender Breasts', 'Acne', 'Bloating', 'Craving', 'Nausea'],
+                "availableOptions_id": ['headache', 'cramps', 'backache', 'fatigue', 'tender_breasts', 'acne', 'bloating', 'craving', 'nausea'],
+                "isChecked": [false, false, false, false, false, false, false, false, false],
+                "description": 'Info for symptoms'
             },
             {
-                key: 'mood',
-                title: 'Mood',
-                titleColor: '#006666',
-                iconBackgroundColor: '#a9d8ff',
-                multipleChoices: true,
-                availableOptions: ['Content', 'Excited', 'Sad', 'Angry', 'Sensitive', 'Anxious', 'Stressed', 'Self-critical', 'Other'],
-                availableOptions_id: ['content', 'excited', 'sad', 'angry', 'sensitive', 'anxious', 'stressed', 'self_critical', 'other'],
-                isChecked: [false, false, false, false, false, false, false, false, false],
-                description: 'Info for Mood'
+                "key": 'mood',
+                "title": 'Mood',
+                "titleColor": '#006666',
+                "iconBackgroundColor": '#a9d8ff',
+                "multipleChoices": true,
+                "availableOptions": ['Content', 'Excited', 'Sad', 'Angry', 'Sensitive', 'Anxious', 'Stressed', 'Self-critical', 'Other'],
+                "availableOptions_id": ['content', 'excited', 'sad', 'angry', 'sensitive', 'anxious', 'stressed', 'self_critical', 'other'],
+                "isChecked": [false, false, false, false, false, false, false, false, false],
+                "description": 'Info for Mood'
             },
             // {
             //     key: 'sexual_drive',
@@ -118,6 +119,7 @@ class MODAL_TEMPLATE {
                 sticky: require("../assets/symptom_icons/discharge_sticky.png"),
                 watery: require("../assets/symptom_icons/discharge_watery.png"),
                 spotting: require("../assets/symptom_icons/discharge_spotting.png"),
+                transparent: require("../assets/symptom_icons/discharge_transparent.png"),
             },
             symptoms: {
                 headache: require("../assets/symptom_icons/symptoms_headache.png"),
@@ -160,6 +162,24 @@ class MODAL_TEMPLATE {
             }
         }
         return `N/A (${inSymptom})`;
+    }
+
+    getKeys = () => {
+        res = []
+        this.default_template.map((ele) => {
+            res.push(ele['key'])
+        })
+        return res
+    }
+
+    getDefaultTemplate = (setKeysToGet) => {
+        res = []
+        this.default_template.map((ele) => {
+            if (setKeysToGet.has(ele['key'])) {
+                res.push(ele)
+            }
+        })
+        return res
     }
 }
 
@@ -213,8 +233,8 @@ class PeriodDate {
 
     // Render complete list of symptoms
     // 'true' for marked symptom, 'false' otherwise
-    renderSymptom = () => {
-        let res = new MODAL_TEMPLATE().default_template;
+    renderSymptom = (setKeysToGet) => {
+        let res = new MODAL_TEMPLATE().getDefaultTemplate(setKeysToGet);
         for (let i=0; i<res.length; i++) {
             let curr_key = res[i].key;
             for (let ii=0; ii<res[i]['isChecked'].length; ii++) {

@@ -13,6 +13,8 @@ import {
     DarkTheme as PaperDarkTheme
 } from "react-native-paper";
 
+import { MODAL_TEMPLATE } from '../models/PeriodDate';
+
 // Loading env variables
 import {
     // LOCAL_DEV_IP,
@@ -135,7 +137,8 @@ export const AuthProvider = ({children}) => {
                                     "lastName"  : inLastName,
                                     "dob"       : inDob,
                                     "avgDaysPerPeriod"  : inAvgDaysPerPeriod,
-                                    "profileImageId"    : "default_profile_women_1.jpg"
+                                    "profileImageId"    : "default_profile_women_1.jpg",
+                                    "symptomsTrack"     : new MODAL_TEMPLATE().getKeys()
                                 })
                             })
                             .then(resp => resp.json())
