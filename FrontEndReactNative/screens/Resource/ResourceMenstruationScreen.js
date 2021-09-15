@@ -1,21 +1,64 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Accordion from 'react-native-collapsible/Accordion';
 import { AntDesign } from '@expo/vector-icons';
-import { MENSTRUATION } from '../../models/ResourceModel';
+import Markdown from 'react-native-markdown-display';
+import LoadingIndicator from '../../components/LoadingIndicator';
 
 // STYLE CONSTANTS
 MARGIN          = '3%'
 PADDING         = '3%'
 BORDER_RADIUS   = 20
 
-const ResourceMenstruationScreen = ({ props }) => {
+const ResourceMenstruationScreen = ({ route, navigation }) => {
+    const resourcesJson = route.params['resourcesJson'][0];
     const [activeSections, setActiveSections] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [allContents, setAllContents] = useState(new Array(resourcesJson['mappings'].length));
+    
+    function getMarkdown(inURL) {
+        return fetch(inURL, {
+            method: "GET",
+            headers: {
+                // "Content-Type": "text/markdown",
+                "Content-Type": "text/plain"
+            }
+        })
+        .then(resp => resp.text())
+        .then(data => {
+            return data
+        })
+        .catch(error => console.log('Error: ', error))
+    }
+
+    async function getAllMarkdowns() {
+        var fetches = resourcesJson['mappings'].map((ele) => getMarkdown(ele['s3Link']) );
+
+        // Parallel fetching!
+        await Promise.all(fetches)
+        .then(resp => {
+            let tmp = resourcesJson['mappings'].map((ele, ele_index) => {
+                return {
+                    'question': ele['question'],
+                    'answer': resp[ele_index]
+                }
+            })
+            setAllContents(tmp)
+            setIsLoading(false)
+        })
+        .catch(error => {console.log(error)})
+    }
+
+    useEffect(() => {
+        getAllMarkdowns()
+    }, []);
 
     return (
         <View style={styles.container}>
+            {isLoading ? <LoadingIndicator/> 
+            : 
             <Accordion
-            sections={MENSTRUATION}
+            sections={allContents}
             activeSections={activeSections}
             onChange={(activeSections) => {
                 setActiveSections(activeSections)
@@ -46,11 +89,12 @@ const ResourceMenstruationScreen = ({ props }) => {
             renderContent={(content, index, isActive) => {
                 return (
                     <View style={styles.itemContentWrapper}>
-                        <Text>{content['answer']}</Text>
+                        <Markdown style={markdownStyles}>{ content['answer'] }</Markdown>
                     </View>
                 )
             }}
             />
+            }
         </View>
     )
 }
@@ -89,6 +133,13 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: BORDER_RADIUS,
         borderBottomRightRadius: BORDER_RADIUS,
         backgroundColor: 'white'
+    },
+})
+
+const markdownStyles = StyleSheet.create({
+    text: {
+        // letterSpacing: 3
+        lineHeight: 30
     }
 })
 

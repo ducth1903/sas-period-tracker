@@ -7,11 +7,29 @@ import {
     Dimensions
 } from 'react-native';
 import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
+// import Markdown from 'react-native-markdown-display';
+
+// async function getMarkdown() {
+//     await fetch('https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/menstrualHealthHygiene.md', {
+//         method: "GET",
+//         headers: {
+//             // "Content-Type": "text/markdown",
+//             "Content-Type": "text/plain"
+//         }
+//     })
+//     .then(resp => resp.text())
+//     .then(data => {
+//         console.log('here in getMarkdown()...')
+//         console.log(data)
+//         return data;
+//     })
+//     .catch(error => console.log(error))
+// }
 
 // STYLE CONSTANTS
 // NEED TO UPDATE IN THE CORRESPONDING RESOURCE PAGE
-MARGIN = '3%'
-PADDING = '3%'
+// MARGIN = '3%'
+// PADDING = '3%'
 
 const styles = StyleSheet.create({
     viewWrapper: {
@@ -80,53 +98,53 @@ class RESOURCE_TEMPLATE {
     }
 }
 
-const MENSTRUATION = [
-    {
-        question: 'What is Menstruation?',
-        answer: 
-        <View>
-            <View style={styles.viewWrapper}>
-                <Text style={styles.textStyle}>
-                    {"Menstruation is normal vaginal bleeding that occurs as part of a woman's monthly cycle. \
-Every month, your body prepares for pregnancy. If no pregnancy occurs, the uterus, or womb, sheds its lining. \
-The menstrual blood is partly blodd and partly tissue from inside the uterus. It passed out of the body through the vagina."}
-                </Text>
-            </View>
+// const MENSTRUATION = [
+//     {
+//         question: 'What is Menstruation?',
+//         answer: 
+//         <View>
+//             <View style={styles.viewWrapper}>
+//                 <Text style={styles.textStyle}>
+//                     {"Menstruation is normal vaginal bleeding that occurs as part of a woman's monthly cycle. \
+// Every month, your body prepares for pregnancy. If no pregnancy occurs, the uterus, or womb, sheds its lining. \
+// The menstrual blood is partly blodd and partly tissue from inside the uterus. It passed out of the body through the vagina."}
+//                 </Text>
+//             </View>
 
-            <View style={{flex: 1}}>
-            <ReactNativeZoomableView
-            maxZoom={1.5}
-            minZoom={0.5}
-            zoomStep={0.5}
-            initialZoom={1}
-            bindToBorders={true}
-            captureEvent={true}
-            >
-                <Image
-                style={{resizeMode: "contain", width: '100%'}}
-                source={require("../assets/resources_images/what_is_menstruation.jpg")}
-                />
-            </ReactNativeZoomableView>
-            </View>
-        </View>
-    },
-    {
-        question: 'Question 2?',
-        answer: 'Answer 2'
-    },
-    {
-        question: 'Question 3?',
-        answer: 'Answer 3'
-    },
-    {
-        question: 'Question 4?',
-        answer: 'Answer 4'
-    },
-    {
-        question: 'Question 5?',
-        answer: 'Answer 5'
-    }
-];
+//             <View style={{flex: 1}}>
+//             <ReactNativeZoomableView
+//             maxZoom={1.5}
+//             minZoom={0.5}
+//             zoomStep={0.5}
+//             initialZoom={1}
+//             bindToBorders={true}
+//             captureEvent={true}
+//             >
+//                 {/* <Image
+//                 style={{resizeMode: "contain", width: '100%'}}
+//                 source={require("../assets/resources_images/what_is_menstruation.jpg")}
+//                 /> */}
+//             </ReactNativeZoomableView>
+//             </View>
+//         </View>
+//     },
+//     {
+//         question: 'Question 2?',
+//         answer: <Text></Text>
+//     },
+//     {
+//         question: 'Question 3?',
+//         answer: 'Answer 3'
+//     },
+//     {
+//         question: 'Question 4?',
+//         answer: 'Answer 4'
+//     },
+//     {
+//         question: 'Question 5?',
+//         answer: 'Answer 5'
+//     }
+// ];
 
-export { MENSTRUATION };
+// export { MENSTRUATION };
 export default RESOURCE_TEMPLATE;

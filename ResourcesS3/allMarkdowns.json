@@ -1,0 +1,39 @@
+[
+{
+    "id": "menstruation",
+    "mappings": [
+        {
+            "question": "What is Menstruation?",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/what_is_menstruation.md"
+        },
+        {
+            "question": "The Menstrual Cycle",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/the_menstrual_cycle.md"
+        },
+        {
+            "question": "First Period",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/first_period.md"
+        },
+        {
+            "question": "What to do when you have a period?",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/what_to_do_when_period.md"
+        },
+        {
+            "question": "Menopause: When Your Period Stops",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/when_period_stops.md"
+        },
+        {
+            "question": "A Normal Period",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/a_normal_period.md"
+        },
+        {
+            "question": "An Irregular/Abnormal Period",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/an_abnormal_period.md"
+        },
+        {
+            "question": "Blood Clots",
+            "s3Link": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/blood_clots.md"
+        }
+    ]
+}
+]

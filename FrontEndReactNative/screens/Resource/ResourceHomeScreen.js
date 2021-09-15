@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useEffect, useContext, useState}  from 'react';
 import { 
     StyleSheet, 
     Text, 
@@ -8,46 +8,90 @@ import {
     SafeAreaView,  
     StatusBar,
     Image,
+    RefreshControl
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 import { AuthContext } from '../../navigation/AuthProvider'; 
 
+const MARKDOWN_S3_URL = 'https://s3-sas-period-tracker.s3.amazonaws.com/resources/allMarkdowns.json'
+
 const ResourceScreen = ({ navigation, props }) => {
     const resource_template = new RESOURCE_TEMPLATE();
+    const [resourcesJson, setResourcesJson] = useState({});
+    const [refreshing, setRefreshing] = useState(false);
     const { userId } = useContext(AuthContext);
 
-    const renderItem = ({item}) => {
-    return (
-        <View style={{flex: 1}}>
-        <View style={styles.menubox}>
-            <Pressable 
-            style={styles.button} 
-            onPress={() => navigation.navigate( resource_template.default_pages[item['id']] )}>
-            <Image
-            source={resource_template.default_images[item['id']]}
-            style={styles.imageButton}/>
+    async function fetchResoucesJson() {
+        await fetch(MARKDOWN_S3_URL, { method: "GET" })
+        .then(resp => resp.json())
+        .then(data => {
+            // console.log('[ResourceHomeScreen] fetchResourcesJson(): ', data);
+            setResourcesJson(data)
+        })
+        .catch(error => {console.log(error)})
+    }
 
-            <View style={{paddingTop: 6}}>
-                <Text style={styles.buttontext}>{item['title']}</Text>
+    useEffect(()=>{
+        fetchResoucesJson();
+    }, []);
+
+    // Pull down to refresh
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchResoucesJson();
+        setRefreshing(false);
+    }, []);
+
+    function getResourceContentForSection(sectionName) {
+        const result = resourcesJson.map((ele) => {
+            if (ele['id'] == sectionName) {
+                return ele
+            }
+        })
+        return result
+    }
+
+    const renderItem = ({item}) => {
+        return (
+            <View style={{flex: 1}}>
+            <View style={styles.menubox}>
+                <Pressable 
+                style={styles.button} 
+                onPress={() => navigation.navigate( 
+                    resource_template.default_pages[item['id']],
+                    { resourcesJson: getResourceContentForSection(item['id']) }
+                )}>
+                <Image
+                source={resource_template.default_images[item['id']]}
+                style={styles.imageButton}/>
+
+                <View style={{paddingTop: 6}}>
+                    <Text style={styles.buttontext}>{item['title']}</Text>
+                </View>
+                </Pressable>
             </View>
-            </Pressable>
-        </View>
-        </View>
-    )
+            </View>
+        )
     }
 
     return (
     <SafeAreaView style={styles.container}>
-        {/* <View style={styles.menurow}> */}
-        <View>
-        <FlatList
-        data={resource_template.default_template}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        horizontal={false}
-        numColumns={2}
-        />
-        </View>
+        <ScrollView
+            refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
+            contentContainerStyle={{flex: 1}}
+        >
+            {/* <View style={styles.menurow}> */}
+            <View>
+                <FlatList
+                data={resource_template.default_template}
+                renderItem={renderItem}
+                keyExtractor={item => item.id}
+                horizontal={false}
+                numColumns={2}
+                />
+            </View>
+        </ScrollView>
     </SafeAreaView>
     )
 }

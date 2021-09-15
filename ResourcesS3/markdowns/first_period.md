@@ -1,0 +1,3 @@
+A girl generally begins menstruation between the ages of 8 and 15, or two years after her breasts start to develop and pubic hair begins to grow. The age your biological mother got her first period could also be a good indicator for when you get your first period.  
+
+Other things such as ethnicity, body weight, health, and exercise can also impact when you get your first period. If a period starts later or earlier than this range, it is best to consult a doctor to figure out what’s going on. 
