@@ -1,53 +1,29 @@
-import React from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View,
-    Image, 
-    Dimensions
-} from 'react-native';
-import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
-// import Markdown from 'react-native-markdown-display';
-
-// async function getMarkdown() {
-//     await fetch('https://s3-sas-period-tracker.s3.amazonaws.com/resources/markdowns/menstrualHealthHygiene.md', {
-//         method: "GET",
-//         headers: {
-//             // "Content-Type": "text/markdown",
-//             "Content-Type": "text/plain"
-//         }
-//     })
-//     .then(resp => resp.text())
-//     .then(data => {
-//         console.log('here in getMarkdown()...')
-//         console.log(data)
-//         return data;
-//     })
-//     .catch(error => console.log(error))
-// }
+// import React from 'react';
+// import { StyleSheet, Dimensions } from 'react-native';
+// import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView'
 
 // STYLE CONSTANTS
 // NEED TO UPDATE IN THE CORRESPONDING RESOURCE PAGE
 // MARGIN = '3%'
 // PADDING = '3%'
 
-const styles = StyleSheet.create({
-    viewWrapper: {
-        flex: 1,
-        flexDirection: 'row',
-        width: Dimensions.get('screen').width * 0.9
-    },
-    textStyle: {
-        flex: 1, 
-        flexShrink: 1,
+// const styles = StyleSheet.create({
+//     viewWrapper: {
+//         flex: 1,
+//         flexDirection: 'row',
+//         width: Dimensions.get('screen').width * 0.9
+//     },
+//     textStyle: {
+//         flex: 1, 
+//         flexShrink: 1,
 
-        // fontFamily: '',
-        // fontSize: 
-        letterSpacing: 1,
-        lineHeight: 25,
-        textAlign: 'auto'
-    }
-})
+//         // fontFamily: '',
+//         // fontSize: 
+//         letterSpacing: 1,
+//         lineHeight: 25,
+//         textAlign: 'auto'
+//     }
+// })
 
 class RESOURCE_TEMPLATE {
     constructor() {
@@ -145,6 +121,6 @@ class RESOURCE_TEMPLATE {
 //         answer: 'Answer 5'
 //     }
 // ];
-
 // export { MENSTRUATION };
+
 export default RESOURCE_TEMPLATE;

@@ -64,6 +64,7 @@ const ResourceMenstruationScreen = ({ route, navigation }) => {
                 setActiveSections(activeSections)
             }}
             renderAsFlatList={true}     // to make it scrollable
+            keyExtractor={item => item['question'].toString()}
             underlayColor=''
             renderSectionTitle={() => {}}
             renderHeader={(content, index, isActive)=>{

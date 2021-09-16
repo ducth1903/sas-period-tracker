@@ -745,6 +745,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                     <Accordion
                                     sections={fetchedHistory}
                                     activeSections={activeSections}
+                                    keyExtractor={item => item['year_month'].toString()}
                                     renderSectionTitle={() => {}}
                                     renderHeader={(content, index, isActive)=>{
                                         return (

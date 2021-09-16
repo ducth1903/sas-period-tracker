@@ -22,9 +22,7 @@ const AuthStack = () => {
     const [isFirstLaunch, setIsFirstLaunch] = useState(null);     // Only show OnboardingScreen on first-time launch
     
     useEffect(() => {
-      if (initializing) {
-        setInitializing(false);
-      }
+      let isMounted = true;
 
       (async () => {
         let myToken = await getToken();
@@ -32,56 +30,65 @@ const AuthStack = () => {
             console.log('[AuthStack] useEffect: user found in AsyncStorage');
             // let user_lastLoginAt = myToken.toJSON().lastLoginAt;
             // console.log('here in AuthStack: user_lastLoginAt = ', user_lastLoginAt);
-            setUserId(myToken.uid);
+            if (isMounted) { setUserId(myToken.uid); }
         } else {
             console.log('[AuthStack] useEffect: no user found in AsyncStorage');
-            setUserId(null);
+            if (isMounted) { setUserId(null); }
         }
       })()
 
       AsyncStorage.getItem('alreadyLaunched')
       .then(value => {
-          if (value==null) { 
+        if (value==null) { 
           AsyncStorage.setItem('alreadyLaunched', 'true')
-          setIsFirstLaunch(true)
-          } else {
-          setIsFirstLaunch(false)
-          }
+          if (isMounted) { setIsFirstLaunch(true) }
+        } else {
+          if (isMounted) { setIsFirstLaunch(false) }
+        }
       })
-    }, []);
+      
+      if (initializing) {
+        if (isMounted) { setInitializing(false); }
+      }
 
-    if (initializing) {
+      return () => { isMounted = false }
+    }, []);   // end useEffect()
+
+    if (initializing || isFirstLaunch==null) {
       console.log("[Routes] initializing...");
       return ( <LoadingIndicator/> )
     }
 
     return (
         <View style={styles.container}>
-        <Stack.Navigator initialRouteName="LandingScreen">
+          <Stack.Navigator>
             {/* <PaperProvider theme={theme}> */}
-                <Stack.Screen 
-                    name="OnboardingScreen" 
-                    component={OnboardingScreen} 
-                    options={ {header: ()=>null} }/>
-                <Stack.Screen 
-                    name="LandingScreen" 
-                    component={LandingScreen} 
-                    options={ {header: ()=>null} }/>
-                <Stack.Screen 
-                    name="LoginScreen" 
-                    component={LoginScreen} 
-                    options={ {title: "Log in"} }/>
-                <Stack.Screen 
-                    name="SignupScreen" 
-                    component={SignupScreen}
-                    options={ {title: "Sign up"} } />
-                <Stack.Screen
-                    name="ForgotPasswordScreen"
-                    component={ForgotPasswordScreen}
-                    options={ {title: "Forgot Password"} } />
-                {/* <StatusBar style="auto" /> */}
+            
+            {isFirstLaunch ? (
+            <Stack.Screen 
+              name="OnboardingScreen" 
+              component={OnboardingScreen} 
+              options={ {header: ()=>null} }/>
+            ) : null }
+            <Stack.Screen 
+              name="LandingScreen" 
+              component={LandingScreen} 
+              options={ {header: ()=>null} }/>
+            <Stack.Screen 
+                name="LoginScreen" 
+                component={LoginScreen} 
+                options={ {title: "Log in"} }/>
+            <Stack.Screen 
+                name="SignupScreen" 
+                component={SignupScreen}
+                options={ {title: "Sign up"} } />
+            <Stack.Screen
+                name="ForgotPasswordScreen"
+                component={ForgotPasswordScreen}
+                options={ {title: "Forgot Password"} } />
+            {/* <StatusBar style="auto" /> */}
             {/* </PaperProvider> */}
-        </Stack.Navigator>
+          </Stack.Navigator>
         </View>
   );
 } // end AuthStack()

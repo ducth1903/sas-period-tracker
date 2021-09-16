@@ -19,7 +19,7 @@ const Routes = () => {
                 // User is signed in, see docs for a list of available properties
                 // https://firebase.google.com/docs/reference/js/firebase.User
                 setUserId(user.uid);
-                if (initializing) setInitializing(false);
+                setInitializing(false);
             } else {
                 // No user is signed in.
                 setInitializing(false);
@@ -32,13 +32,16 @@ const Routes = () => {
         // To find user token...
         console.log("[Routes] initializing...");
         return (<ActivityIndicator size="large" />)
+    } else {
+        return (
+            <NavigationContainer theme={theme}>
+                {/* Must explicitly handle isMounted in AuthStack.useEffect()
+                Initially, userId is null and AuthStack useEffect is activated
+                but components did not mount */}
+                { userId ? <AppStack/> : <AuthStack/> }
+            </NavigationContainer>
+        )
     }
-
-    return (
-        <NavigationContainer theme={theme}>
-            { userId ? <AppStack/> : <AuthStack/>}
-        </NavigationContainer>
-    )
 }
 
 export default Routes;

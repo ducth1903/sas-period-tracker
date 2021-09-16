@@ -8,11 +8,9 @@ import {
     SafeAreaView,  
     StatusBar,
     Image,
-    RefreshControl
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
-import { AuthContext } from '../../navigation/AuthProvider'; 
+// import { AuthContext } from '../../navigation/AuthProvider'; 
 
 const MARKDOWN_S3_URL = 'https://s3-sas-period-tracker.s3.amazonaws.com/resources/allMarkdowns.json'
 
@@ -20,7 +18,7 @@ const ResourceScreen = ({ navigation, props }) => {
     const resource_template = new RESOURCE_TEMPLATE();
     const [resourcesJson, setResourcesJson] = useState({});
     const [refreshing, setRefreshing] = useState(false);
-    const { userId } = useContext(AuthContext);
+    // const { userId } = useContext(AuthContext);
 
     async function fetchResoucesJson() {
         await fetch(MARKDOWN_S3_URL, { method: "GET" })
@@ -76,23 +74,17 @@ const ResourceScreen = ({ navigation, props }) => {
     }
 
     return (
-    <SafeAreaView style={styles.container}>
-        <ScrollView
-            refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
-            contentContainerStyle={{flex: 1}}
-        >
-            {/* <View style={styles.menurow}> */}
-            <View>
-                <FlatList
-                data={resource_template.default_template}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
-                horizontal={false}
-                numColumns={2}
-                />
-            </View>
-        </ScrollView>
-    </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+            <FlatList
+            data={resource_template.default_template}
+            renderItem={renderItem}
+            keyExtractor={item => item.id.toString()}
+            horizontal={false}
+            numColumns={2}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            />
+        </SafeAreaView>
     )
 }
 
