@@ -12,6 +12,7 @@ import SignupScreen from '../screens/Authentication/SignupScreen';
 import ForgotPasswordScreen from '../screens/Authentication/ForgotPasswordScreen';
 import LoadingIndicator from '../components/LoadingIndicator';
 import { AuthContext } from './AuthProvider';
+import I18n from '../models/i18n';
 
 const Stack = createStackNavigator();
 
@@ -77,15 +78,15 @@ const AuthStack = () => {
             <Stack.Screen 
                 name="LoginScreen" 
                 component={LoginScreen} 
-                options={ {title: "Log in"} }/>
+                options={ {title: I18n.t('authentication.login')} }/>
             <Stack.Screen 
                 name="SignupScreen" 
                 component={SignupScreen}
-                options={ {title: "Sign up"} } />
+                options={ {title: I18n.t('authentication.signup')} } />
             <Stack.Screen
                 name="ForgotPasswordScreen"
                 component={ForgotPasswordScreen}
-                options={ {title: "Forgot Password"} } />
+                options={ {title: I18n.t('authentication.forgotPassword')} } />
             {/* <StatusBar style="auto" /> */}
             {/* </PaperProvider> */}
           </Stack.Navigator>

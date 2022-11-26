@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Image, Dimensions, ImageBackground } from 'react-native';
 import FormButton from '../../components/FormButton';
+import I18n from '../../models/i18n';
 
 const LoginScreen = ({navigation}) => {
     return (
@@ -14,14 +15,14 @@ const LoginScreen = ({navigation}) => {
                 <View style={styles.footer}>
                     <View style={styles.item}>
                         <FormButton
-                            btnTitle="Login"
+                            btnTitle={I18n.t('authentication.login')}
                             isHighlight={false}
                             onPress={ ()=>{navigation.navigate("LoginScreen")} }
                         />
                     </View>
                     <View style={styles.item}>
                         <FormButton
-                            btnTitle="Join us"
+                            btnTitle={I18n.t('authentication.signup')}
                             isHighlight={true}
                             onPress={ ()=>{navigation.navigate("SignupScreen")} }
                         />

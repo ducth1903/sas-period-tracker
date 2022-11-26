@@ -22,6 +22,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import FormButton from '../components/FormButton';
 // import LoadingIndicator from '../components/LoadingIndicator';
 // import ProgressiveImage from '../components/ProgressiveImage';
+import I18n from '../models/i18n';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -292,6 +293,7 @@ const HomeScreen = ({ props }) => {
                     <Text>Email: {userObj['email']}</Text>
                     <Text>DoB: {userObj['dob']}</Text>
                     <Text>Server IP: {API_URL}</Text>
+                    <Text>{I18n.t('home.welcome', {appName: 'SAS'})}</Text>
                 </Animated.View>
             </ScrollView>
             

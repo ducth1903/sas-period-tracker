@@ -9,9 +9,10 @@ import FormInput from '../../components/FormInput';
 import { styles as stylesFormInput } from '../../components/FormInput';
 import FormButton from '../../components/FormButton';
 // import SocialButton from '../../components/SocialButton';
+import I18n from '../../models/i18n';
 
 const SignupScreen = ({navigation}) => {
-    const initDob = "Date of Birth*"
+    const initDob = `${I18n.t('authentication.dob')}*`
 
     const {signup, authError, setAuthError}     = useContext(AuthContext);
     const [inUserData, setInUserData] = useState({
@@ -84,7 +85,7 @@ const SignupScreen = ({navigation}) => {
         <View>
             <FormInput 
                 labelValue="Email"
-                placeholderText="Email"
+                placeholderText={I18n.t('authentication.email')}
                 isRequired={true}
                 iconType="user"
                 color="black"
@@ -96,7 +97,7 @@ const SignupScreen = ({navigation}) => {
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Password"
-                placeholderText="Password"
+                placeholderText={I18n.t('authentication.password')}
                 isRequired={true}
                 iconType="lock"
                 color="black"
@@ -109,7 +110,7 @@ const SignupScreen = ({navigation}) => {
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Confirm Password"
-                placeholderText="Confirm Password"
+                placeholderText={I18n.t('authentication.confirmPassword')}
                 isRequired={true}
                 iconType="lock"
                 color="black"
@@ -126,7 +127,7 @@ const SignupScreen = ({navigation}) => {
 
             <FormInput 
                 labelValue="First Name"
-                placeholderText="First Name"
+                placeholderText={I18n.t('authentication.firstName')}
                 isRequired={true}
                 iconType="user"
                 color="black"
@@ -137,7 +138,7 @@ const SignupScreen = ({navigation}) => {
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormInput 
                 labelValue="Last Name"
-                placeholderText="Last Name"
+                placeholderText={I18n.t('authentication.lastName')}
                 isRequired={true}
                 iconType="user"
                 color="black"
@@ -167,7 +168,7 @@ const SignupScreen = ({navigation}) => {
             
             <FormInput 
                 labelValue=""
-                placeholderText="On average, how many days is your period?"
+                placeholderText={I18n.t('authentication.avgPeriodDays')}
                 value={ inUserData.avgDaysPerPeriod }
                 keyboardType={"number-pad"}
                 onChangeText={ (inAvgDaysPerPeriod) => {
@@ -175,7 +176,7 @@ const SignupScreen = ({navigation}) => {
                 }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
             <FormButton
-                btnTitle="Sign Up"
+                btnTitle={I18n.t('authentication.signup')}
                 isHighlight={true}
                 // disabled={inUserData.isValidPassword}
                 onPress={ handleSignUpClicked }

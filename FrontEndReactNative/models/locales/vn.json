@@ -1,0 +1,27 @@
+{
+    "appName": "Blitz Reading",
+    "authentication": {
+        "login": "Đăng nhập",
+        "signup": "Đăng ký",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "signIn": "Đăng nhập",
+        "forgotPassword": "Quên mật khẩu",
+        "noAccountSignUp": "Đăng ký ngay!",
+        "firstName": "Tên",
+        "lastName": "Họ",
+        "dob": "Ngày sinh",
+        "avgPeriodDays": "Chu kỳ kinh nguyệt của bạn trung bình (ngày)?",
+        "agreement": "",
+        "resetPassword": "Thay đổi mật khẩu"
+    },
+    "navigation": {
+        "home": "Home",
+        "highScores": "High Scores",
+        "settings": "Settings"
+    },
+    "home": {
+        "welcome": "Xin chào %{appName}!"
+    }
+}

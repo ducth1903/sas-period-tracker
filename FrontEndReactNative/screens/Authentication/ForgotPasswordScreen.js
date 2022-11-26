@@ -4,9 +4,16 @@ import { View, Text, StyleSheet } from 'react-native';
 import { AuthContext } from '../../navigation/AuthProvider';
 import FormInput from '../../components/FormInput';
 import FormButton from '../../components/FormButton';
+import I18n from '../../models/i18n';
 
 const ForgotPasswordScreen = ({navigation}) => {
-    const {authStatus, setAuthStatus, authError, setAuthError, resetPassword}    = useContext(AuthContext);
+    const {
+        authStatus, 
+        setAuthStatus, 
+        authError, 
+        setAuthError, 
+        resetPassword
+    } = useContext(AuthContext);
     const [email, setEmail] = useState();
 
     useEffect(() => {
@@ -18,14 +25,14 @@ const ForgotPasswordScreen = ({navigation}) => {
         <View style={styles.container}>
             <FormInput 
                 labelValue="Email"
-                placeholderText="Email"
+                placeholderText={I18n.t('authentication.email')}
                 iconType="user"
                 color="black"
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(inEmail) => {setEmail(inEmail)}} />
             <FormButton 
-                btnTitle="Reset Password"
+                btnTitle={I18n.t('authentication.resetPassword')}
                 isHighlight={true}
                 onPress={ () => resetPassword(email) } />
             { authError ? 

@@ -7,6 +7,7 @@ import { AuthContext } from '../../navigation/AuthProvider';
 import FormInput from '../../components/FormInput';
 import FormButton from '../../components/FormButton';
 // import SocialButton from '../../components/SocialButton';
+import I18n from '../../models/i18n';
 
 const LoginScreen = ({navigation}) => {
     const {login, authError, setAuthError}    = useContext(AuthContext);
@@ -46,7 +47,7 @@ const LoginScreen = ({navigation}) => {
             <View>
                 <FormInput 
                     labelValue="Email"
-                    placeholderText="Email"
+                    placeholderText={I18n.t('authentication.email')}
                     iconType="user"
                     color="black"
                     keyboardType="email-address"
@@ -54,7 +55,7 @@ const LoginScreen = ({navigation}) => {
                     onChangeText={handleEmail} />
                 <FormInput 
                     labelValue="Password"
-                    placeholderText="Password"
+                    placeholderText={I18n.t('authentication.password')}
                     iconType="lock"
                     color="black"
                     isPassword={true}
@@ -63,7 +64,7 @@ const LoginScreen = ({navigation}) => {
                     onChangeText={handlePassword}
                     onPressEyeBtn={handleEyeClicked} />
                 <FormButton 
-                    btnTitle="Sign In With Email"
+                    btnTitle={I18n.t('authentication.signIn')}
                     isHighlight={true}
                     onPress={ () => login_with_email(inUserData.email, inUserData.password) } />
 
@@ -88,13 +89,17 @@ const LoginScreen = ({navigation}) => {
                 <TouchableOpacity 
                     onPress={ ()=>{navigation.navigate("ForgotPasswordScreen")} }
                     style={styles.centerItems} >
-                    <Text style={[styles.textStyle, styles.textUnderlineStyle, styles.bottomItems]}>Forgot Password?</Text>
+                    <Text style={[styles.textStyle, styles.textUnderlineStyle, styles.bottomItems]}>
+                        {I18n.t('authentication.forgotPassword')}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity 
                     onPress={ ()=>{navigation.navigate("SignupScreen")} }
                     style={styles.centerItems} >      
-                    <Text style={[styles.textStyle, styles.textUnderlineStyle]}>Don't have an account? Sign up one!</Text>
+                    <Text style={[styles.textStyle, styles.textUnderlineStyle]}>
+                        {I18n.t('authentication.noAccountSignUp')}
+                    </Text>
                 </TouchableOpacity>
             </View>
         </View>

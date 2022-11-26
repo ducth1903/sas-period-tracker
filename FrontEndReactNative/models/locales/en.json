@@ -1,0 +1,27 @@
+{
+    "appName": "Blitz Reading",
+    "authentication": {
+        "login": "Log In",
+        "signup": "Sign Up",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "signIn": "Sign In With Email",
+        "forgotPassword": "Forgot Password",
+        "noAccountSignUp": "Don't have an account? Sign up one!",
+        "firstName": "First Name",
+        "lastName": "lastName",
+        "dob": "Date of Birth",
+        "avgPeriodDays": "On average, how many days is your period?",
+        "agreement": "",
+        "resetPassword": "Reset Password"
+    },
+    "navigation": {
+        "home": "Home",
+        "highScores": "High Scores",
+        "settings": "Settings"
+    },
+    "home": {
+        "welcome": "Welcome to %{appName}!"
+    }
+}

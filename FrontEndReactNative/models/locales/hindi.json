@@ -1,0 +1,15 @@
+{
+    "appName": "Blitz Reading",
+    "authentication": {
+        "login": "Login",
+        "signup": "Join Us"
+    },
+    "navigation": {
+        "home": "Home",
+        "highScores": "High Scores",
+        "settings": "Settings"
+    },
+    "home": {
+        "welcome": "Welcome to %{appName}!"
+    }
+}
