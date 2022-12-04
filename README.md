@@ -4,6 +4,11 @@ Small Acts for Sustainability - Period Tracker App
 ## TODO:
 
 - CICD: [Code Pipeline](https://aws.amazon.com/getting-started/hands-on/continuous-deployment-pipeline/)
+- [React] bottom sheet transition smoother
+- [React] main calendar
+- [React] scrollable calendar
+- [React] resources page: markdown library is broken
+- [Python] deploy
 
 ## Frontend - React Native
 

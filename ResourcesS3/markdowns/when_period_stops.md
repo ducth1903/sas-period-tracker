@@ -1,5 +1,0 @@
-Women usually have periods for about forty years. After that, periods become irregular or less frequent. This is called *perimenopause*. This lasts for a few years as the body prepares to transition into menopause. **Menopause** is a time when you no longer are able to get pregnant or have a period, and is marked by when you have gone 12 months without having a period. The age range for menopause is between 45 to 58 years, but may happen earlier if you have never had children, smoke, or have certain health problems.  
-
-It is extremely important to support those who are going through perimenopause and menopause because the body is going through big hormonal changes. This could result in negative symptoms such as depression and mood swings that are difficult to deal with alone.  
-
-Besides menopause, periods also stop during pregnancy and breastfeeding. 

@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  mobile:
+    build: ./mobile
+    ports:
+      - 19000:19000   # ios / android
+      - 19006:19006   # web
+    volumes:
+      - ./mobile:/mobile
+    stdin_open: true  # docker run -i
+    tty: true         # docker run -t
+
+  server:
+    build: ./server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server:/server
+      
