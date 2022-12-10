@@ -1,2 +1,3 @@
 - Duc Tran ([ducth1903](https://github.com/ducth1903))
 - Dominic Rutkowski ([drutkowski](https://github.com/dominicrutk))
+- Paul Davis ([21pdavis](https://github.com/21pdavis))
