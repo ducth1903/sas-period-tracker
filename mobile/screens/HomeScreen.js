@@ -43,18 +43,16 @@ const HomeScreen = ({ props }) => {
         await fetch(`${API_URL}/users/${userId}`, { method: "GET" })
         .then(resp => resp.json())
         .then(data => {
-            // console.log('userObj = ', data);
             setUserObj(data);
             getImagePresignedUrl(data['profileImageId']);
             setIsLoading(false);
         })
-        .catch(error => {console.log(error)})
+        .catch(error => {console.log("[HomeScreen] fetchUserData() error:", error)})
     }
 
     // This will be run after the component is mounted and after every render cycle
     // i.e. whenever your functional component re-runs/re-renders
     useEffect(() => {
-        console.log('[HomeScreen] useEffect()')
         // to avoid state update on unmounted component issue
         // https://www.debuggr.io/react-update-unmounted-component/
         fetchUserData();

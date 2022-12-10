@@ -1,3 +1,7 @@
+# This project only: ignore mobile/Dockerfile since every user
+# will overwrite with their own local IP address
+mobile/Dockerfile
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

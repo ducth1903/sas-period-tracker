@@ -17,7 +17,6 @@ import { MODAL_TEMPLATE } from '../models/PeriodDate';
 
 // Loading env variables
 import {
-    // LOCAL_DEV_IP,
     REACT_APP_FIREBASE_API_KEY,
     REACT_APP_FIREBASE_AUTH_DOMAIN,
     REACT_APP_FIREBASE_PROJECT_ID,
