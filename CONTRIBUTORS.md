@@ -1,1 +1,2 @@
-- Duc Tran (ducth1903)
+- Duc Tran ([ducth1903](https://github.com/ducth1903))
+- Dominic Rutkowski ([drutkowski](https://github.com/dominicrutk))
