@@ -2,3 +2,4 @@
 - Dominic Rutkowski ([drutkowski](https://github.com/dominicrutk))
 - Paul Davis ([21pdavis](https://github.com/21pdavis))
 - Anshul Saha ([sheldor1510](https://github.com/sheldor1510))
+- Vi Doan ([vitdoan](https://github.com/vitdoan))
