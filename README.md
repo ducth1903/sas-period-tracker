@@ -14,7 +14,7 @@ Small Acts for Sustainability - Period Tracker App
 
 ## Getting Started
 
-- Prerequisites: 
+- Prerequisites:
   
   - Install Docker Desktop / Docker Engine
   
