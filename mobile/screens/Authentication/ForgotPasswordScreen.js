@@ -8,10 +8,10 @@ import i18n from '../../translations/i18n';
 
 const ForgotPasswordScreen = ({navigation}) => {
     const {
-        authStatus, 
-        setAuthStatus, 
-        authError, 
-        setAuthError, 
+        authStatus,
+        setAuthStatus,
+        authError,
+        setAuthError,
         resetPassword
     } = useContext(AuthContext);
     const [email, setEmail] = useState();
@@ -23,7 +23,7 @@ const ForgotPasswordScreen = ({navigation}) => {
 
     return (
         <View style={styles.container}>
-            <FormInput 
+            <FormInput
                 labelValue="Email"
                 placeholderText={i18n.t('authentication.email')}
                 iconType="user"
@@ -31,13 +31,13 @@ const ForgotPasswordScreen = ({navigation}) => {
                 keyboardType="email-address"
                 value={email}
                 onChangeText={(inEmail) => {setEmail(inEmail)}} />
-            <FormButton 
+            <FormButton
                 btnTitle={i18n.t('authentication.resetPassword')}
                 isHighlight={true}
                 onPress={ () => resetPassword(email) } />
-            { authError ? 
-            <Text style={[styles.centerItems, styles.errTextSyle]}>{authError}</Text> :
-            <Text style={[styles.centerItems, styles.statusTextSyle]}>{authStatus}</Text> }
+            { authError ?
+            <Text style={[styles.centerItems, styles.errTextStyle]}>{authError}</Text> :
+            <Text style={[styles.centerItems, styles.statusTextStyle]}>{authStatus}</Text> }
         </View>
     )
 }
@@ -53,10 +53,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 10,
     },
-    statusTextSyle: {
+    statusTextStyle: {
         color: 'green'
     },
-    errTextSyle: {
+    errTextStyle: {
         color: 'red'
     }
 })

@@ -31,13 +31,13 @@ const SignupScreen = ({navigation}) => {
     const [showDateTimePicker, setShowDateTimePicker] = useState(false);
     const handleDobPicker = (event, selectedDate) => {
         const currentDate = selectedDate || date
-        currentDateString = JSON.stringify(currentDate).slice(1).split('T')[0].split('-').join('/')
+        const currentDateString = JSON.stringify(currentDate).slice(1).split('T')[0].split('-').join('/')
         setInUserData({...inUserData, dob: currentDateString})
         setShowDateTimePicker( Platform.OS === 'ios' )
         setDate(currentDate)
     };
-    
-    handleConfirmPassword = (inConfirmPassword) => {
+
+    const handleConfirmPassword = (inConfirmPassword) => {
         // let inConfirmPassword = inConfirmPasswordEvent.nativeEvent.text;
         let isEqual = false;
         if (inConfirmPassword !== inUserData.password) {
@@ -49,7 +49,7 @@ const SignupScreen = ({navigation}) => {
         setInUserData({...inUserData, confirmPassword: inConfirmPassword, isValidPassword: isEqual})
     }
 
-    handleSignUpClicked = () => {
+    const handleSignUpClicked = () => {
         if (inUserData.email==='') {
             setAuthError("Email cannot be empty")
             return
@@ -73,7 +73,7 @@ const SignupScreen = ({navigation}) => {
         if (!inUserData.isValidPassword) {
             return
         }
-        
+
         signup(inUserData.email, inUserData.password, inUserData.firstName, inUserData.lastName, inUserData.dob, inUserData.avgDaysPerPeriod)
     }
 
@@ -83,7 +83,7 @@ const SignupScreen = ({navigation}) => {
 
     return (
         <View>
-            <FormInput 
+            <FormInput
                 labelValue="Email"
                 placeholderText={i18n.t('authentication.email')}
                 isRequired={true}
@@ -95,7 +95,7 @@ const SignupScreen = ({navigation}) => {
                     setInUserData({...inUserData, email: inEmail})
                 }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
-            <FormInput 
+            <FormInput
                 labelValue="Password"
                 placeholderText={i18n.t('authentication.password')}
                 isRequired={true}
@@ -108,7 +108,7 @@ const SignupScreen = ({navigation}) => {
                     setInUserData({...inUserData, password: inPassword})
                 }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
-            <FormInput 
+            <FormInput
                 labelValue="Confirm Password"
                 placeholderText={i18n.t('authentication.confirmPassword')}
                 isRequired={true}
@@ -123,12 +123,12 @@ const SignupScreen = ({navigation}) => {
             {inUserData.isValidPassword ? null :
             // <Animatable.View animation="fadeInLeft" duration={500}>
             <View>
-                <Text style={[styles.centerItems, styles.errTextSyle]}>Password does not match</Text>
+                <Text style={[styles.centerItems, styles.errTextStyle]}>Password does not match</Text>
             {/* </Animatable.View> */}
             </View>
             }
 
-            <FormInput 
+            <FormInput
                 labelValue="First Name"
                 placeholderText={i18n.t('authentication.firstName')}
                 isRequired={true}
@@ -139,7 +139,7 @@ const SignupScreen = ({navigation}) => {
                     setInUserData({...inUserData, firstName: inFirstName})
                 }}
                 onFocus={()=>{ setShowDateTimePicker(false) }} />
-            <FormInput 
+            <FormInput
                 labelValue="Last Name"
                 placeholderText={i18n.t('authentication.lastName')}
                 isRequired={true}
@@ -165,11 +165,11 @@ const SignupScreen = ({navigation}) => {
                     display="spinner"
                     timeZoneOffsetInMinutes={-60*24}
                     maximumDate={new Date()}
-                    onChange={handleDobPicker} 
+                    onChange={handleDobPicker}
                 />
             : null }
-            
-            <FormInput 
+
+            <FormInput
                 labelValue=""
                 placeholderText={i18n.t('authentication.avgPeriodDays')}
                 value={ inUserData.avgDaysPerPeriod }
@@ -188,16 +188,16 @@ const SignupScreen = ({navigation}) => {
             {authError ?
             // <Animatable.View animation="fadeInLeft" duration={500}>
             <View>
-                <Text style={[styles.centerItems, styles.errTextSyle]}>{authError}</Text>
+                <Text style={[styles.centerItems, styles.errTextStyle]}>{typeof(authError) === 'object' ? JSON.stringify(authError) : authError}</Text>
             </View>
             // </Animatable.View>
             : null}
 
             <Text style={styles.centerItems}>
-                By signing up, you agree to our 
-                <Text style={styles.underlineStyle} onPress={()=>Linking.openURL('https://google.com')}> Terms of Service </Text> 
-                and 
-                <Text style={styles.underlineStyle} onPress={()=>Linking.openURL('https://apple.com')}> Privacy Policy</Text>
+                By signing up, you agree to our
+                <Text style={styles.underlineStyle} onPress={()=>Linking.openURL('https://google.com')}>Terms of Service</Text>
+                and
+                <Text style={styles.underlineStyle} onPress={()=>Linking.openURL('https://apple.com')}>Privacy Policy</Text>
             </Text>
         </View>
     )
@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 20,
         padding: 35,
-        alignItems: "center",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
     dobTextStyle: {
         color: 'black'
     },
-    errTextSyle: {
+    errTextStyle: {
         color: 'red'
     }
 })
