@@ -5,7 +5,8 @@ import { createMaterialBottomTabNavigator  } from '@react-navigation/material-bo
 import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/HomeScreen';
-import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
+// import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
+import PeriodCalendarScreen from '../screens/NewPeriodCalendarScreen';
 import SettingScreen from '../screens/SettingScreen';
 import ResourceStack from '../screens/Resource/ResourceStack';
 
