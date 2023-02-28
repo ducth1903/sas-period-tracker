@@ -208,8 +208,12 @@ const PeriodCalendarScreen = ({ props }) => {
                             <TouchableHighlight
                                 className="flex w-14 h-14 rounded-full justify-center items-center bg-turquoise"
                                 onPress={() => console.log('Pressed Profile!')}
+                                underlayColor="#5B9F8F"
                             >
-                                <Text className="text-[18px] font-bold text-offwhite">A</Text> 
+                                {/* TODO: Dynamically get first initial */}
+                                <Text className="text-[18px] font-bold text-offwhite">
+                                    A
+                                </Text> 
                             </TouchableHighlight>
                         </View>
                     </View>
