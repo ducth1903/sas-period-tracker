@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
 
 import {
     DefaultTheme as NavigationDefaultTheme,
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
 
     const setToken = async (user) => {
         try {
-            await AsyncStorage.setItem(key = 'userData', value = JSON.stringify(user));
+            await AsyncStorage.setItem('userData', JSON.stringify(user));
         } catch (error) {
             console.log('[AuthProvider] setToken() failed: ', error);
         }
@@ -108,8 +108,8 @@ export const AuthProvider = ({ children }) => {
                                     setUserId(userCredential.user.uid);
                                 })
                                 .catch((error) => {
-                                    var errorCode = error.code;
-                                    var errorMessage = error.message;
+                                    const errorCode = error.code;
+                                    const errorMessage = error.message;
                                     setAuthError(errorMessage);
                                     // console.log("Error signing in...", errorCode, errorMessage);
                                 });
