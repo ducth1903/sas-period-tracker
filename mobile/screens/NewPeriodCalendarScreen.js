@@ -51,10 +51,10 @@ const PeriodCalendarScreen = ({ props }) => {
     const [snackBarText, setSnackBarText]       = useState("");
     const [statusBarHidden, setStatusBarHidden] = useState(false);
     const [refreshing, setRefreshing]           = useState(false);
-    const [date, setDate]                       = useState(new Date());
 
     // either "month" (default), "week", or "day"
-    const [dayWeekMonthSelector, setDayWeekMonthSelector]     = useState("month");
+    const [dayWeekMonthSelector, setDayWeekMonthSelector] = useState("month");
+    const [dwmDividersVisible, setDwmDividersVisible] = useState([true, false]);
     const dwmNonActive = "flex w-14 h-14 rounded-full justify-center items-center bg-turquoise";
     const dwmActive = "flex w-14 h-14 rounded-full justify-center items-center bg-teal"
 
@@ -161,7 +161,7 @@ const PeriodCalendarScreen = ({ props }) => {
         fetchPeriodData();
         fetchLastPeriod();
         fetchUserData();
-        setDate(new Date());
+        setCurrDateObject(new Date());
         setRefreshing(false);
     }, []);
 
@@ -171,8 +171,10 @@ const PeriodCalendarScreen = ({ props }) => {
         return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
     }
 
-    // For Calendar
-    
+    // Dynamic rendering
+    const renderDwmDividers = () => {
+        
+    }
 
     const renderCalendar = () => {
         let dots = []
@@ -226,6 +228,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                 console.log('Selected Day!');
                                 if (!(dayWeekMonthSelector == "day")) {
                                     setDayWeekMonthSelector("day");
+                                    setDwmDividersVisible([false, true]);
                                 }
                             }}
                             underlayColor="#5B9F8F"
@@ -235,12 +238,15 @@ const PeriodCalendarScreen = ({ props }) => {
                             </Text>
                         </TouchableHighlight>
 
+                        <View className={`${dwmDividersVisible[0] ? "border-offwhite" : "border-teal"} border-[0.3px] h-2/3`}></View>
+
                         <TouchableHighlight
                             className={`flex-1 rounded-[7px] items-center pt-1 pb-1 ${dayWeekMonthSelector == "week" ? "bg-seafoam" : "bg-teal"}`}
                             onPressIn={() => {
                                 console.log('Selected Week!');
                                 if (!(dayWeekMonthSelector == "week")) {
                                     setDayWeekMonthSelector("week");
+                                    setDwmDividersVisible([false, false]);
                                 }
                             }}
                             underlayColor="#5B9F8F"
@@ -250,12 +256,15 @@ const PeriodCalendarScreen = ({ props }) => {
                             </Text>
                         </TouchableHighlight>
                         
+                        <View className={`${dwmDividersVisible[1] ? "border-offwhite" : "border-teal"} border-[0.3px] h-2/3`}></View>
+
                         <TouchableHighlight
                             className={`flex-1 rounded-[7px] items-center pt-1 pb-1 ${dayWeekMonthSelector == "month" ? "bg-seafoam" : "bg-teal"}`}
                             onPressIn={() => {
                                 console.log('Selected Month!');
                                 if (!(dayWeekMonthSelector == "month")) {
                                     setDayWeekMonthSelector("month");
+                                    setDwmDividersVisible([true, false]);
                                 }
                             }}
                             underlayColor="#5B9F8F"
@@ -263,6 +272,23 @@ const PeriodCalendarScreen = ({ props }) => {
                             <Text className="text-[10px] font-normal text-offwhite">
                                 M
                             </Text>    
+                        </TouchableHighlight>
+                    </View>
+
+                    {/* Month & Year + Export Button View */}
+                    <View className="flex-row mt-4 px-1">
+                        <Text className="font-bold justify-start self-end text-[22px]">
+                            {currDateObject.toLocaleString('default', {month: 'long'})} {currDateObject.toLocaleString('default', {year: 'numeric'})}
+                        </Text>
+                        <View className="flex-1"></View>
+                        <TouchableHighlight
+                            className="rounded-[9px] self-start flex items-center justify-center bg-teal px-3 py-1"
+                            onPressIn={() => console.log('Pressed Export!')}
+                            underlayColor="#5B9F8F"
+                        >
+                            <Text className="text-offwhite text-xs">
+                                Export
+                            </Text>
                         </TouchableHighlight>
                     </View>
 
