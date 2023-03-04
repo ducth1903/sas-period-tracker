@@ -20,6 +20,7 @@ const getEnvVars = (env = Constants.manifest.releaseChannel) => {
     // This variable is set to true when react-native is running in Dev mode.
     // __DEV__ is true when run locally, but false when published.
     if (__DEV__) {
+        console.log(ENV);
         return ENV.dev;
     } else if (env === 'staging-v1') {
         // i.e. run the app via Apple TestFlight or an Android testing track
