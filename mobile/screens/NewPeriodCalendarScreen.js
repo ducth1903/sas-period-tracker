@@ -54,6 +54,7 @@ const PeriodCalendarScreen = ({ props }) => {
 
     // either "month" (default), "week", or "day"
     const [dayWeekMonthSelector, setDayWeekMonthSelector] = useState("month");
+    // dwm = Day Week Month
     const [dwmDividersVisible, setDwmDividersVisible] = useState([true, false]);
     const dwmNonActive = "flex w-14 h-14 rounded-full justify-center items-center bg-turquoise";
     const dwmActive = "flex w-14 h-14 rounded-full justify-center items-center bg-teal"
@@ -172,10 +173,14 @@ const PeriodCalendarScreen = ({ props }) => {
     }
 
     // Dynamic rendering
-    const renderDwmDividers = () => {
-        
+    const renderStandardLetter = (letter) => {
+        return (
+            <Text className="text-[11px] font-normal text-offwhite">
+                {letter}
+            </Text>
+        );
     }
-
+    
     const renderCalendar = () => {
         let dots = []
         // for (let i = 0; i < 3; i++) {
@@ -233,9 +238,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             }}
                             underlayColor="#5B9F8F"
                         >
-                            <Text className="text-[10px] font-normal text-offwhite">
-                                D
-                            </Text>
+                            {renderStandardLetter("D")}
                         </TouchableHighlight>
 
                         <View className={`${dwmDividersVisible[0] ? "border-offwhite" : "border-teal"} border-[0.3px] h-2/3`}></View>
@@ -251,9 +254,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             }}
                             underlayColor="#5B9F8F"
                         >
-                            <Text className="text-[10px] font-normal text-offwhite">
-                                W
-                            </Text>
+                            {renderStandardLetter("W")}
                         </TouchableHighlight>
                         
                         <View className={`${dwmDividersVisible[1] ? "border-offwhite" : "border-teal"} border-[0.3px] h-2/3`}></View>
@@ -269,9 +270,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             }}
                             underlayColor="#5B9F8F"
                         >
-                            <Text className="text-[10px] font-normal text-offwhite">
-                                M
-                            </Text>    
+                            {renderStandardLetter("M")}    
                         </TouchableHighlight>
                     </View>
 
@@ -282,7 +281,7 @@ const PeriodCalendarScreen = ({ props }) => {
                         </Text>
                         <View className="flex-1"></View>
                         <TouchableHighlight
-                            className="rounded-[9px] self-start flex items-center justify-center bg-teal px-3 py-1"
+                            className="flex rounded-[9px] self-start items-center justify-center bg-teal px-3 py-1"
                             onPressIn={() => console.log('Pressed Export!')}
                             underlayColor="#5B9F8F"
                         >
@@ -292,8 +291,21 @@ const PeriodCalendarScreen = ({ props }) => {
                         </TouchableHighlight>
                     </View>
 
-                    {/* Calendar */}
+                    {/* Days (S, M, T ... S) Header */}
+                    <View className="flex-row justify-center items-center rounded-[7px] bg-teal mt-5 py-1">
+                        {
+                            ["S", "M", "T", "W", "T", "F", "S"].map((letter) => {
+                                return (
+                                    <View className="flex-grow items-center">
+                                        {renderStandardLetter(letter)}
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
 
+                    {/* Calendar */}
+                    
 
             </ScrollView>
         </SafeAreaView>
