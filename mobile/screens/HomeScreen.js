@@ -1,17 +1,19 @@
-import React, {useContext, useEffect, useState, useRef, useMemo, useCallback} from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View, 
-    RefreshControl, 
-    ScrollView, 
-    SafeAreaView, 
-    Pressable, 
-    Platform, 
+import React, { useContext, useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    RefreshControl,
+    ScrollView,
+    SafeAreaView,
+    Pressable,
+    Platform,
     ImageBackground,
-    Animated
+    Animated,
+    TouchableHighlight,
+    Dimensions
 } from 'react-native';
-import { Feather } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -19,6 +21,7 @@ import BottomSheetCustomBackground from '../components/BottomSheetCustomBackgrou
 
 import { AuthContext } from '../navigation/AuthProvider';
 import FormButton from '../components/FormButton';
+import DateCircle from '../components/DateCircle';
 // import LoadingIndicator from '../components/LoadingIndicator';
 // import ProgressiveImage from '../components/ProgressiveImage';
 import i18n from '../translations/i18n';
@@ -28,26 +31,28 @@ import getEnvVars from '../environment';
 const { API_URL } = getEnvVars();
 
 const HomeScreen = ({ props }) => {
-    const { userId }                    = useContext(AuthContext);
-    const [userObj, setUserObj]         = useState(null);
-    const [isLoading, setIsLoading]     = useState(true);
-    const [refreshing, setRefreshing]   = useState(false);
-    const bottomSheetRef                = useRef(null);
-    const snapPoints                    = useMemo(() => ['30%'], []);
+    const { userId } = useContext(AuthContext);
+    const [userObj, setUserObj] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const bottomSheetRef = useRef(null);
+    const snapPoints = useMemo(() => ['30%'], []);
     const [profileImageUri, setProfileImageUri] = useState('../assets/profile_images/default_profile_women_1.jpg');
-    const fall                          = useRef(new Animated.Value(1)).current;    // useRef = mutable object
-    let fall_ctrl                       = 1;
+    const fall = useRef(new Animated.Value(1)).current;    // useRef = mutable object
+    let fall_ctrl = 1;
+    const [dateCircleArr, setDateCirleArr] = useState(null);
+    let dateCircleRotateDegree = 0;
 
     // Async function to fetch user data
     async function fetchUserData() {
         await fetch(`${API_URL}/users/${userId}`, { method: "GET" })
-        .then(resp => resp.json())
-        .then(data => {
-            setUserObj(data);
-            getImagePresignedUrl(data['profileImageId']);
-            setIsLoading(false);
-        })
-        .catch(error => {console.log("[HomeScreen] fetchUserData() error:", error)})
+            .then(resp => resp.json())
+            .then(data => {
+                setUserObj(data);
+                getImagePresignedUrl(data['profileImageId']);
+                setIsLoading(false);
+            })
+            .catch(error => { console.log("[HomeScreen] fetchUserData() error:", error) })
     }
 
     // This will be run after the component is mounted and after every render cycle
@@ -56,6 +61,22 @@ const HomeScreen = ({ props }) => {
         // to avoid state update on unmounted component issue
         // https://www.debuggr.io/react-update-unmounted-component/
         fetchUserData();
+
+        // Get number of days for this month and populate dateCircleArr
+        const numDaysInMonth = daysInMonth(1, 2023);
+        dateCircleRotateDegree = 360 / numDaysInMonth;
+        let tmp = [];
+        for (let i = 0; i < numDaysInMonth; i++) {
+            let rotateDeg = Math.round(dateCircleRotateDegree * i);
+            tmp.push(
+                <DateCircle inText={i + 1}
+                    outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
+                    innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }} />
+            );
+            // if (i == 2) break
+        }
+        console.log('here...', tmp)
+        setDateCirleArr(tmp);
 
         // return in useEffect() specifies how to "clean up" after effects
         // return () => mounted = false;
@@ -109,7 +130,7 @@ const HomeScreen = ({ props }) => {
 
     async function onPressTakingPhoto() {
         if (Platform.OS !== 'web') {
-            const {status} = await ImagePicker.requestCameraPermissionsAsync();
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
             if (status !== 'granted') {
                 alert('You may need to change it in Settings if you want to proceed!');
             }
@@ -128,14 +149,14 @@ const HomeScreen = ({ props }) => {
             // 2. Upload image to S3 using presigned URL
             postImagePresignedUrl(result.uri);
             updateUserImageInDB();
-            setProfileImageUri( result.uri );
+            setProfileImageUri(result.uri);
             bottomSheetRef.current?.close();
         }
     }
 
     async function onPressUploadPhoto() {
         if (Platform.OS !== 'web') {
-            const {status} = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== 'granted') {
                 alert('You may need to change it in Settings if you want to proceed!');
             }
@@ -154,22 +175,22 @@ const HomeScreen = ({ props }) => {
             // 2. Upload image to S3 using presigned URL
             postImagePresignedUrl(result.uri);
             updateUserImageInDB();
-            setProfileImageUri( result.uri );
+            setProfileImageUri(result.uri);
             bottomSheetRef.current?.close();
         }
     };
     // End Bottom sheet
-    
+
     // Utils
     const getImagePresignedUrl = async (inImageId) => {
         try {
             await fetch(`${API_URL}/imagepresigned/${inImageId}`, { method: "GET" })
-            .then(resp => resp.json())
-            .then(data => {
-                // console.log('presigned url = ', data);
-                setProfileImageUri(data['presignedUrl']);
-            })
-            .catch(error => console.log(error))
+                .then(resp => resp.json())
+                .then(data => {
+                    // console.log('presigned url = ', data);
+                    setProfileImageUri(data['presignedUrl']);
+                })
+                .catch(error => console.log(error))
         } catch {
             console.log('Error in getImagePresignedUrl', inImageId)
         }
@@ -177,12 +198,12 @@ const HomeScreen = ({ props }) => {
 
     const uploadImageViaPresignedUrl = async (imageUri, inPresignedUrl) => {
         // get image blob
-        const inImageUri= Platform.OS === 'ios' ? imageUri.replace('file://', '') : imageUri;
-        const response  = await fetch(inImageUri);
-        const blob      = await response.blob();
+        const inImageUri = Platform.OS === 'ios' ? imageUri.replace('file://', '') : imageUri;
+        const response = await fetch(inImageUri);
+        const blob = await response.blob();
         // const reader = new FileReader();
         // reader.readAsDataURL(blob)       // convert to base64-encoding?
-        
+
         await fetch(inPresignedUrl, {
             method: "PUT",
             body: blob,
@@ -190,20 +211,20 @@ const HomeScreen = ({ props }) => {
                 "Content-Type": "image/jpeg",
             }
         })
-        .catch(error => console.log(error))
+            .catch(error => console.log(error))
     }
 
     const postImagePresignedUrl = async (imageUri) => {
         let presignedUrl = ''
-        await fetch(`${API_URL}/imagepresigned/${userId}.jpg`, { 
+        await fetch(`${API_URL}/imagepresigned/${userId}.jpg`, {
             method: "POST",
         })
-        .then(resp => resp.json())
-        .then(data => {
-            presignedUrl = data['presignedUrl']
-        })
-        .catch(error => {console.log(error)})
-        
+            .then(resp => resp.json())
+            .then(data => {
+                presignedUrl = data['presignedUrl']
+            })
+            .catch(error => { console.log(error) })
+
         if (presignedUrl) {
             // Now that we have presigned URL -> upload image to S3
             uploadImageViaPresignedUrl(imageUri, presignedUrl)
@@ -215,20 +236,29 @@ const HomeScreen = ({ props }) => {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                "profileImageId"    : `${userId}.jpg`
+                "profileImageId": `${userId}.jpg`
             })
         })
-        .catch(error => {console.log(error)})
+            .catch(error => { console.log(error) })
+    }
+
+    // Month in JavaScript is 0-indexed (January is 0, February is 1, etc), 
+    // but by using 0 as the day it will give us the last day of the prior
+    // month. So passing in 1 as the month number will return the last day
+    // of January, not February
+    const daysInMonth = (month, year) => {
+        var tmp = new Date(year, month, 0).getDate();
+        return tmp
     }
 
     // End utils
-    
+
     // Main View return()
     if (isLoading) {
         console.log('[HomeScreen] loading...');
         return (
             <ScrollView
-                refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 contentContainerStyle={styles.scrollViewStyle}
             >
                 {/* <LoadingIndicator/> */}
@@ -246,69 +276,22 @@ const HomeScreen = ({ props }) => {
             </ScrollView>
         )
     }
+
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1">
             <ScrollView
-            refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/> }
-            contentContainerStyle={styles.scrollViewStyle}
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                contentContainerStyle={styles.scrollViewStyle}
             >
-                <Animated.View style={[
-                    styles.scrollViewStyle,
-                    {opacity: Animated.add(0.2, Animated.multiply(fall, 1.0))}
-                ]}>
-                    <Pressable onPress={() => {
-                        bottomSheetRef.current?.snapToIndex(0);
-                        // bottomSheetRef.current?.expand();
-                    }}>
-                        {/* <Avatar.Image
-                            source={{ uri: profileImageUri }}
-                            size={100}
-                            style={{margin: 10}} />
-                        <Feather name="camera" size={24} color="black" /> */}
-                        <ImageBackground
-                            source={{ uri: profileImageUri }}
-                            style={{margin: 10, height: 100, width: 100}}
-                            imageStyle={{borderRadius: 15}}
-                        >
-                            <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-                                <Feather name="camera" size={24} color="white"/>
-                            </View>
-                        </ImageBackground>
+                <TouchableHighlight className="
+                flex-1 items-center justify-center w-1/2 aspect-square absolute rounded-full bg-red-400">
+                    <Text className="text-white">Hello Circle</Text>
+                </TouchableHighlight>
 
-                        {/* <ProgressiveImage
-                            defaultImageSrc={ require('../assets/profile_images/default_img.png') }
-                            imageSrc={{ uri: profileImageUri }}
-                            style={{margin: 10, height: 100, width: 100}}
-                        /> */}
-
-                    </Pressable>
-                    
-                    <Text>{userObj['firstName']} {userObj['lastName']}</Text>
-                    <Text>Email: {userObj['email']}</Text>
-                    <Text>DoB: {userObj['dob']}</Text>
-                    <Text>Server IP: {API_URL}</Text>
-                    <Text>{i18n.t('home.welcome', {appName: 'SAS'})}</Text>
-                </Animated.View>
+                <View className="flex items-center justify-center">
+                    {dateCircleArr.map(ele => ele)}
+                </View>
             </ScrollView>
-            
-            <BottomSheet
-                ref={bottomSheetRef}
-                index={-1}
-                snapPoints={snapPoints}
-                onChange={handleSheetChanges}
-                style={styles.bottomSheetStyle}
-                backgroundComponent={BottomSheetCustomBackground}
-                enablePanDownToClose={true}
-            >
-                <FormButton 
-                    btnTitle="Take Photo"
-                    isHighlight={true} 
-                    onPress={ onPressTakingPhoto } />
-                <FormButton 
-                    btnTitle="Upload Photo"
-                    isHighlight={true} 
-                    onPress={ onPressUploadPhoto } />
-            </BottomSheet>
         </SafeAreaView>
     )
 }
@@ -323,7 +306,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
     },
 
     fab: {
