@@ -1,4 +1,4 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -10,6 +10,7 @@ import {
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
+import CalendarCircle from '../components/CalendarCircle';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -72,6 +73,9 @@ const PeriodCalendarScreen = ({ props }) => {
     const [currDateObject, setCurrDateObject] = useState(new Date());
     const [lastMarkedDate, setLastMarkDate]   = useState(null);
     const [fetchedHistory, setFetchedHistory] = useState([]);
+    const [calendarViewHeight, setCalendarViewHeight] = useState(0);
+    const [calendarViewWidth, setCalendarViewWidth] = useState(0);
+    const calendarViewRef = useRef(null);
 
     // For Collapsible History
     const [activeSections, setActiveSections] = useState([]);
@@ -168,8 +172,20 @@ const PeriodCalendarScreen = ({ props }) => {
 
     // Helpers
     const daysInThisMonth = () => {
-        let now = new Date();
-        return new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        return (currDateObject.getFullYear(), currDateObject.getMonth() + 1, 0).getDate();
+    }
+
+    const getFirstDay = () => {
+        let tenDaysBefore = new Date(currDateObject.getTime());
+        tenDaysBefore.setDate(tenDaysBefore.getDate() - 10);
+        console.log("ten days before date string: ", tenDaysBefore.toDateString());
+        return tenDaysBefore.getDate();
+    }
+
+    const getDateFromDiff = (diff) => {
+        let dayAtDiff = new Date(currDateObject.getTime());
+        dayAtDiff.setDate(dayAtDiff.getDate() + diff);
+        return dayAtDiff;
     }
 
     // Dynamic rendering
@@ -180,27 +196,53 @@ const PeriodCalendarScreen = ({ props }) => {
             </Text>
         );
     }
+
+    // const getCalendarViewSize = () => {
+    //     // console.log(Object.keys(calendarViewRef.current).filter(key => key.includes('e')))
+    //     // console.log(calendarViewRef.current)
+    //     setCalendarViewHeight(calendarViewRef.current.clientHeight);        
+    //     setCalendarViewWidth(calendarViewRef.current.clientWidth);
+    // }
+
+    // useEffect(() => {
+    //     getCalendarViewSize();
+    // }, [calendarViewRef])
     
     const renderCalendar = () => {
-        let dots = []
-        // for (let i = 0; i < 3; i++) {
-        for (let i = 0; i < 2; i++) {
-            dots.push(
-                <TouchableOpacity
-                        className="w-20 h-20 rounded-full flex justify-center items-center bg-offwhite"
-                        onPress={() => console.log('Pressed!')}
-                        underlayColor="#FFFFFF"
-                    >
-                        <Text>test</Text> 
-                    </TouchableOpacity>
-            )
-        }
-        return dots
+        let dayDiff = -16;
+        let calendarRowKey = "calendarRow";
+        let calendarCircleKey = "calendarCircle";
+
+        return (
+            <View className="mt-4" ref={calendarViewRef}>
+                {
+                    [...Array(9).keys()].map((rowN) => (
+                        <View className="flex-row my-1" key={calendarRowKey+rowN}>
+                            {
+                                [...Array(7).keys()].map((circleN) => {
+                                    const dateFromDiff = getDateFromDiff(dayDiff);
+                                    
+                                    let calendarCircle = <CalendarCircle
+                                        key={calendarCircleKey+(rowN * 7 + circleN)}
+                                        day={dateFromDiff.getDate()}
+                                        inCurrMonth={dateFromDiff.getMonth() === currDateObject.getMonth()}
+                                        borderFillColor = {dateFromDiff.getMonth() === currDateObject.getMonth() ? "salmon" : null}
+                                    />
+
+                                    dayDiff += 1;
+                                    return calendarCircle;
+                                })
+                            }
+                        </View>
+                    ))
+                }
+            </View>
+        )
     }
         
     return (
         <SafeAreaView className="flex-1 bg-offwhite">
-            <ScrollView className="p-[35px]">
+            <ScrollView className="flex p-[35px]" nestedScrollEnabled={true}>
                     {/* Header */}
                     <View className="flex-row items-center">
                         {/* invisible View to be able to center text  in flex row*/}
@@ -294,10 +336,10 @@ const PeriodCalendarScreen = ({ props }) => {
                     {/* Days (S, M, T ... S) Header */}
                     <View className="flex-row justify-center items-center rounded-[7px] bg-teal mt-5 py-1">
                         {
-                            ["S", "M", "T", "W", "T", "F", "S"].map((letter) => {
+                            ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"].map((day) => {
                                 return (
-                                    <View className="flex-grow items-center">
-                                        {renderStandardLetter(letter)}
+                                    <View className="flex-grow items-center" key={day}>
+                                        {renderStandardLetter(day[0])}
                                     </View>
                                 )
                             })
@@ -305,8 +347,7 @@ const PeriodCalendarScreen = ({ props }) => {
                     </View>
 
                     {/* Calendar */}
-                    
-
+                    {renderCalendar()}
             </ScrollView>
         </SafeAreaView>
     );
