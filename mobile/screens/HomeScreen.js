@@ -63,7 +63,7 @@ const HomeScreen = ({ props }) => {
         fetchUserData();
 
         // Get number of days for this month and populate dateCircleArr
-        const numDaysInMonth = daysInMonth(1, 2023);
+        const numDaysInMonth = daysInMonth();
         dateCircleRotateDegree = 360 / numDaysInMonth;
         let tmp = [];
         for (let i = 0; i < numDaysInMonth; i++) {
@@ -246,9 +246,9 @@ const HomeScreen = ({ props }) => {
     // but by using 0 as the day it will give us the last day of the prior
     // month. So passing in 1 as the month number will return the last day
     // of January, not February
-    const daysInMonth = (month, year) => {
-        var tmp = new Date(year, month, 0).getDate();
-        return tmp
+    const daysInMonth = () => {
+        let now = new Date();
+        return new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
     }
 
     // End utils
@@ -289,7 +289,7 @@ const HomeScreen = ({ props }) => {
                 </TouchableHighlight>
 
                 <View className="flex items-center justify-center">
-                    {dateCircleArr.map(ele => ele)}
+                    {dateCircleArr}
                 </View>
             </ScrollView>
         </SafeAreaView>
