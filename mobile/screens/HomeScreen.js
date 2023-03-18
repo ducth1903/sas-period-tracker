@@ -13,7 +13,7 @@ import {
     TouchableHighlight,
     Dimensions
 } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 // import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import BottomSheet from '@gorhom/bottom-sheet';
@@ -41,6 +41,7 @@ const HomeScreen = ({ props }) => {
     const fall = useRef(new Animated.Value(1)).current;    // useRef = mutable object
     let fall_ctrl = 1;
     const [dateCircleArr, setDateCirleArr] = useState(null);
+    const [todayStr, setTodayStr] = useState('');
     let dateCircleRotateDegree = 0;
 
     // Async function to fetch user data
@@ -75,9 +76,9 @@ const HomeScreen = ({ props }) => {
             );
             // if (i == 2) break
         }
-        console.log('here...', tmp)
+        // console.log('here...', tmp)
         setDateCirleArr(tmp);
-
+        setTodayStr(currentDate());
         // return in useEffect() specifies how to "clean up" after effects
         // return () => mounted = false;
     }, []);
@@ -251,10 +252,14 @@ const HomeScreen = ({ props }) => {
         return new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
     }
 
+    const currentDate = () => {
+        let [month, day, year] = (new Date()).toString().split(' ').splice(1,3)
+        return day + ' ' + month + ', ' + year;
+    }
     // End utils
 
     // Main View return()
-    if (isLoading) {
+    if (!isLoading) {
         console.log('[HomeScreen] loading...');
         return (
             <ScrollView
@@ -281,15 +286,32 @@ const HomeScreen = ({ props }) => {
         <SafeAreaView className="flex-1">
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                contentContainerStyle={styles.scrollViewStyle}
             >
-                <TouchableHighlight className="
-                flex-1 items-center justify-center w-1/2 aspect-square absolute rounded-full bg-red-400">
-                    <Text className="text-white">Hello Circle</Text>
-                </TouchableHighlight>
+                <View className="p-6 pb-2 gap-y-5">
+                    <View className="flex flex-row justify-between items-center">
+                        <View className="bg-dullgray self-center px-4 py-1 rounded-lg">
+                            <Text className="text-lg font-semibold text-teal">{todayStr}</Text>
+                        </View>
+                        <MaterialCommunityIcons name="account-circle-outline" size={24} color="black" />
+                    </View>
+                    <View 
+                        className="border-[0.8px] px-4 py-2 rounded-2xl"
+                        style={styles.textbox}
+                        >
+                        <Text className="text-teal text-xs">
+                        It seems that you are having an above average blood flow, we recommend you to get some tips on the education page: Blood Flow Control
+                        </Text>
+                    </View>
+                </View>
 
-                <View className="flex items-center justify-center">
-                    {dateCircleArr}
+                <View className="min-h-[85vw] flex-1 justify-center items-center">
+                    <TouchableHighlight className="
+                    flex-1 items-center justify-center h-3/5 aspect-square absolute rounded-full bg-red-400 border-[15px] border-offwhite/50">
+                        <Text className="text-white">Hello Circle</Text>
+                    </TouchableHighlight>
+                    <View className="flex items-center justify-center">
+                        {dateCircleArr}
+                    </View>
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -347,6 +369,10 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
         elevation: 9,
+    },
+
+    textbox: {
+        borderColor: '#00394E',
     }
 })
 

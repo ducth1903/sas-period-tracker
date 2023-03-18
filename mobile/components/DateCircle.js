@@ -8,9 +8,9 @@ const DateCircle = ({ inText, outerRotate, innerRotate }) => {
         <TouchableHighlight
             className={`w-1/2 aspect-square absolute`}
             style={outerRotate} >
-            <View className="flex-none w-6 aspect-square bg-cyan-800/50 rounded-full items-center justify-center"
+            <View className="-m-1.5 bg-teal/20 flex-none w-5 aspect-square rounded-full items-center justify-center"
                 style={innerRotate}>
-                <Text className="text-black">{inText}</Text>
+                <Text className="text-black text-xs">{inText}</Text>
             </View>
         </TouchableHighlight>
     )
