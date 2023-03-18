@@ -42,6 +42,7 @@ const HomeScreen = ({ props }) => {
     let fall_ctrl = 1;
     const [dateCircleArr, setDateCirleArr] = useState(null);
     const [todayStr, setTodayStr] = useState('');
+    const [currentDay, setCurrentDay] = useState(1);
     let dateCircleRotateDegree = 0;
 
     // Async function to fetch user data
@@ -71,14 +72,18 @@ const HomeScreen = ({ props }) => {
             let rotateDeg = Math.round(dateCircleRotateDegree * i);
             tmp.push(
                 <DateCircle inText={i + 1}
-                    outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
-                    innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }} />
+                outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
+                innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }} 
+                currentDay={currentDay}
+                key={i+1}
+                />
             );
             // if (i == 2) break
         }
         // console.log('here...', tmp)
         setDateCirleArr(tmp);
         setTodayStr(currentDate());
+        setCurrentDay(new Date().getDate());
         // return in useEffect() specifies how to "clean up" after effects
         // return () => mounted = false;
     }, []);
@@ -253,13 +258,13 @@ const HomeScreen = ({ props }) => {
     }
 
     const currentDate = () => {
-        let [month, day, year] = (new Date()).toString().split(' ').splice(1,3)
+        let [month, day, year] = (new Date()).toString().split(' ').splice(1,3);
         return day + ' ' + month + ', ' + year;
     }
     // End utils
 
     // Main View return()
-    if (!isLoading) {
+    if (isLoading) {
         console.log('[HomeScreen] loading...');
         return (
             <ScrollView
@@ -297,7 +302,7 @@ const HomeScreen = ({ props }) => {
                     <View 
                         className="border-[0.8px] px-4 py-2 rounded-2xl"
                         style={styles.textbox}
-                        >
+                    >
                         <Text className="text-teal text-xs">
                         It seems that you are having an above average blood flow, we recommend you to get some tips on the education page: Blood Flow Control
                         </Text>
@@ -306,8 +311,8 @@ const HomeScreen = ({ props }) => {
 
                 <View className="min-h-[85vw] flex-1 justify-center items-center">
                     <TouchableHighlight className="
-                    flex-1 items-center justify-center h-3/5 aspect-square absolute rounded-full bg-red-400 border-[15px] border-offwhite/50">
-                        <Text className="text-white">Hello Circle</Text>
+                    flex-1 items-center justify-center h-3/5 aspect-square absolute rounded-full bg-salmon border-[15px] border-offwhite/50">
+                        <Text className="text-slate text-xl font-semibold">Hello Circle</Text>
                     </TouchableHighlight>
                     <View className="flex items-center justify-center">
                         {dateCircleArr}
