@@ -19,7 +19,8 @@ const FormInput = ({ labelValue, placeholderText, iconType, color, isRequired=fa
                 <TextInput 
                     style={styles.textInputStyle}
                     value={labelValue} 
-                    placeholder={isRequired ? placeholderText+"*" : placeholderText} 
+                    placeholder={isRequired ? placeholderText : placeholderText} 
+                    placeholderTextColor="#272727CC"
                     {...restProps} />
                 }
                 { isPassword ? 
@@ -40,18 +41,22 @@ export const styles = StyleSheet.create({
 
     viewStyle: {
         flexDirection: 'row',
-        margin: 10,
+        height: 70,
+        margin: 8,
         paddingTop: 10,
         paddingBottom: 5,
         // flex: 1,
-        padding: 10,
+        padding: 35,
         borderWidth: 2,
-        borderColor: '#F59B3F',
-        borderRadius: 9,
+        borderColor: '#EDEEE0',
+        backgroundColor: '#EDEEE0',
+        borderRadius: 50,
     },
 
     textInputStyle: {
         flex: 1,
+        color: '#000000',
+        fontSize: 16
         // padding: 10,
         // borderWidth: 2,
         // borderColor: '#F59B3F',
