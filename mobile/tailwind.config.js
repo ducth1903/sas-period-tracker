@@ -16,18 +16,19 @@ module.exports = {
   // theme is used to define the colors, fonts, and other styles that are used throughout the app
   // example: <View className="bg-teal border-2 border-salmon"> <-- teal and salmon will map to the colors values defined below
   theme: {
-    colors: {
-      'gray': '#D1D5DB',
-      'offwhite': '#FEFFF4',
-      'lavenderlight': '#DDD6F6',
-      'lavender': '#C0B3F1',
-      'salmon': '#ff7f73',
-      'teal': '#00394E',
-      'turquoise': '#005C6A',
-      'seafoam': '#5B9F8F',
-      'greydark': '#272727',
-    },
-    extend: {},
+    extend: {
+      colors: {
+        'gray': '#D1D5DB',
+        'offwhite': '#FEFFF4',
+        'lavenderlight': '#DDD6F6',
+        'lavender': '#C0B3F1',
+        'salmon': '#ff7f73',
+        'teal': '#00394E',
+        'turquoise': '#005C6A',
+        'seafoam': '#5B9F8F',
+        'greydark': '#272727',
+      }
+    }
   },
 
   // plugins are general addons to extend tailwind
