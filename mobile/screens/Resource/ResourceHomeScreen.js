@@ -9,10 +9,12 @@ import {
     StatusBar,
     Image,
     ScrollView,
+    TouchableOpacity
 } from 'react-native';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
 import { MARKDOWN_S3_URL } from '@env';
+import { useNavigation } from '@react-navigation/native';
 
 const mockData = [
     {
@@ -144,7 +146,9 @@ const ResourceScreen = ({ navigation, props }) => {
             <ScrollView>
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>Education</Text>
-                    <Image source={require('../../assets/icons/search.png')} style={styles.headerSearchIcon}/>
+                    <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                        <Image source={require('../../assets/icons/search.png')} style={styles.headerSearchIcon}/>
+                    </TouchableOpacity>
                 </View>
                 <Text style={styles.subHeaderText}>Saved</Text>
                 <FlatList
