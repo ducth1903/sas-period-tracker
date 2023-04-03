@@ -1,0 +1,30 @@
+<svg width="69" height="67" viewBox="0 0 69 67" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="1.9375" y="1.48816" width="66" height="64" rx="11" fill="#FEFFF4" />
+    <path d="M28.1211 31.5142C28.1211 31.5142 30.5627 24.755 32.8755 31.5142" stroke="#5B9F8F"
+        stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round" />
+    <path d="M36.5449 31.5142C36.5449 31.5142 38.9865 24.755 41.2993 31.5142" stroke="#5B9F8F"
+        stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round" />
+    <path
+        d="M29.4941 36.5262H40.0725C40.0725 36.5262 38.7565 41.0958 34.7861 40.5302C30.8157 39.9646 30.6869 38.1502 29.4997 36.5262H29.4941Z"
+        stroke="#5B9F8F" stroke-width="1.96" stroke-linecap="round" stroke-linejoin="round" />
+    <path
+        d="M34.9375 44.7078C41.1324 44.7078 46.1543 39.6858 46.1543 33.491C46.1543 27.2961 41.1324 22.2742 34.9375 22.2742C28.7426 22.2742 23.7207 27.2961 23.7207 33.491C23.7207 39.6858 28.7426 44.7078 34.9375 44.7078Z"
+        stroke="#5B9F8F" stroke-width="1.96" stroke-miterlimit="10" />
+    <path d="M20.4385 33.2838H14.8105" stroke="#5B9F8F" stroke-width="1.96" stroke-miterlimit="10"
+        stroke-linecap="round" />
+    <path d="M35.0039 18.8638V13.387" stroke="#5B9F8F" stroke-width="1.96" stroke-miterlimit="10"
+        stroke-linecap="round" />
+    <path d="M45.6445 23.383L49.5869 19.4406" stroke="#5B9F8F" stroke-width="1.96"
+        stroke-miterlimit="10" stroke-linecap="round" />
+    <path d="M49.5859 33.2838H55.0627" stroke="#5B9F8F" stroke-width="1.96" stroke-miterlimit="10"
+        stroke-linecap="round" />
+    <path d="M25.1028 22.8062L21.166 18.8638" stroke="#5B9F8F" stroke-width="1.96"
+        stroke-miterlimit="10" stroke-linecap="round" />
+    <path d="M35.0039 53.5894V48.1125" stroke="#5B9F8F" stroke-width="1.96" stroke-miterlimit="10"
+        stroke-linecap="round" />
+    <path d="M20.4395 47.1214L24.3818 43.179" stroke="#5B9F8F" stroke-width="1.96"
+        stroke-miterlimit="10" stroke-linecap="round" />
+    <path d="M49.5869 47.1214L45.6445 43.179" stroke="#5B9F8F" stroke-width="1.96"
+        stroke-miterlimit="10" stroke-linecap="round" />
+    <rect x="1.9375" y="1.48816" width="66" height="64" rx="11" stroke="#5B9F8F" stroke-width="2" />
+</svg>
