@@ -4,6 +4,7 @@ import {
     Modal,
     SafeAreaView,
     ScrollView,
+    Systrace,
     Text,
     TouchableHighlight,
     View,
@@ -12,6 +13,7 @@ import {
 import { AuthContext } from '../navigation/AuthProvider'; 
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
 import CalendarCircle from '../components/CalendarCircle';
+import WeekColumn from '../components/WeekColumn';
 
 import TimelineIcon from '../assets/icons/timeline.svg';
 
@@ -77,6 +79,9 @@ const PeriodCalendarScreen = ({ props }) => {
     // For Collapsible History
     const [activeSections, setActiveSections] = useState([]);
 
+    // TODO: translations
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
     async function fetchUserData() {
         await fetch(`${API_URL}/users/${userId}`, { method: "GET" })
         .then(resp => resp.json())
@@ -145,6 +150,171 @@ const PeriodCalendarScreen = ({ props }) => {
         .catch(error => {console.log(error)})
     }
 
+    const getDateFromDiff = (diff, date=currDateObject) => {
+        let dayAtDiff = new Date(date.getTime());
+        dayAtDiff.setDate(dayAtDiff.getDate() + diff);
+        return dayAtDiff;
+    }
+
+    // TODO: make async and actually fetch
+    function fetchNotesForDate(date) {
+        return "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit";
+    }
+
+    // fetch methods here will return an object for each day in the week
+    const fetchWeekFlow = (startDate) => {
+        // TODO: ACTUALLY FETCH FROM BACKEND
+        // returning it in this object format will take some manipulation of the data
+        return {
+            sunday: "light",
+            monday: "medium",
+            tuesday: "heavy",
+            wednesday: "medium",
+            thursday: "notsure",
+            friday: "light",
+            saturday: "none"
+        };
+    }
+    
+    const fetchWeekDischarge = (startDate) => {
+        // TODO: ACTUALLY FETCH FROM BACKEND
+        
+        return {
+            sunday: "stringy",
+            monday: "watery",
+            tuesday: "transparent",
+            wednesday: "creamy",
+            thursday: "clumpy",
+            friday: "watery",
+            saturday: "sticky"
+        };
+    }
+
+    const fetchWeekSymptoms = (startDate) => {
+        // TODO: ACTUALLY FETCH FROM BACKEND
+        
+        return {
+            sunday: {
+                cravings: true,
+                backache: true,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: false,
+                nausea: false,
+            },
+            monday: {
+                cravings: false,
+                backache: false,
+                tenderBreasts: true,
+                headache: true,
+                fatigue: false,
+                nausea: false,
+            },
+            tuesday: {
+                cravings: false,
+                backache: false,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: true,
+                nausea: true,
+            },
+            wednesday: {
+                cravings: false,
+                backache: false,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: false,
+                nausea: false,
+            },
+            thursday:{
+                cravings: false,
+                backache: false,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: false,
+                nausea: false,
+            },
+            friday: {
+                cravings: false,
+                backache: false,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: false,
+                nausea: false,
+            },
+            saturday:{
+                cravings: false,
+                backache: false,
+                tenderBreasts: false,
+                headache: false,
+                fatigue: false,
+                nausea: false,
+            }
+        };
+    }
+
+    const fetchWeekMood = (startDate) => {
+        // TODO: ACTUALLY FETCH FROM BACKEND
+        return {
+            sunday: {
+                excited: true,
+                happy: false,
+                sensitive: false,
+                sad: false,
+                anxious: false,
+                angry: false
+            },
+            monday: {
+                excited: false,
+                happy: true,
+                sensitive: false,
+                sad: false,
+                anxious: false,
+                angry: false
+            },
+            tuesday: {
+                excited: false,
+                happy: false,
+                sensitive: true,
+                sad: false,
+                anxious: false,
+                angry: false
+            },
+            wednesday: {
+                excited: false,
+                happy: false,
+                sensitive: true,
+                sad: false,
+                anxious: false,
+                angry: false
+            },
+            thursday:{
+                excited: false,
+                happy: false,
+                sensitive: false,
+                sad: true,
+                anxious: false,
+                angry: false
+            },
+            friday: {
+                excited: false,
+                happy: false,
+                sensitive: false,
+                sad: false,
+                anxious: true,
+                angry: false
+            },
+            saturday:{
+                excited: true,
+                happy: false,
+                sensitive: false,
+                sad: false,
+                anxious: false,
+                angry: true
+            }
+        };
+    };
+
     const getKeyFromPeriodHistory = () => {
         return fetchedHistory.map((ele) => ele['year_month'])
     }
@@ -174,20 +344,38 @@ const PeriodCalendarScreen = ({ props }) => {
         return new Date(currDateObject.getFullYear() + yearDiff, currDateObject.getMonth() + monthDiff + 1, 0).getDate();
     }
 
-    const getFirstDay = () => {
-        let tenDaysBefore = new Date(currDateObject.getTime());
-        tenDaysBefore.setDate(tenDaysBefore.getDate() - 10);
-        console.log("ten days before date string: ", tenDaysBefore.toDateString());
-        return tenDaysBefore.getDate();
+    let flag = true;
+    function getWeekDates() {
+        let currDayOfWeek = currDateObject.getDay();
+        let daysSinceSunday = currDayOfWeek === 0 ? 0 : currDayOfWeek;
+        let sundayDate = new Date(currDateObject.getFullYear(), currDateObject.getMonth(), currDateObject.getDate() - daysSinceSunday);
+
+        return [...Array(7).keys()].map((d) => getDateFromDiff(d, sundayDate));
     }
 
-    const getDateFromDiff = (diff) => {
-        let dayAtDiff = new Date(currDateObject.getTime());
-        dayAtDiff.setDate(dayAtDiff.getDate() + diff);
-        return dayAtDiff;
+    const getCurrWeekRangeString = () => {
+        const weekDates = getWeekDates();
+
+        const firstDateOfWeek = weekDates[0];
+        const lastDateOfWeek = weekDates[6];
+        
+        const first = {
+            day: firstDateOfWeek.getDate(),
+            monthNum: firstDateOfWeek.getMonth(),
+            monthString: firstDateOfWeek.toLocaleString('default', {month: 'short'}),
+            year: firstDateOfWeek.getFullYear()
+        }
+        
+        const last = {
+            day: lastDateOfWeek.getDate(),
+            monthNum: lastDateOfWeek.getMonth(),
+            monthString: lastDateOfWeek.toLocaleString('default', {month: 'short'}),
+            year: lastDateOfWeek.getFullYear()
+        }
+
+        return `${first.monthString} ${first.day} - ${first.monthNum !== last.monthNum ? last.monthString + ' ' : ''}${last.day}, ${first.year}${first.year === last.year ? '' : ' - ' + last.year}`;
     }
 
-    // const getCalendarViewSize = () => {
     //     // console.log(Object.keys(calendarViewRef.current).filter(key => key.includes('e')))
     //     // console.log(calendarViewRef.current)
     //     setCalendarViewHeight(calendarViewRef.current.clientHeight);        
@@ -209,46 +397,108 @@ const PeriodCalendarScreen = ({ props }) => {
         const weekCount = Math.ceil(daysLeftToRender / 7);
         
         return (
-            <View className="mt-4" ref={calendarViewRef}>
-                <Text className="text-[20px] font-bold mb-3">
-                    {/* TODO: get dynamic month name */}
-                    March
-                </Text>
-                
-                {
-                    [...Array(weekCount).keys()].map((rowN) => {
-                        return (
-                            <View className="flex-row my-1" key={calendarRowKey+rowN}>
-                                {
-                                    [...Array(daysLeftToRender >= 7 ? 7 : daysLeftToRender).keys()].map((circleN) => {
-                                        let calendarCircle = (
-                                            <CalendarCircle
-                                                key={calendarCircleKey+(rowN * 7 + circleN)}
-                                                day={dayNum}
-                                                // TODO: Dynamic fillColor and fillPercent based on user period data
-                                                fillColor="salmon"
-                                                flowLevel="heavy"
-                                            />
-                                        )
-    
-                                        dayNum += 1;
-                                        daysLeftToRender -= 1;
-                                        return calendarCircle;
-                                    })
-                                }
-                            </View>
-                        )}
-                    )
-                }
-               
+            <View className="flex-col mt-4" ref={calendarViewRef}>
+                <View>
+                    <Text className="text-[20px] font-bold mb-3">
+                        {currDateObject.toLocaleString('default', { month: 'long' })}
+                    </Text>
+                    {
+                        [...Array(weekCount).keys()].map((rowN) => {
+                            return (
+                                <View className="flex-row my-1" key={calendarRowKey+rowN}>
+                                    {
+                                        [...Array(daysLeftToRender >= 7 ? 7 : daysLeftToRender).keys()].map((circleN) => {
+                                            let calendarCircle = (
+                                                <CalendarCircle
+                                                    key={calendarCircleKey+(rowN * 7 + circleN)}
+                                                    day={dayNum}
+                                                    // TODO: Dynamic fillColor and fillPercent based on user period data
+                                                    // borderFillColor="salmon"
+                                                    fillColor="salmon"
+                                                    flowLevel="none"
+                                                />
+                                            )
+        
+                                            dayNum += 1;
+                                            daysLeftToRender -= 1;
+                                            return calendarCircle;
+                                        })
+                                    }
+                                </View>
+                            )}
+                        )
+                    }
+                </View>
             </View>
         )
     }
+
+    const renderWeekly = () => {
+        const weekData = {
+            flow: fetchWeekFlow(),
+            discharge: fetchWeekDischarge(),
+            symptoms: fetchWeekSymptoms(),
+            mood: fetchWeekMood()
+        }
+        
+        return (
+            <View className="flex flex-col">
+                <View className="flex-row">
+                    {
+                        weekDays.map(s => s.toLowerCase()).map((day) => 
+                            <WeekColumn 
+                                flow={weekData.flow[day]}
+                                discharge={weekData.discharge[day]}
+                                symptoms={weekData.symptoms[day]}
+                                moods={weekData.mood[day]}
+                                day={day}
+                                key={`weekcolumn-${day}`}
+                            />
+                        )
+                    }
+                </View>
+                
+                <Text className="text-[20px] font-bold mt-14 mb-2">
+                    Notes
+                </Text>
+
+                {
+                    getWeekDates().map((date) => 
+                        <View key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}>
+                            <Text className="text-[18px] font-bold mt-4">{`${weekDays[date.getDay()]}, ${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`}</Text>
+                            <View className="items-center justify-center border-2 min-h-[112px] border-turquoise rounded-xl mt-1.5 px-4 py-8">
+                                <Text className="text-teal">{fetchNotesForDate()}</Text>
+                            </View>
+                        </View>
+                    )
+                }
+
+            </View>
+        );
+    }
+
+    const renderDaily = () => {
+        return null;
+    }
+    
+    const renderMwdContent = () => {
+        {/* TODO: Separate these components out into separate files in the components folder */}
+        switch (monthWeekDaySelector) {
+            case "month":
+                return renderCalendar();
+            case "week":
+                return renderWeekly();
+            case "day": 
+                return renderDaily();
+        }
+    }
         
     // TODO: Satoshi Font
+    // TODO: Add padding at bottom for navigation bar
     return (
         <SafeAreaView className="flex-1 bg-offwhite">
             <ScrollView className="flex p-[35px]" nestedScrollEnabled={true}>
+                <View className="mb-14">
                     {/* Header */}
                     <View className="flex-row justify-center items-center">
                         <Text className="text-[32px] font-bold">
@@ -337,11 +587,24 @@ const PeriodCalendarScreen = ({ props }) => {
                     </Modal>
 
                     {/* Month & Year + Trends Button View */}
-                    <View className="flex-row mt-2 px-1">
-                        <Text className="font-bold justify-start self-end text-[22px]">
-                            {currDateObject.toLocaleString('default', {year: 'numeric'})}
-                        </Text>
-                        <View className="flex-1"></View>
+                    <View className="flex-row mt-2">
+                        <View className="flex-grow justify-end shrink mr-1">
+                            <Text adjustsFontSizeToFit={true} numberOfLines={1} className="font-bold text-[22px]">
+                                {
+                                    monthWeekDaySelector == "month" ? 
+                                    currDateObject.toLocaleString('default', {year: 'numeric'})
+                                    :
+                                    // need to get date of the most recent sunday
+                                    // currDateObject.toLocaleString('default', {month: 'long', year: 'numeric'})
+                                    monthWeekDaySelector == "week" ?
+                                    // "test"
+                                    getCurrWeekRangeString()
+                                    :
+                                    `${currDateObject.toLocaleString('default', {month: 'long', day: 'numeric'})}, ${currDateObject.toLocaleString('default', {year: 'numeric'})}`
+                                }
+                            </Text>
+                        </View>
+                        {/* <View className="flex-1"></View> */}
                         <TouchableHighlight
                             className="flex rounded-[50px] self-start items-center justify-center bg-turquoise px-3 py-1"
                             onPress={() => {
@@ -374,9 +637,22 @@ const PeriodCalendarScreen = ({ props }) => {
                         }
                     </View>
 
-                    {/* Calendar */}
+                    {/* Main content (calendaar, weekly view, or daily view) */}
+                    {renderMwdContent()}
 
-                    {renderCalendar()}
+                    {/* Debug Button */}
+                    {/* <TouchableHighlight
+                        className="flex rounded-[50px] self-start items-center justify-center bg-turquoise px-3 py-1 mt-4"
+                        onPressIn={() => {
+                        }}
+                    >
+                        <View className="flex-row items-center">
+                            <Text className="text-offwhite text-[14px] font-bold py-1">
+                                Debug Button
+                            </Text>
+                        </View>
+                    </TouchableHighlight> */}
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
