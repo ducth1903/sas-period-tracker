@@ -66,8 +66,6 @@ const mockData = [
     }
 ]
 
-
-
 const PurpleListItem = ({ item }) => {
     return (
       <View style={styles.purpleBox}>
@@ -76,141 +74,26 @@ const PurpleListItem = ({ item }) => {
     );
 };
 
-const ResourceScreen = ({ navigation, props }) => {
-    const resource_template = new RESOURCE_TEMPLATE();
-    const [resourcesJson, setResourcesJson] = useState({});
-    const [refreshing, setRefreshing] = useState(false);
-    // const { userId } = useContext(AuthContext);
-
-    async function fetchResoucesJson() {
-        await fetch(MARKDOWN_S3_URL, { method: "GET" })
-        .then(resp => resp.json())
-        .then(data => {
-            // console.log('[ResourceHomeScreen] fetchResourcesJson(): ', data);
-            setResourcesJson(data)
-        })
-        .catch(error => {console.log(error)})
-    }
-
-    useEffect(()=>{
-        fetchResoucesJson();
-    }, []);
-
-    const RedListItem = ({ item }) => {
-        return (
-            <>
-                {item.text == 'See All' ? (
-                    <Pressable onPress={() => navigation.navigate('ResourceSaved')}>
-                        <View style={styles.redBox}>
-                            <Text style={styles.redBoxText}>{item.text}</Text>
-                        </View>
-                    </Pressable>
-                ) : (
-                    <View style={styles.redBox}>
-                        <Text style={styles.redBoxText}>{item.text}</Text>
-                    </View>
-                )}
-            </>
-        );
-      };
-
-    // Pull down to refresh
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        fetchResoucesJson();
-        setRefreshing(false);
-    }, []);
-
-    function getResourceContentForSection(sectionName) {
-        const result = resourcesJson.map((ele) => {
-            if (ele['id'] == sectionName) {
-                return ele
-            }
-        })
-        return result
-    }
-
-    const renderItem = ({item}) => {
-        return (
-            <View style={{flex: 1}}>
-            <View style={styles.menubox}>
-                <Pressable 
-                style={styles.button} 
-                onPress={() => navigation.navigate( 
-                    resource_template.default_pages[item['id']],
-                    { resourcesJson: getResourceContentForSection(item['id']) }
-                )}>
-                <Image
-                source={resource_template.default_images[item['id']]}
-                style={styles.imageButton}/>
-
-                <View style={{paddingTop: 6}}>
-                    <Text style={styles.buttontext}>{item['title']}</Text>
-                </View>
-                </Pressable>
-            </View>
-            </View>
-        )
-    }
+const ResourceSaved = ({ navigation, props }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
-                <View style={styles.inline}>
-                    <Text style={styles.headerText}>Education</Text>
+            <View style={styles.inline}>
+                    <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
+                        <Image source={require('../../assets/icons/back.png')} style={styles.headerBackIcon}/>
+                    </TouchableOpacity>
+                    <Text style={styles.headerText}>Saved</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
                         <Image source={require('../../assets/icons/search.png')} style={styles.headerSearchIcon}/>
                     </TouchableOpacity>
-                </View>
-                <Text style={styles.subHeaderText}>Saved</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[0].data}
-                    renderItem={({ item }) => <RedListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Recently Viewed</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[1].data}
-                    renderItem={({ item }) => <RedListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
+            </View>
+            <FlatList
                     data={mockData[2].data}
+                    numColumns={1}
                     renderItem={({ item }) => <PurpleListItem item={item} />}
                     showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
+                    style={{marginTop: 20}}
                 />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    // style={{marginBottom: -15}}
-                />
-            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -222,13 +105,19 @@ const styles = StyleSheet.create({
         color: "black",
         textAlign: "center",
         marginTop: 10,
-        marginLeft: 70,
+        width: 230,
+    },
+    headerBackIcon: {
+        width: 11,
+        height: 21,
+        marginTop: 10,
+        marginRight: 40,
     },
     headerSearchIcon: {
         width: 30, 
         height: 30, 
         marginTop: 10, 
-        marginLeft: 50
+        marginLeft: 30,
     },
     inline: {
         display: 'flex',
@@ -260,7 +149,7 @@ const styles = StyleSheet.create({
     },
     purpleBox: {
         margin: 20,
-        width: 180,
+        width: 330,
         height: 180,
         backgroundColor: '#D9D1F7',
         borderRadius: 15,
@@ -270,7 +159,9 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3,
         elevation: 5,
-        marginRight: 5,
+        marginLeft: 30,
+        marginTop: 20,
+        marginBottom: 10,
     },
     purpleBoxText: {
         color: 'black',
@@ -370,4 +261,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ResourceScreen;
+export default ResourceSaved;

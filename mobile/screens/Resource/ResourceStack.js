@@ -10,6 +10,7 @@ import ResourceMentalHealthScreen from './ResourceMentalHealthScreen';
 import ResourceSexEducationScreen from './ResourceSexEducationScreen';
 import ResourceSustainabilityScreen from './ResourceSustainabilityScreen';
 import ResourceSearch  from './ResourceSearch';
+import ResourceSaved  from './ResourceSaved';
 
 const rStack = createStackNavigator();
 
@@ -25,6 +26,10 @@ const ResourceStack = () => {
                 <rStack.Screen
                     name="ResourceSearch"
                     component={ResourceSearch}
+                    options={ {header: ()=>null} } />
+                <rStack.Screen
+                    name="ResourceSaved"
+                    component={ResourceSaved}
                     options={ {header: ()=>null} } />
                 <rStack.Screen 
                     name="ResourceMenstruationScreen" 
