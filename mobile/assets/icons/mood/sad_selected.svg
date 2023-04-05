@@ -1,50 +1,16 @@
-<svg width="88" height="87" viewBox="0 0 88 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_d_1726_16166)">
-        <rect x="10" y="10.4882" width="68" height="66" rx="12" fill="#5B9F8F" />
-        <path
-            d="M44.0703 54.4977C50.2652 54.4977 55.2871 49.4758 55.2871 43.2809C55.2871 37.0861 50.2652 32.0641 44.0703 32.0641C37.8754 32.0641 32.8535 37.0861 32.8535 43.2809C32.8535 49.4758 37.8754 54.4977 44.0703 54.4977Z"
-            stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" />
-        <path d="M36.9023 40.3409C36.9023 40.3409 39.4055 50.0289 41.7687 40.3409" stroke="#FEFFF4"
-            stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M46.002 40.3409C46.002 40.3409 48.5052 50.0289 50.8684 40.3409" stroke="#FEFFF4"
-            stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M40.3848 49.8721C40.3848 49.8721 43.7784 44.9049 46.9872 49.8721" stroke="#FEFFF4"
-            stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M29.4991 43.2809H23.8711" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M44.0703 28.8666V23.3842" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M54.7051 33.3802L58.6475 29.4434" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M58.6465 43.2809H64.1289" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M34.169 32.8034L30.2266 28.8666" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M44.0703 63.5921V58.1097" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M29.5 57.1186L33.4424 53.1818" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <path d="M58.6475 57.1186L54.7051 53.1818" stroke="#FEFFF4" stroke-width="1.96"
-            stroke-miterlimit="10" stroke-linecap="round" />
-        <rect x="10.5" y="10.9882" width="67" height="65" rx="11.5" stroke="#5B9F8F" />
-    </g>
-    <defs>
-        <filter id="filter0_d_1726_16166" x="0" y="0.488159" width="88" height="86"
-            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
-            <feColorMatrix in="SourceAlpha" type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-            <feMorphology radius="4" operator="dilate" in="SourceAlpha"
-                result="effect1_dropShadow_1726_16166" />
-            <feOffset />
-            <feGaussianBlur stdDeviation="3" />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix"
-                values="0 0 0 0 0.356863 0 0 0 0 0.623529 0 0 0 0 0.560784 0 0 0 0.5 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1726_16166" />
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1726_16166"
-                result="shape" />
-        </filter>
-    </defs>
+<svg width="69" height="67" viewBox="0 0 69 67" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1" y="1" width="66" height="64" rx="11" fill="#5B9F8F"/>
+<path d="M34.0703 44.0096C40.2652 44.0096 45.2871 38.9877 45.2871 32.7928C45.2871 26.5979 40.2652 21.576 34.0703 21.576C27.8754 21.576 22.8535 26.5979 22.8535 32.7928C22.8535 38.9877 27.8754 44.0096 34.0703 44.0096Z" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10"/>
+<path d="M26.9023 29.8528C26.9023 29.8528 29.4055 39.5408 31.7687 29.8528" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M36.002 29.8528C36.002 29.8528 38.5052 39.5408 40.8684 29.8528" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M30.3848 39.384C30.3848 39.384 33.7784 34.4168 36.9872 39.384" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M19.4991 32.7928H13.8711" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M34.0703 18.3784V12.896" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M44.7051 22.892L48.6475 18.9552" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M48.6465 32.7928H54.1289" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M24.169 22.3152L20.2266 18.3784" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M34.0703 53.104V47.6216" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M19.5 46.6304L23.4424 42.6936" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<path d="M48.6475 46.6304L44.7051 42.6936" stroke="#FEFFF4" stroke-width="1.96" stroke-miterlimit="10" stroke-linecap="round"/>
+<rect x="1" y="1" width="66" height="64" rx="11" stroke="#5B9F8F" stroke-width="2"/>
 </svg>
-    
