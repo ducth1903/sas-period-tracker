@@ -6,11 +6,8 @@ import i18n from '../../translations/i18n';
 const LoginScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('../../assets/landingPage.jpg')} style={styles.backgroundImageStyle}>
                 <View style={styles.header}>
-                    <Image source={require('../../assets/sas_logo.png')}
-                    style={styles.logo}
-                    resizeMode="stretch" />
+                    <Image source={require('../../assets/revised-logo.png')} style={styles.logo} />
                 </View>
                 <View style={styles.footer}>
                     <View style={styles.item}>
@@ -28,7 +25,7 @@ const LoginScreen = ({navigation}) => {
                         />
                     </View>
                 </View>
-            </ImageBackground>
+            
         </View>
     )
 }
@@ -64,7 +61,8 @@ const styles = StyleSheet.create({
     },
     logo: {
         width: height*0.2,
-        height: height*0.2
+        height: height*0.2,
+        resizeMode: "stretch"
     },
     textStyle: {
       fontSize: 25,

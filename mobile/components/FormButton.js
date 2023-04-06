@@ -10,7 +10,7 @@ const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
         <View style={styles.container}>
             <Pressable {...restProps}>
                 <LinearGradient
-                    colors={isHighlight ? ['#F59B3F', '#E64A38'] : ['#FFFFFF', '#FFFFFF']}
+                    colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#FFFFFF', '#FFFFFF']}
                     style={[styles.commonBtnStyle, isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle]}>
                     
                     <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>{btnTitle}</Text>
@@ -30,13 +30,13 @@ const styles = StyleSheet.create({
     },
     commonTxtStyle: {
         fontFamily: 'System',
-        fontSize: 18,
-        fontWeight: 'bold'
+        fontSize: 16,
+        fontWeight: '400'
     },
     commonBtnStyle: {
         width: '100%',
-        height: 50,
-        borderRadius: 25,
+        height: 70,
+        borderRadius: 50,
         justifyContent: 'center',
         alignItems: 'center',
     },
