@@ -1,5 +1,5 @@
-import React, { useEffect, useContext, useState}  from 'react';
-import { 
+import React, { useEffect, useState}  from 'react';
+import {
     StyleSheet, 
     Text, 
     View,  
@@ -9,72 +9,14 @@ import {
     StatusBar,
     Image,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    ImageBackground
 } from 'react-native';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
 import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
-
-const mockData = [
-    {
-        title: 'Saved',
-        data: [
-          {
-            key: '1',
-            text: 'How to Soothe Cramps'
-          },
-          {
-            key: '2',
-            text: 'See All'
-          },
-        ],
-    },
-    {
-        title: 'Recently Viewed',
-        data: [
-          {
-            key: '1',
-            text: 'What to Do on Your Period'
-          },
-          {
-            key: '2',
-            text: 'The First Period'
-          }
-        ],
-    },
-    {
-        title: 'Menstruation',
-        data: [
-            {
-                key: '1',
-                text: 'Period Basics'
-            },
-            {
-                key: '2',
-                text: "How-to's"
-            },
-            {
-                key: '3',
-                text: 'Health and Hygiene'
-            },
-            {
-                key: '4',
-                text: 'Taboos and Misconceptions'
-            },
-        ],
-    }
-]
-
-
-
-const PurpleListItem = ({ item }) => {
-    return (
-      <View style={styles.purpleBox}>
-        <Text style={styles.purpleBoxText}>{item.text}</Text>
-      </View>
-    );
-};
+import { mockData } from './mockData';
 
 const ResourceScreen = ({ navigation, props }) => {
     const resource_template = new RESOURCE_TEMPLATE();
@@ -96,7 +38,30 @@ const ResourceScreen = ({ navigation, props }) => {
         fetchResoucesJson();
     }, []);
 
+    const images = {
+        exercise: require('../../assets/resources_images/exercise_banner.png'),
+        growing_up: require('../../assets/resources_images/growing_up_banner.png'),
+        maternal_health: require('../../assets/resources_images/maternal_health_banner.png'),
+        menstruation: require('../../assets/resources_images/menstruation_banner.png'),
+        mental_health: require('../../assets/resources_images/mental_health_banner.png'),
+        nutrition: require('../../assets/resources_images/nutrition_banner.png'),
+        reproductive_health: require('../../assets/resources_images/reproductive_health_banner.png'),
+        sexual_health: require('../../assets/resources_images/sexual_health_banner.png'),
+    }   
+
+    const PurpleListItem = ({ item }) => {
+        const image = images[item.image];
+
+        return (
+            <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15  }}>
+                <View style={styles.darkness} />
+                <Text style={styles.purpleBoxText}>{item.text}</Text>
+            </ImageBackground>
+        );
+    };
+
     const RedListItem = ({ item }) => {
+        const image = images[item.image];
         return (
             <>
                 {item.text == 'See All' ? (
@@ -106,9 +71,10 @@ const ResourceScreen = ({ navigation, props }) => {
                         </View>
                     </Pressable>
                 ) : (
-                    <View style={styles.redBox}>
+                    <ImageBackground source={image} style={styles.redBox} imageStyle={{ borderRadius: 15 }}>
+                        <View style={styles.darkness} />
                         <Text style={styles.redBoxText}>{item.text}</Text>
-                    </View>
+                    </ImageBackground>
                 )}
             </>
         );
@@ -130,29 +96,6 @@ const ResourceScreen = ({ navigation, props }) => {
         return result
     }
 
-    const renderItem = ({item}) => {
-        return (
-            <View style={{flex: 1}}>
-            <View style={styles.menubox}>
-                <Pressable 
-                style={styles.button} 
-                onPress={() => navigation.navigate( 
-                    resource_template.default_pages[item['id']],
-                    { resourcesJson: getResourceContentForSection(item['id']) }
-                )}>
-                <Image
-                source={resource_template.default_images[item['id']]}
-                style={styles.imageButton}/>
-
-                <View style={{paddingTop: 6}}>
-                    <Text style={styles.buttontext}>{item['title']}</Text>
-                </View>
-                </Pressable>
-            </View>
-            </View>
-        )
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
@@ -162,54 +105,37 @@ const ResourceScreen = ({ navigation, props }) => {
                         <Image source={require('../../assets/icons/search.png')} style={styles.headerSearchIcon}/>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.subHeaderText}>Saved</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[0].data}
-                    renderItem={({ item }) => <RedListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Recently Viewed</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[1].data}
-                    renderItem={({ item }) => <RedListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginBottom: -15}}
-                />
-                <Text style={styles.subHeaderText}>Menstruation</Text>
-                <FlatList
-                    horizontal
-                    data={mockData[2].data}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    // style={{marginBottom: -15}}
-                />
+                {
+                    mockData.map((ele, index) => {
+                        if (index > 1) {
+                            return (
+                                <>
+                                    <Text style={styles.subHeaderText}>{ele.title}</Text>
+                                    <FlatList
+                                        horizontal
+                                        data={ele.data}
+                                        renderItem={({ item }) => <PurpleListItem item={item} />}
+                                        showsHorizontalScrollIndicator={false}
+                                        style={{marginBottom: -15}}
+                                    />
+                                </>
+                            )
+                        } else {
+                            return (
+                                <>
+                                    <Text style={styles.subHeaderText}>{ele.title}</Text>
+                                    <FlatList
+                                        horizontal
+                                        data={ele.data}
+                                        renderItem={({ item }) => <RedListItem item={item} />}
+                                        showsHorizontalScrollIndicator={false}
+                                        style={{marginBottom: -15}}
+                                    />
+                                </>
+                            )
+                        }
+                    })
+                }
             </ScrollView>
         </SafeAreaView>
     )
@@ -273,11 +199,20 @@ const styles = StyleSheet.create({
         marginRight: 5,
     },
     purpleBoxText: {
-        color: 'black',
+        color: 'white',
         fontSize: 22,
         fontWeight: '600',
         textAlign: 'center',
         width: '100%',
+    },
+    darkness: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.2)',
+        borderRadius: 15,
     },
     subHeaderText: {
         fontSize: 24,
