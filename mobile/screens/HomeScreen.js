@@ -34,7 +34,7 @@ const FLOWS = [
     { key: 'light', label: 'Light', selected: false, DefaultIcon: SVG.FlowLightDefault, SelectedIcon: SVG.FlowLightSelected },
     { key: 'medium', label: 'Medium', selected: false, DefaultIcon: SVG.FlowMediumDefault, SelectedIcon: SVG.FlowMediumSelected },
     { key: 'heavy', label: 'Heavy', selected: false, DefaultIcon: SVG.FlowHeavyDefault, SelectedIcon: SVG.FlowHeavySelected },
-    { key: 'notsure', label: 'Not Sure', selected: false, DefaultIcon: SVG.FlowNotsureDefault, SelectedIcon: SVG.FlowNotsureSelected },
+    { key: 'notsure', label: 'Not Sure', selected: false, DefaultIcon: SVG.FlowNotSureDefault, SelectedIcon: SVG.FlowNotSureSelected },
 ];
 
 const MOODS = [
