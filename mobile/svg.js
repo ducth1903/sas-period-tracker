@@ -23,7 +23,8 @@ import MoodSensitiveSelected from './assets/icons/mood/sensitive_selected.svg';
 import MoodSadSelected from './assets/icons/mood/sad_selected.svg';
 import MoodAnxiousSelected from './assets/icons/mood/anxious_selected.svg';
 import MoodAngrySelected from './assets/icons/mood/angry_selected.svg';
-
+import MoodCustomizeDefault from './assets/icons/mood/custom_mood_default.svg';
+import MoodCustomizeSelected from './assets/icons/mood/custom_mood_selected.svg';
 // Symptom Icons
 import SymptomCravingsDefault from './assets/icons/symptoms/cravings_default.svg';
 import SymptomBackacheDefault from './assets/icons/symptoms/backache_default.svg';
@@ -77,6 +78,8 @@ export {
   MoodSadSelected,
   MoodAnxiousSelected,
   MoodAngrySelected,
+  MoodCustomizeDefault,
+  MoodCustomizeSelected,
   SymptomCravingsDefault,
   SymptomBackacheDefault,
   SymptomCrampsDefault,
