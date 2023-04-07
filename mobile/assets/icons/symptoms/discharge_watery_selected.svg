@@ -1,31 +1,6 @@
-<svg width="89" height="87" viewBox="0 0 89 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_d_1726_17430)">
-        <rect x="10.9375" y="10.2471" width="68" height="66" rx="12" fill="#5B9F8F" />
-        <path
-            d="M50.141 28.1649C52.1004 29.4771 53.2243 31.7249 53.2184 34.0844C53.2066 38.3976 52.5535 47.9183 47.4342 52.9552C44.5686 55.7679 41.3793 55.9974 38.649 55.3266C33.6651 54.0968 30.6229 49.0069 31.8468 44.0229C32.3117 42.1282 33.2061 39.9922 34.7889 37.7386C39.6611 30.8069 37.0014 29.836 40.4143 27.6C43.4623 25.5994 47.4165 26.3349 50.141 28.1649Z"
-            stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <path
-            d="M57.1253 47.1476C57.8902 47.1711 59.7379 54.6677 56.225 58.5866C55.919 58.9279 54.6245 60.3695 53.5889 60.04C52.5297 59.7046 52.0472 57.6216 52.4767 56.021C52.8592 54.5971 53.7654 54.3205 54.901 52.8318C57.1076 49.9426 56.6487 47.13 57.1194 47.1476H57.1253Z"
-            stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <rect x="11.4375" y="10.7471" width="67" height="65" rx="11.5" stroke="#5B9F8F" />
-    </g>
-    <defs>
-        <filter id="filter0_d_1726_17430" x="0.9375" y="0.24707" width="88" height="86"
-            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
-            <feColorMatrix in="SourceAlpha" type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-            <feMorphology radius="4" operator="dilate" in="SourceAlpha"
-                result="effect1_dropShadow_1726_17430" />
-            <feOffset />
-            <feGaussianBlur stdDeviation="3" />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix"
-                values="0 0 0 0 0.356863 0 0 0 0 0.623529 0 0 0 0 0.560784 0 0 0 0.5 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1726_17430" />
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1726_17430"
-                result="shape" />
-        </filter>
-    </defs>
+<svg width="69" height="67" viewBox="0 0 69 67" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1.4375" y="0.74707" width="67" height="65" rx="11.5" fill="#5B9F8F"/>
+<path d="M40.141 18.1649C42.1004 19.4771 43.2243 21.7249 43.2184 24.0844C43.2066 28.3976 42.5535 37.9183 37.4342 42.9552C34.5686 45.7679 31.3793 45.9974 28.649 45.3266C23.6651 44.0968 20.6229 39.0069 21.8468 34.0229C22.3117 32.1282 23.2061 29.9922 24.7889 27.7386C29.6611 20.8069 27.0014 19.836 30.4143 17.6C33.4623 15.5994 37.4165 16.3349 40.141 18.1649Z" stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M47.1253 37.1476C47.8902 37.1711 49.7379 44.6677 46.225 48.5866C45.919 48.9279 44.6245 50.3695 43.5889 50.04C42.5297 49.7046 42.0472 47.6216 42.4767 46.021C42.8592 44.5971 43.7654 44.3205 44.901 42.8318C47.1076 39.9426 46.6487 37.13 47.1194 37.1476H47.1253Z" stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="1.4375" y="0.74707" width="67" height="65" rx="11.5" stroke="#5B9F8F"/>
 </svg>
-    

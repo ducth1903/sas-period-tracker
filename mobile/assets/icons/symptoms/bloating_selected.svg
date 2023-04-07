@@ -1,28 +1,5 @@
-<svg width="89" height="87" viewBox="0 0 89 87" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_d_1726_17346)">
-        <rect x="10.9375" y="10.2471" width="68" height="66" rx="12" fill="#5B9F8F" />
-        <path
-            d="M26.854 52.2076H63.2379C63.2379 52.2076 68.3195 41.6155 57.7595 42.1595C57.7595 42.1595 54.7259 29.5193 42.6556 36.2714C42.6556 36.2714 34.342 34.5178 33.5036 40.1371C33.5036 40.1371 21.3244 37.6794 26.854 52.2076Z"
-            stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        <rect x="11.4375" y="10.7471" width="67" height="65" rx="11.5" stroke="#5B9F8F" />
-    </g>
-    <defs>
-        <filter id="filter0_d_1726_17346" x="0.9375" y="0.24707" width="88" height="86"
-            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feFlood flood-opacity="0" result="BackgroundImageFix" />
-            <feColorMatrix in="SourceAlpha" type="matrix"
-                values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
-            <feMorphology radius="4" operator="dilate" in="SourceAlpha"
-                result="effect1_dropShadow_1726_17346" />
-            <feOffset />
-            <feGaussianBlur stdDeviation="3" />
-            <feComposite in2="hardAlpha" operator="out" />
-            <feColorMatrix type="matrix"
-                values="0 0 0 0 0.356863 0 0 0 0 0.623529 0 0 0 0 0.560784 0 0 0 0.5 0" />
-            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1726_17346" />
-            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1726_17346"
-                result="shape" />
-        </filter>
-    </defs>
+<svg width="69" height="67" viewBox="0 0 69 67" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="1.9375" y="1.24707" width="66" height="64" rx="11" fill="#5B9F8F"/>
+<path d="M16.854 42.2076H53.2379C53.2379 42.2076 58.3195 31.6155 47.7595 32.1595C47.7595 32.1595 44.7259 19.5193 32.6556 26.2714C32.6556 26.2714 24.342 24.5178 23.5036 30.1371C23.5036 30.1371 11.3244 27.6794 16.854 42.2076Z" stroke="#FEFFF4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="1.9375" y="1.24707" width="66" height="64" rx="11" stroke="#5B9F8F" stroke-width="2"/>
 </svg>
-    
