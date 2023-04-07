@@ -2,13 +2,14 @@
 import FlowLightDefault from './assets/icons/blood_flow/light_default.svg';
 import FlowMediumDefault from './assets/icons/blood_flow/medium_default.svg';
 import FlowHeavyDefault from './assets/icons/blood_flow/heavy_default.svg';
+import FlowNoneDefault from './assets/icons/blood_flow/none_default.svg';
+import FlowNotSureDefault from './assets/icons/blood_flow/notsure_default.svg';
 import FlowLightSelected from './assets/icons/blood_flow/light_selected.svg';
 import FlowMediumSelected from './assets/icons/blood_flow/medium_selected.svg';
 import FlowHeavySelected from './assets/icons/blood_flow/heavy_selected.svg';
-import FlowNoneDefault from './assets/icons/blood_flow/none_default.svg';
 import FlowNoneSelected from './assets/icons/blood_flow/none_selected.svg';
-import FlowNotsureDefault from './assets/icons/blood_flow/notsure_default.svg';
-import FlowNotsureSelected from './assets/icons/blood_flow/notsure_selected.svg';
+import FlowNotSureSelected from './assets/icons/blood_flow/notsure_selected.svg';
+
 // Mood Icons
 import MoodExcitedDefault from './assets/icons/mood/excited_default.svg';
 import MoodHappyDefault from './assets/icons/mood/happy_default.svg';
@@ -58,13 +59,13 @@ export {
   FlowLightDefault,
   FlowMediumDefault,
   FlowHeavyDefault,
+  FlowNoneDefault,
+  FlowNotSureDefault,
   FlowLightSelected,
   FlowMediumSelected,
   FlowHeavySelected,
-  FlowNoneDefault,
   FlowNoneSelected,
-  FlowNotsureDefault,
-  FlowNotsureSelected,
+  FlowNotSureSelected,
   MoodExcitedDefault,
   MoodHappyDefault,
   MoodSensitiveDefault,
