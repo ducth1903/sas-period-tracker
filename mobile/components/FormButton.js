@@ -12,11 +12,11 @@ const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
                 <LinearGradient
                     colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#FFFFFF', '#FFFFFF']}
                     style={[styles.commonBtnStyle, isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle]}>
-                    
+
                     <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>{btnTitle}</Text>
                 </LinearGradient>
             </Pressable>
-            
+
             {/* <Button mode="contained" {...restProps}>
                 <Text style={[styles.commonTxtStyle, isHighlight ? btnTextHighlight.text : btnText.text]}>{btnTitle}</Text>
             </Button> */}
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
+    // not highlight
     formBtnStyle: {
         borderWidth: 2,
         borderColor: '#F59B3F',
@@ -50,8 +51,9 @@ const styles = StyleSheet.create({
         color: '#F59B3F'
     },
 
+    // highlight
     formBtnStyleHighlight: {
-
+        borderRadius: 25
     },
     formTxtStyleHighlight: {
         color: '#ffffff'

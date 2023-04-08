@@ -17,80 +17,81 @@ import i18n from '../translations/i18n';
 const Stack = createStackNavigator();
 
 const AuthStack = () => {
-    console.log("in AuthStack...");
-    const {setUserId, getToken}             = useContext(AuthContext);
-    const [initializing, setInitializing]   = useState(true);
-    const [isFirstLaunch, setIsFirstLaunch] = useState(null);     // Only show OnboardingScreen on first-time launch
-    
-    useEffect(() => {
-      let isMounted = true;
+  const { setUserId, getToken } = useContext(AuthContext);
+  const [initializing, setInitializing] = useState(true);
+  const [isFirstLaunch, setIsFirstLaunch] = useState(null);     // Only show OnboardingScreen on first-time launch
 
-      (async () => {
-        let myToken = await getToken();
-        if (myToken !== null) {
-            console.log('[AuthStack] useEffect: user found in AsyncStorage');
-            // let user_lastLoginAt = myToken.toJSON().lastLoginAt;
-            // console.log('here in AuthStack: user_lastLoginAt = ', user_lastLoginAt);
-            if (isMounted) { setUserId(myToken.uid); }
-        } else {
-            console.log('[AuthStack] useEffect: no user found in AsyncStorage');
-            if (isMounted) { setUserId(null); }
-        }
-      })()
+  useEffect(() => {
+    let isMounted = true;
 
-      AsyncStorage.getItem('alreadyLaunched')
+    (async () => {
+      let myToken = await getToken();
+      if (myToken !== null) {
+        console.log('[AuthStack] useEffect: user found in AsyncStorage');
+        // let user_lastLoginAt = myToken.toJSON().lastLoginAt;
+        // console.log('here in AuthStack: user_lastLoginAt = ', user_lastLoginAt);
+        if (isMounted) { setUserId(myToken.uid); }
+      } else {
+        console.log('[AuthStack] useEffect: no user found in AsyncStorage');
+        if (isMounted) { setUserId(null); }
+      }
+    })()
+
+    AsyncStorage.getItem('alreadyLaunched')
       .then(value => {
-        if (value==null) { 
+        if (value == null) {
           AsyncStorage.setItem('alreadyLaunched', 'true')
           if (isMounted) { setIsFirstLaunch(true) }
         } else {
           if (isMounted) { setIsFirstLaunch(false) }
         }
       })
-      
-      if (initializing) {
-        if (isMounted) { setInitializing(false); }
-      }
 
-      return () => { isMounted = false }
-    }, []);   // end useEffect()
-
-    if (initializing || isFirstLaunch==null) {
-      console.log("[Routes] initializing...");
-      return ( <LoadingIndicator/> )
+    if (initializing) {
+      if (isMounted) { setInitializing(false); }
     }
 
-    return (
-        <View style={styles.container}>
-          <Stack.Navigator>
-            {/* <PaperProvider theme={theme}> */}
-            
-            {isFirstLaunch ? (
-            <Stack.Screen 
-              name="OnboardingScreen" 
-              component={OnboardingScreen} 
-              options={ {header: ()=>null} }/>
-            ) : null }
-            <Stack.Screen 
-              name="LandingScreen" 
-              component={LandingScreen} 
-              options={ {header: ()=>null} }/>
-            <Stack.Screen 
-                name="LoginScreen" 
-                component={LoginScreen} 
-                options={ {title: i18n.t('authentication.login')} }/>
-            <Stack.Screen 
-                name="SignupScreen" 
-                component={SignupScreen}
-                options={ {title: i18n.t('authentication.signup')} } />
-            <Stack.Screen
-                name="ForgotPasswordScreen"
-                component={ForgotPasswordScreen}
-                options={ {title: i18n.t('authentication.forgotPassword')} } />
-            {/* <StatusBar style="auto" /> */}
-            {/* </PaperProvider> */}
-          </Stack.Navigator>
-        </View>
+    return () => { isMounted = false }
+  }, []);   // end useEffect()
+
+  if (initializing || isFirstLaunch == null) {
+    console.log("[Routes] initializing...");
+    return (<LoadingIndicator />)
+  }
+
+  return (
+    <View style={styles.container}>
+      <Stack.Navigator
+        screenOptions={{
+          headerMode: 'screen'
+        }}>
+        {/* <PaperProvider theme={theme}> */}
+        {isFirstLaunch ? (
+          <Stack.Screen
+            name="OnboardingScreen"
+            component={OnboardingScreen}
+            options={{ header: () => null }} />
+        ) : null}
+        <Stack.Screen
+          name="Landing"
+          component={LandingScreen}
+          options={{ header: () => null, title: "" }} />
+        <Stack.Screen
+          name="LoginScreen"
+          component={LoginScreen}
+          options={{ title: "" }} />
+        <Stack.Screen
+          name="SignupScreen"
+          component={SignupScreen}
+          options={{ title: "" }} />
+        <Stack.Screen
+          name="ForgotPasswordScreen"
+          component={ForgotPasswordScreen}
+          options={{ title: i18n.t('authentication.forgotPassword') }} />
+        {/* <StatusBar style="auto" /> */}
+        {/* </PaperProvider> */}
+      </Stack.Navigator>
+    </View>
   );
 } // end AuthStack()
 

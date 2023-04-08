@@ -55,7 +55,6 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    // <View style={styles.container}>
     <View style={{ flex: 1 }}>
       <View style={styles.header}>
         <Image
