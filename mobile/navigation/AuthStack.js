@@ -73,7 +73,7 @@ const AuthStack = () => {
             options={{ header: () => null }} />
         ) : null}
         <Stack.Screen
-          name="Landing"
+          name="LandingScreen"
           component={LandingScreen}
           options={{ header: () => null, title: "" }} />
         <Stack.Screen
