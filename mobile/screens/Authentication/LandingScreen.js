@@ -1,41 +1,40 @@
 import React from 'react';
-import { StyleSheet, View, Image, Dimensions, ImageBackground } from 'react-native';
+import { StyleSheet, View, Image, Dimensions } from 'react-native';
 import FormButton from '../../components/FormButton';
 import i18n from '../../translations/i18n';
 
-const LoginScreen = ({navigation}) => {
+const LandingScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
-                <View style={styles.header}>
-                    <Image source={require('../../assets/revised-logo.png')} style={styles.logo} />
+            <View style={styles.header}>
+                <Image source={require('../../assets/revised-logo.png')} style={styles.logo} />
+            </View>
+            <View style={styles.footer}>
+                <View style={styles.item}>
+                    <FormButton
+                        btnTitle={i18n.t('authentication.login')}
+                        isHighlight={true}
+                        onPress={() => { navigation.navigate("LoginScreen") }}
+                    />
                 </View>
-                <View style={styles.footer}>
-                    <View style={styles.item}>
-                        <FormButton
-                            btnTitle={i18n.t('authentication.login')}
-                            isHighlight={false}
-                            onPress={ ()=>{navigation.navigate("LoginScreen")} }
-                        />
-                    </View>
-                    <View style={styles.item}>
-                        <FormButton
-                            btnTitle={i18n.t('authentication.signup')}
-                            isHighlight={true}
-                            onPress={ ()=>{navigation.navigate("SignupScreen")} }
-                        />
-                    </View>
+                <View style={styles.item}>
+                    <FormButton
+                        btnTitle={i18n.t('authentication.signup')}
+                        isHighlight={true}
+                        onPress={() => { navigation.navigate("SignupScreen") }}
+                    />
                 </View>
-            
+            </View>
         </View>
     )
 }
 
-const {height} = Dimensions.get("screen");
+const { height } = Dimensions.get("screen");
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-    //   backgroundColor: '#6d5b57',
-      justifyContent: 'center',
+        flex: 1,
+        //   backgroundColor: '#6d5b57',
+        justifyContent: 'center',
     },
     header: {
         flex: 7,
@@ -60,19 +59,19 @@ const styles = StyleSheet.create({
         width: '50%'        // 50% of container width
     },
     logo: {
-        width: height*0.2,
-        height: height*0.2,
+        width: height * 0.2,
+        height: height * 0.2,
         resizeMode: "stretch"
     },
     textStyle: {
-      fontSize: 25,
-      color: "red"
+        fontSize: 25,
+        color: "red"
     },
     backgroundImageStyle: {
         flex: 1,
         resizeMode: "cover",
         justifyContent: "center"
     }
-  });
+});
 
-export default LoginScreen;
+export default LandingScreen;
