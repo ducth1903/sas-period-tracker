@@ -1,3 +1,8 @@
+"""
+Helper function to initialize the project,
+such as retrieving local IP and set it in environment and Dockerfile
+"""
+
 import argparse
 import socket
 import os
@@ -49,4 +54,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
