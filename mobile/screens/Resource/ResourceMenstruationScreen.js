@@ -90,7 +90,7 @@ const ResourceMenstruationScreen = ({ route, navigation }) => {
             renderContent={(content, index, isActive) => {
                 return (
                     <View style={styles.itemContentWrapper}>
-                        <Text>Currently failed</Text>
+                        <Text>{content['answer']}</Text>
                         {/* <Markdown style={markdownStyles}>{ content['answer'] }</Markdown> */}
                     </View>
                 )
