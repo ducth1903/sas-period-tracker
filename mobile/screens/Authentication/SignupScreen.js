@@ -52,13 +52,6 @@ const SignupScreen = ({ navigation }) => {
     setDate(currentDate);
   };
 
-  const languages = [
-    { label: "English", value: "English" },
-    { label: "Kanada", value: "Kanada" },
-  ];
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentValue, setCurrentValue] = useState();
-
   const handleConfirmPassword = (inConfirmPassword) => {
     // let inConfirmPassword = inConfirmPasswordEvent.nativeEvent.text;
     let isEqual = false;
@@ -154,19 +147,6 @@ const SignupScreen = ({ navigation }) => {
           <LanguagePicker />
         </View>
 
-        {/* <View style={{position: 'relative', zIndex: 1, paddingLeft: 25, paddingRight: 40}}>
-                    <DropDownPicker
-                        style={styles.pickerStyle}
-                        placeholderStyle={{color: '#272727CC', fontSize: 16}}
-                        dropDownContainerStyle={styles.dropDownStyle}
-                        //dropDownMaxHeight={4}
-                        items={languages}
-                        open={isOpen}
-                        setOpen={() => setIsOpen(!isOpen)}
-                        value={currentValue}
-                        placeholder={'Language'}
-                    />              
-                </View>  */}
         <View style={styles.formInputContainer}>
           <FormInput
             labelValue="First Name"

@@ -21,9 +21,6 @@ const LoginScreen = ({ navigation }) => {
   const { login, authError, setAuthError } = useContext(AuthContext);
   const [hiddenPassword, setHiddenPassword] = useState(true);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("English");
-
   const [inUserData, setInUserData] = useState({
     email: "",
     password: "",
