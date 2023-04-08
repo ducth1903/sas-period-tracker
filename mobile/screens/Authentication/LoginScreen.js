@@ -92,7 +92,7 @@ const LoginScreen = ({ navigation }) => {
             secureTextEntry={hiddenPassword}
             value={inUserData.password}
             onChangeText={handlePassword}
-            //onPressEyeBtn={handleEyeClicked}
+          //onPressEyeBtn={handleEyeClicked}
           />
           <View style={styles.signIn}>
             <FormButton
@@ -188,9 +188,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     //color: "#AC3632",
   },
-  textUnderlineStyle: {
-    textDecorationLine: "underline",
-  },
+  // textUnderlineStyle: {
+  //   textDecorationLine: "underline",
+  // },
   bottomItems: {
     // flex: 1,
     justifyContent: "flex-end",

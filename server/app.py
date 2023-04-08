@@ -1,3 +1,7 @@
+"""
+Entrypoint to Flask backend server
+"""
+
 import os
 from flask import Flask
 from api.v0.routes.users import users_api
