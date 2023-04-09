@@ -23,16 +23,23 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "sas.period"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/revised-logo.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "sas.period"
     },
     "web": {
       "favicon": "./assets/revised-logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9627972f-0ff2-4907-bffd-a39031949d35"
+      }
     }
   }
 }

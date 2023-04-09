@@ -78,7 +78,7 @@ const HomeScreen = () => {
     const [flowIconEnable, setFlowIconEnable] = useState(FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
     const [moodIconEnable, setMoodIconEnable] = useState(MOODS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
     const [symptomIconEnable, setSymptomIconEnable] = useState(SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
-    const [showRecommendationText, setShowRecommendationText] = useState(false);
+    const [showRecommendationText, setShowRecommendationText] = useState(true);
 
     // For bottom sheet upload image
     // const bottomSheetRef = useRef(null);
@@ -334,6 +334,7 @@ const HomeScreen = () => {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 contentContainerStyle={styles.scrollViewStyle}
             >
+                <TextCard inText={API_URL} />
                 {/* <LoadingIndicator/> */}
                 {/* <SkeletonPlaceholder>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -364,7 +365,8 @@ const HomeScreen = () => {
                     </View>
                     {showRecommendationText &&
                         <View className="py-2">
-                            <TextCard inText={"It seems that you are having an above average blood flow, we recommend you to get some tips on the education page: Blood Flow Control"} />
+                            <TextCard inText={API_URL} />
+                            {/* <TextCard inText={"It seems that you are having an above average blood flow, we recommend you to get some tips on the education page: Blood Flow Control"} /> */}
                         </View>
                     }
                 </View>

@@ -1,42 +1,38 @@
-# SAS Period Tracker
-
-Small Acts for Sustainability - Period Tracker App
+# SAS Period Tracker (Small Acts for Sustainability)
 
 ## TODO:
-
-- CICD: [Code Pipeline](https://aws.amazon.com/getting-started/hands-on/continuous-deployment-pipeline/)
-- [React] bottom sheet transition smoother
-- [React] main calendar
-- [React] scrollable calendar
-- [React] resources page: markdown library is broken
-- [Python] deploy
-- [Python] CI / unit testing
+- [ ] CICD: [Code Pipeline](https://aws.amazon.com/getting-started/hands-on/continuous-deployment-pipeline/)
+- [ ] [React] bottom sheet transition smoother
+- [ ] [React] main calendar
+- [ ] [React] scrollable calendar
+- [ ] [React] resources page: markdown library is broken
+- [ ] [Python] deploy
+- [ ] [Python] CI / unit testing
 
 ## Getting Started
 
 - Prerequisites: 
-  
-  - Install Docker Desktop / Docker Engine
-  
-  - Install `python3`
-  
+  - Install Docker Desktop / Docker Engine  
   - Have `.env` under `mobile` and `server` folders
 
-- **One-time set up only**:
-  
+- **One-time set up only**:  
   ```bash
   # populate .env with your local IP address
   python sas.py -overwrite-env
+  
+  # or manually set your IP address in .env files for both mobile/ and server/
+  # get your IP with
+  python sas.py -getip
+  
+  # Note that mobile/.env should contain port as well: <YOUR_IP>:5000
   ```
 
 - Run mobile and server with Docker (**recommended**):
-  
   ```bash
   make run_docker 
   ```
 
-- If you want to set up and run **locally**:
-  
+- Run **locally**:
   - Install `nvm` and `npm`. Make sure the version of `npm` and `node` matched below:
     
     ```bash
@@ -47,8 +43,7 @@ Small Acts for Sustainability - Period Tracker App
     8.19.2
     ```
   
-  - Build / install first:
-    
+  - Build first:
     ```bash
     # Mobile
     make build_mobile_local
@@ -57,8 +52,7 @@ Small Acts for Sustainability - Period Tracker App
     make build_server_local
     ```
   
-  - Run locally:
-    
+  - Then run locally on two separate terminals:
     ```bash
     # Mobile
     make run_mobile_local
@@ -67,36 +61,22 @@ Small Acts for Sustainability - Period Tracker App
     make run_server_local
     ```
 
-## 
-
 ## Features
 
 ### 1. Period Tracking
-
-- Date / Symptoms
-
+- Symptoms tracking
 - Predict next cycle
 
-- 
-
 ### 2. Blog/Resource Content
-
 - All live on S3 bucket
-
 - One master JSON file
-
 - Each content (i.e. question and answer) is a Markdown file
-
 - Images should be uploaded to S3 also. Then Markdown should refer to the image's S3 URL
-
 - Package to render Markdown in React Native: https://github.com/iamacup/react-native-markdown-display (syntax support provided in the link)
-
-- Chatbot for Q&A
+- Chatbot for Q&A (ChatGPT?)
 
 ### 3. Multiple Languages
-
-- Use internationalization library: i18n-js
-  
+- Use internationalization library: `i18n-js`
   ```javascript
   import I18n from "i18n-js";
   
@@ -115,7 +95,22 @@ Small Acts for Sustainability - Period Tracker App
   ```
 
 - Inside each of the above JSON files, define the corresponding language for each term
-
 - To use it: 
-  
-  `I18n.t('authentication.email')`
+  ```javascript
+  I18n.t('authentication.email')
+  ```
+
+## Deployment
+### 1. For dev
+- Mobile: development build with EAS build [link](https://docs.expo.dev/development/create-development-builds/)
+    - `EAS Build` is a hosted service for building app binary for your Expo project.
+    - Handles app signing credentials for you
+    - Sharing the builds with team via internal distribution: https://docs.expo.dev/build/internal-distribution/
+    - For Android APK: https://docs.expo.dev/build-reference/apk/
+    - For iOS Simulator: https://docs.expo.dev/build-reference/simulators/
+
+- Server: deploy Flask app to Elastic Beanstalk
+
+### 2. For prod
+- Mobile: Similar to dev's build but need to follow upload to App Store path.
+- Server: same with dev
