@@ -2,17 +2,10 @@ import React, { createContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
-
-import {
-    DefaultTheme as NavigationDefaultTheme,
-    DarkTheme as NavigationDarkTheme
-} from '@react-navigation/native';
-import {
-    Provider as PaperProvider,
-    DefaultTheme as PaperDefaultTheme,
-    DarkTheme as PaperDarkTheme
-} from "react-native-paper";
-
+// import {
+//     DefaultTheme as NavigationDefaultTheme,
+//     DarkTheme as NavigationDarkTheme
+// } from '@react-navigation/native';
 import { MODAL_TEMPLATE } from '../models/PeriodDate';
 
 // Loading env variables
@@ -55,8 +48,6 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
-    const theme = isDarkTheme ? CustomDarkTheme : CustomDefaultTheme;
     const [authError, setAuthError] = useState("");         // https://firebase.google.com/docs/auth/admin/errors
     const [authStatus, setAuthStatus] = useState("");
 
@@ -88,139 +79,89 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <PaperProvider theme={theme}>
-            <AuthContext.Provider
-                value={{
-                    userId, setUserId,                      // to be able to set this user from any other file
-                    theme, toggleTheme: () => {         // to be able to access "theme"
-                        setIsDarkTheme(!isDarkTheme)
-                    },
-                    authError, setAuthError,
-                    authStatus, setAuthStatus,
-                    getToken,
-                    login: async (inEmail, inPassword) => {
-                        console.log("[AuthProvider] login()")
-                        try {
-                            await signInWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
-                                .then((userCredential) => {
-                                    // Signed in
-                                    setToken(userCredential.user);
-                                    setUserId(userCredential.user.uid);
-                                })
-                                .catch((error) => {
-                                    const errorCode = error.code;
-                                    const errorMessage = error.message;
-                                    setAuthError(errorMessage);
-                                    // console.log("Error signing in...", errorCode, errorMessage);
-                                });
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    },  // ending login
+        <AuthContext.Provider
+            value={{
+                userId, setUserId,                  // to be able to set this user from any other file
+                authError, setAuthError,
+                authStatus, setAuthStatus,
+                getToken,
+                login: async (inEmail, inPassword) => {
+                    console.log("[AuthProvider] login()")
+                    try {
+                        await signInWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
+                            .then((userCredential) => {
+                                // Signed in
+                                setToken(userCredential.user);
+                                setUserId(userCredential.user.uid);
+                            })
+                            .catch((error) => {
+                                const errorCode = error.code;
+                                const errorMessage = error.message;
+                                setAuthError(errorMessage);
+                                // console.log("Error signing in...", errorCode, errorMessage);
+                            });
+                    } catch (e) {
+                        console.log(e);
+                    }
+                },  // ending login
 
-                    signup: async (inEmail, inPassword, inFirstName, inLastName, inDob, inAvgDaysPerPeriod) => {
-                        console.log("[AuthProvider] signup()")
-                        try {
-                            await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
-                                .then((userCredential) => {
-                                    fetch(`${API_URL}/api/user/${userCredential.user.uid}`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({
-                                            "userId": userCredential.user.uid,
-                                            "email": userCredential.user.email,
-                                            "firstName": inFirstName,
-                                            "lastName": inLastName,
-                                            "dob": inDob,
-                                            "avgDaysPerPeriod": inAvgDaysPerPeriod,
-                                            "profileImageId": "default_profile_women_1.jpg",
-                                            "symptomsTrack": new MODAL_TEMPLATE().getKeys()
-                                        })
+                signup: async (inEmail, inPassword, inFirstName, inLastName, inDob, inAvgDaysPerPeriod) => {
+                    console.log("[AuthProvider] signup()")
+                    try {
+                        await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
+                            .then((userCredential) => {
+                                fetch(`${API_URL}/api/user/${userCredential.user.uid}`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        "userId": userCredential.user.uid,
+                                        "email": userCredential.user.email,
+                                        "firstName": inFirstName,
+                                        "lastName": inLastName,
+                                        "dob": inDob,
+                                        "avgDaysPerPeriod": inAvgDaysPerPeriod,
+                                        "profileImageId": "default_profile_women_1.jpg",
+                                        "symptomsTrack": new MODAL_TEMPLATE().getKeys()
                                     })
-                                        .then(resp => resp.json())
-                                        .then(userData => {
-                                            setUserId(userData);
-                                        })
-                                });
-                        } catch (e) {
-                            console.log(e);
-                            setAuthError(e);
-                        }
-                    },  // ending signup
-
-                    logout: async () => {
-                        console.log("[AuthProvider] logout()")
-                        try {
-                            await signOut(firebaseAuth);
-                            removeToken();
-                            setUserId(null);
-                        } catch (e) {
-                            console.log(e);
-                            setAuthError(e);
-                        }
-                    },   // ending logout
-
-                    resetPassword: async (inEmail) => {
-                        console.log("[AuthProvider] resetPassword()")
-                        try {
-                            await sendPasswordResetEmail(firebaseAuth, inEmail)
-                                .then(() => {
-                                    setAuthStatus("Please check your email for reset password instructions")
                                 })
-                        } catch (e) {
-                            setAuthError(String(e));
-                        }
-                    },  // ending resetPassword
-                }}>
-                {children}
-            </AuthContext.Provider>
-        </PaperProvider>
+                                    .then(resp => resp.json())
+                                    .then(userData => {
+                                        setUserId(userData);
+                                    })
+                            });
+                    } catch (e) {
+                        console.log(e);
+                        setAuthError(e);
+                    }
+                },  // ending signup
+
+                logout: async () => {
+                    console.log("[AuthProvider] logout()")
+                    try {
+                        await signOut(firebaseAuth);
+                        removeToken();
+                        setUserId(null);
+                    } catch (e) {
+                        console.log(e);
+                        setAuthError(e);
+                    }
+                },   // ending logout
+
+                resetPassword: async (inEmail) => {
+                    console.log("[AuthProvider] resetPassword()")
+                    try {
+                        await sendPasswordResetEmail(firebaseAuth, inEmail)
+                            .then(() => {
+                                setAuthStatus("Please check your email for reset password instructions")
+                            })
+                    } catch (e) {
+                        setAuthError(String(e));
+                    }
+                },  // ending resetPassword
+            }}>
+            {children}
+        </AuthContext.Provider>
     )
 }
-
-
-// Styles
-const CustomDefaultTheme = {
-    ...NavigationDefaultTheme,
-    ...PaperDefaultTheme,
-    roundness: 50,
-    colors: {
-        // ...NavigationDefaultTheme.colors,
-        // ...PaperDefaultTheme.colors,
-        primary: '#F56A37',
-        accent: '#FFFBEE',
-        background: '#FFFBEE',
-        text: '#F56A37',
-        fonts: 'regular',
-        placeholder: 'black'
-    },
-
-    btnTextHighlight: {
-        text: 'white'
-    },
-    btnText: {
-        text: 'yellow'
-    }
-}
-
-const CustomDarkTheme = {
-    ...NavigationDarkTheme,
-    ...PaperDarkTheme,
-    roundness: 50,
-    colors: {
-        ...NavigationDarkTheme.colors,
-        ...PaperDarkTheme.colors,
-        background: '#333333',
-        text: '#ffffff'
-    },
-
-    btnTextHighlight: {
-        text: 'white'
-    },
-    btnText: {
-        text: 'yellow'
-    }
-}
-
 
 export default AuthProvider;
