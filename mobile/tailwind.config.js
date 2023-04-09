@@ -36,6 +36,9 @@ module.exports = {
     // safelist was added because some of the theme colors were not working, so adding this pattern ensures they will work across all files
     safelist: [{
       pattern: /(bg|text|border)-(gray|offwhite|lavenderlight|lavender|salmon|teal|turquoise|seafoam|greydark)/
+    },
+    {
+      pattern: /(h|w)-(full|1\/4|1\/2|3\/4)/
     }
   ]
 }
