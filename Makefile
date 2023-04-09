@@ -2,6 +2,9 @@
 run_docker:
 	docker compose up
 
+build_server_docker:
+	cd server && docker build -t sas-server .
+
 build_mobile_local:
 	cd mobile && npm install
 
@@ -16,7 +19,7 @@ build_server_local:
 	cd server && python -m venv ./venv && source ./venv/bin/activate && pip install -r requirements.txt
 
 run_server_local:
-	cd server && python app.py
+	cd server && source ./venv/bin/activate && python app.py
 
 # Must run 'make build_mobile_local' first
 run_server_dummy:
@@ -25,3 +28,21 @@ run_server_dummy:
 clean:
 	cd mobile && npm prune && rm -rf node_modules package-lock.json
 	cd server && rm -rf ./venv ./.venv
+
+# Deploy for dev
+deploy_dev_mobile_android:
+	cd mobile && eas build --platform android --profile preview
+
+deploy_dev_mobile_ios:
+	cd mobile && eas build --platform ios --profile preview
+
+deploy_server_docker:
+	cd server && docker build --platform=linux/amd64 -t sas-server .
+
+deploy_secret_force:
+	cd mobile && eas secret:push --scope project --env-file ./.env
+
+# Build with prod locally
+# npx expo start --no-dev
+# or
+# npx expo start --no-dev --minify (--minify will eliminate unnecessary data such as comments, formatting, and unused code)
