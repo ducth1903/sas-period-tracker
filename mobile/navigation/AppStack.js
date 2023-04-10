@@ -1,6 +1,7 @@
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 import HomeScreen from '../screens/HomeScreen';
 // import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
@@ -12,36 +13,39 @@ const Tab = createMaterialBottomTabNavigator();
 
 const AppStack = () => {
     return (
-        <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#E1EEDD' }} >
-            <Tab.Screen
-                name="HomeScreen"
-                component={HomeScreen}
-                options={{
-                    tabBarLabel: "Home",
-                    tabBarIcon: () => (<FontAwesome name="home" size={24} color="#183A1D" />)
-                }} />
-            <Tab.Screen
-                name="PeriodCalendarScreen"
-                component={PeriodCalendarScreen}
-                options={{
-                    tabBarLabel: "My Period",
-                    tabBarIcon: () => (<FontAwesome name="calendar" size={24} color="#183A1D" />)
-                }} />
-            <Tab.Screen
-                name="ResourceStack"
-                component={ResourceStack}
-                options={{
-                    tabBarLabel: "Resources",
-                    tabBarIcon: () => (<Foundation name="clipboard-notes" size={24} color="#183A1D" />)
-                }} />
-            <Tab.Screen
-                name="SettingScreen"
-                component={SettingScreen}
-                options={{
-                    tabBarLabel: "Settings",
-                    tabBarIcon: () => (<MaterialIcons name="settings" size={24} color="#183A1D" />)
-                }} />
-        </Tab.Navigator>
+        <>
+            <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#E1EEDD' }} >
+                <Tab.Screen
+                    name="HomeScreen"
+                    component={HomeScreen}
+                    options={{
+                        tabBarLabel: "Home",
+                        tabBarIcon: () => (<FontAwesome name="home" size={24} color="#183A1D" />)
+                    }} />
+                <Tab.Screen
+                    name="PeriodCalendarScreen"
+                    component={PeriodCalendarScreen}
+                    options={{
+                        tabBarLabel: "My Period",
+                        tabBarIcon: () => (<FontAwesome name="calendar" size={24} color="#183A1D" />)
+                    }} />
+                <Tab.Screen
+                    name="ResourceStack"
+                    component={ResourceStack}
+                    options={{
+                        tabBarLabel: "Resources",
+                        tabBarIcon: () => (<Foundation name="clipboard-notes" size={24} color="#183A1D" />)
+                    }} />
+                <Tab.Screen
+                    name="SettingScreen"
+                    component={SettingScreen}
+                    options={{
+                        tabBarLabel: "Settings",
+                        tabBarIcon: () => (<MaterialIcons name="settings" size={24} color="#183A1D" />)
+                    }} />
+            </Tab.Navigator>
+            <Toast />
+        </>
     );
 };
 

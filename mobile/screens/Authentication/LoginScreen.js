@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import LanguagePicker from "../../components/LanguagePicker";
 // import * as Animatable from 'react-native-animatable';
-// import { Button, TextInput } from 'react-native-paper';
 
 import { AuthContext } from "../../navigation/AuthProvider";
 import FormInput from "../../components/FormInput";

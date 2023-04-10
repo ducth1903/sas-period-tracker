@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
+import { StyleSheet, View, Text } from 'react-native';
 
 const LoadingIndicator = () => (
     <View style={styles.container}>
-        <ActivityIndicator animating={true} size='large' />
+        <Text>Loading...</Text>
     </View>
 );
 
