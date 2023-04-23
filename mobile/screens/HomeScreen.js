@@ -61,6 +61,9 @@ const SYMPTOMS = [
     { key: 'sticky', label: 'Discharge: Sticky', DefaultIcon: SVG.SymptomDischargeSticky, SelectedIcon: SVG.SymptomDischargeStickySelected },
 ];
 
+
+
+
 // Loading env variables
 import getEnvVars from '../environment';
 const { API_URL } = getEnvVars();
@@ -115,6 +118,7 @@ const HomeScreen = () => {
                     currentDay={new Date().getDate()}
                     key={i + 1}
                     periodDays={[3, 4, 5, 6, 7]}
+                    dayStatus={dayStatus}
                 />
             );
         }
@@ -169,7 +173,8 @@ const HomeScreen = () => {
 
     const toggleFlow = (flowKey) => {
         setFlowIconEnable((prev) => {
-            const newState = { ...prev, [flowKey]: !prev[flowKey] };
+            const temp = FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
+            const newState = { ...temp, [flowKey]: !prev[flowKey] };
             setFlowIconEnable(newState);
             return newState;
         });
@@ -182,6 +187,73 @@ const HomeScreen = () => {
             return newState;
         });
     };
+
+    const mockDataStatus = [
+        {
+            "dateStr": "3",
+            "flow": "heavy",
+            "moods": ["angry","anxious"],
+            "symptoms": ["cravings","cramps","headache"]
+        },
+        {
+            "dateStr": "4",
+            "flow": "medium",
+            "moods": ["sad","sensitive"],
+            "symptoms": ["backache","bloating","fatigue","creamy"]
+        },
+        {
+            "dateStr": "5",
+            "flow": "medium",
+            "moods": ["excited"],
+            "symptoms": ["bloating","nausea","cramps"]
+        },
+        {
+            "dateStr": "6",
+            "flow": "light",
+            "moods": ["sad","sensitive"],
+            "symptoms": ["backache","watery","tender"]
+        },
+        {
+            "dateStr": "7",
+            "flow": "light",
+            "moods": ["excited","sad","sensitive","angry"],
+            "symptoms": ["bloating","fatigue","backache","watery","tender"]
+        },
+    ];
+
+    const dayStatus = (num) => {
+        const temp_flow = FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
+        let temp_mood = MOODS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
+        let temp_symptom = SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
+
+        setFlowIconEnable(temp_flow);
+        setSymptomIconEnable(temp_mood);
+        setMoodIconEnable(temp_mood);
+
+        for(const data of mockDataStatus){
+            const {dateStr, flow, moods, symptoms} = data;
+
+            if(parseInt(dateStr) == num){
+                const newState = { ...temp_flow, [flow]: true };
+                setFlowIconEnable(newState);
+
+                setMoodIconEnable(() => {
+                    for(const mood of moods){
+                        temp_mood = { ...temp_mood, [mood]: true };
+                    }
+                    return temp_mood;
+                });
+
+                setSymptomIconEnable(()=>{
+                    for(const symptom of symptoms){
+                        temp_symptom = { ...temp_symptom, [symptom]: true };
+                    }
+                    return temp_symptom;
+                });
+                break;
+            }
+        }
+    }
 
     // Main View return()
     if (isLoading) {
