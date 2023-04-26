@@ -1,5 +1,5 @@
 import React from 'react';
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome, Foundation, MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
@@ -9,12 +9,13 @@ import PeriodCalendarScreen from '../screens/PeriodCalendarScreen';
 import SettingScreen from '../screens/SettingScreen';
 import ResourceStack from '../screens/Resource/ResourceStack';
 
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const AppStack = () => {
     return (
         <>
-            <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#E1EEDD' }} >
+            <Tab.Navigator initialRouteName="HomeScreen" barStyle={{ backgroundColor: '#E1EEDD' }}
+                screenOptions={{ headerShown: false }}>
                 <Tab.Screen
                     name="HomeScreen"
                     component={HomeScreen}
