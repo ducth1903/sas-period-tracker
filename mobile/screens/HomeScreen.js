@@ -187,7 +187,7 @@ const HomeScreen = () => {
     if (isLoading) {
         console.log('[HomeScreen] loading...');
         return (
-            <SafeAreaView className="flex-1">
+            <SafeAreaView className="bg-offwhite flex-1">
                 <ScrollView
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
@@ -210,7 +210,7 @@ const HomeScreen = () => {
     }
 
     return (
-        <SafeAreaView className="flex-1">
+        <SafeAreaView className="bg-offwhite flex-1">
             <ScrollView
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
