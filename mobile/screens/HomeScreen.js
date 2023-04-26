@@ -13,7 +13,7 @@ import {
     Dimensions,
     Image,
 } from 'react-native';
-import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+// import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { Skeleton } from '@rneui/themed';
 import { TextInput } from 'react-native-gesture-handler';
@@ -185,7 +185,6 @@ const HomeScreen = () => {
 
     // Main View return()
     if (isLoading) {
-        console.log('[HomeScreen] loading...');
         return (
             <SafeAreaView className="bg-offwhite flex-1">
                 <ScrollView
@@ -219,7 +218,7 @@ const HomeScreen = () => {
                         <View className="bg-[#EDEEE0] self-center px-4 py-1 rounded-lg">
                             <Text className="text-lg font-semibold text-teal">{currentDateStr()}</Text>
                         </View>
-                        <MaterialCommunityIcons name="account-circle-outline" size={24} color="black" />
+                        {/* <MaterialCommunityIcons name="account-circle-outline" size={24} color="black" /> */}
                     </View>
                     {showRecommendationText &&
                         <View className="py-2">

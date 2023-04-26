@@ -1,10 +1,6 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { AuthContext } from '../navigation/AuthProvider';
-
-// import * as ImagePicker from 'expo-image-picker';
-// import BottomSheet from '@gorhom/bottom-sheet';
-// import BottomSheetCustomBackground from '../components/BottomSheetCustomBackground';
 
 const SettingScreen = () => {
     const { userId, logout, toggleTheme } = useContext(AuthContext);
@@ -153,54 +149,13 @@ const SettingScreen = () => {
     // End Bottom sheet
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView className="bg-offwhite flex-1 justify-center items-center">
             <Text>Setting Page</Text>
             <Pressable mode="contained" onPress={() => logout()}>
                 <Text>Sign Out</Text>
             </Pressable>
-        </View>
+        </SafeAreaView>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#fff',
-    },
-    // bottomSheetHeader: {
-    //     backgroundColor: '#FFFFFF',
-    //     shadowColor: '#333333',
-    //     shadowOffset: {width: -1, height: -3},
-    //     shadowRadius: 2,
-    //     shadowOpacity: 0.4,
-    //     // elevation: 5,
-    //     paddingTop: 20,
-    //     borderTopLeftRadius: 20,
-    //     borderTopRightRadius: 20,
-    // },
-    // bottomSheetPanelHeader: {
-    //     alignItems: 'center',
-    // },
-    // bottomSheetPanelHandle: {
-    //     width: 40,
-    //     height: 8,
-    //     borderRadius: 4,
-    //     backgroundColor: '#00000040',
-    //     marginBottom: 10,
-    // },
-    // bottomSheetStyle: {
-    //     // backgroundColor: 'red',
-    //     shadowColor: "#333333",
-    //     shadowOffset: {
-    //         width: 0,
-    //         height: 4,
-    //     },
-    //     shadowOpacity: 0.32,
-    //     shadowRadius: 5.46,
-    //     elevation: 9,
-    // },
-})
 
 export default SettingScreen;
