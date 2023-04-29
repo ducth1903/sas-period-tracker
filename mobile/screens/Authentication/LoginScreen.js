@@ -13,11 +13,12 @@ import LanguagePicker from "../../components/LanguagePicker";
 import { AuthContext } from "../../navigation/AuthProvider";
 import FormInput from "../../components/FormInput";
 import FormButton from "../../components/FormButton";
+import SignInWithGoogle from "../../navigation/SignInWithGoogle";
 // import SocialButton from '../../components/SocialButton';
 import i18n from "../../translations/i18n";
 
 const LoginScreen = ({ navigation }) => {
-  const { login, authError, setAuthError } = useContext(AuthContext);
+  const { login, loginWithGoogle, authError, setAuthError } = useContext(AuthContext);
   const [hiddenPassword, setHiddenPassword] = useState(true);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -67,11 +68,8 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.languagePickerContainer}>
-          <LanguagePicker />
-        </View>
-
         <View style={styles.formInputContainer}>
+          <LanguagePicker />
           <FormInput
             labelValue="Email"
             placeholderText={i18n.t("authentication.email")}
@@ -92,7 +90,7 @@ const LoginScreen = ({ navigation }) => {
             onChangeText={handlePassword}
           //onPressEyeBtn={handleEyeClicked}
           />
-          <View style={styles.signIn}>
+          <View>
             <FormButton
               btnTitle={i18n.t("authentication.signIn")}
               isHighlight={true}
@@ -148,6 +146,10 @@ const LoginScreen = ({ navigation }) => {
               {i18n.t("authentication.noAccountSignUp")}
             </Text>
           </Text>
+        </View>
+
+        <View style={styles.formInputContainer}>
+          <SignInWithGoogle successFn={loginWithGoogle} />
         </View>
       </View>
     </View>

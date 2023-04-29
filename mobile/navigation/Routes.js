@@ -9,7 +9,7 @@ import AppStack from './AppStack';
 
 const Routes = () => {
     const auth = getAuth();
-    const { userId, setUserId, theme } = useContext(AuthContext);
+    const { userId, setUserId } = useContext(AuthContext);
     const [initializing, setInitializing] = useState(true);
 
     // Authentication State Observer
@@ -34,7 +34,7 @@ const Routes = () => {
         return (<ActivityIndicator size="large" />)
     } else {
         return (
-            <NavigationContainer theme={theme}>
+            <NavigationContainer>
                 {/* Must explicitly handle isMounted in AuthStack.useEffect()
                 Initially, userId is null and AuthStack useEffect is activated
                 but components did not mount */}

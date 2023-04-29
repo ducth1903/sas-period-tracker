@@ -21,6 +21,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { AuthContext } from '../navigation/AuthProvider';
 // import FormButton from '../components/FormButton';
 import DateCircle from '../components/DateCircle';
+import TextCard from '../components/TextCard';
 // import ProgressiveImage from '../components/ProgressiveImage';
 import i18n from '../translations/i18n';
 import * as SVG from '../assets/svg';
@@ -62,7 +63,6 @@ const SYMPTOMS = [
 
 // Loading env variables
 import getEnvVars from '../environment';
-import TextCard from '../components/TextCard';
 const { API_URL } = getEnvVars();
 
 const HomeScreen = () => {
