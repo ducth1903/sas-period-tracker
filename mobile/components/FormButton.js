@@ -1,16 +1,22 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Text, StyleSheet, View, Pressable } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 
 const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
+    const iconName = restProps?.iconName;
+
     return (
         <View style={styles.container}>
             <Pressable {...restProps}>
                 <LinearGradient
+                    className="flex-row space-x-3"
                     colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#FFFFFF', '#FFFFFF']}
                     style={[styles.commonBtnStyle, isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle]}>
-
-                    <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>{btnTitle}</Text>
+                    {iconName && <AntDesign name={iconName} size={24} color="white" />}
+                    <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>
+                        {btnTitle}
+                    </Text>
                 </LinearGradient>
             </Pressable>
         </View>

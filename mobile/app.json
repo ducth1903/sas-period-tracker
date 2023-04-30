@@ -4,6 +4,7 @@
     "description": "Period tracker app and education",
     "slug": "sas",
     "version": "1.0.0",
+    "scheme": "sasperiodscheme",
     "platforms": [
       "ios",
       "android"

@@ -10,18 +10,18 @@ const LandingScreen = ({ navigation }) => {
                 <Image source={require('../../assets/revised-logo.png')} style={styles.logo} />
             </View>
             <View style={styles.footer}>
-                <View style={styles.item}>
-                    <FormButton
-                        btnTitle={i18n.t('authentication.login')}
-                        isHighlight={true}
-                        onPress={() => { navigation.navigate("LoginScreen") }}
-                    />
-                </View>
-                <View style={styles.item}>
+                <View className="w-1/2">
                     <FormButton
                         btnTitle={i18n.t('authentication.signup')}
                         isHighlight={true}
                         onPress={() => { navigation.navigate("SignupScreen") }}
+                    />
+                </View>
+                <View className="w-1/2">
+                    <FormButton
+                        btnTitle={i18n.t('authentication.login')}
+                        isHighlight={true}
+                        onPress={() => { navigation.navigate("LoginScreen") }}
                     />
                 </View>
             </View>
@@ -33,7 +33,7 @@ const { height } = Dimensions.get("screen");
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //   backgroundColor: '#6d5b57',
+        // backgroundColor: '#6d5b57',
         justifyContent: 'center',
     },
     header: {
@@ -45,18 +45,12 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFFBEE',
         alignItems: 'center',
-        // justifyContent: 'flex-start',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         paddingVertical: 50,
         paddingHorizontal: 30,
-
         flexDirection: 'row',
         flexWrap: 'wrap',
-        // alignItems: 'flex-start'
-    },
-    item: {
-        width: '50%'        // 50% of container width
     },
     logo: {
         width: height * 0.2,

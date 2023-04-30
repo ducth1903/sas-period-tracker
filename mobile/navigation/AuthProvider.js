@@ -1,11 +1,15 @@
 import React, { createContext, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'firebase/auth';
-// import {
-//     DefaultTheme as NavigationDefaultTheme,
-//     DarkTheme as NavigationDarkTheme
-// } from '@react-navigation/native';
+import {
+    createUserWithEmailAndPassword,
+    getAuth,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    signOut,
+    GoogleAuthProvider,
+    signInWithCredential,
+} from 'firebase/auth';
 import { MODAL_TEMPLATE } from '../models/PeriodDate';
 
 // Loading env variables
@@ -104,6 +108,45 @@ export const AuthProvider = ({ children }) => {
                         console.log(e);
                     }
                 },  // ending login
+
+                loginWithGoogle: async (googleResponse) => {
+                    try {
+                        // Build Firebase credential with the Google ID token.
+                        const idToken = googleResponse.authentication.idToken;
+                        const accessToken = googleResponse.authentication.accessToken;
+                        const credential = GoogleAuthProvider.credential(idToken, accessToken);
+
+                        // Sign in with credential from the Google user.
+                        const result = await signInWithCredential(firebaseAuth, credential);
+
+                        const userCredential = result.user;
+                        const userUid = userCredential.uid;
+                        // const userApiKey = userCredential.apiKey;
+                        // const userEmail = userCredential.email;
+                        // const userDisplayName = userCredential.displayName;
+                        // const userPhotoURL = userCredential.photoURL;
+                        setUserId(userUid);
+
+                        // Token response
+                        // const tokenResponse = result._tokenResponse;
+                        // const userFirstName = tokenResponse.firstName;
+                        // const userLastName = tokenResponse.lastName;
+                        // const userFullName = tokenResponse.fullName;
+                        // const userIdToken = tokenResponse.idToken;
+                        // setToken(userIdToken);
+                        setToken(userCredential);
+                    } catch (error) {
+                        // Handle Errors here.
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // The email of the user's account used.
+                        const email = error.email;
+                        // The credential that was used.
+                        const credential = GoogleAuthProvider.credentialFromError(error);
+                        console.log('Error when login with Google:', error, errorCode);
+                    }
+
+                },  // ending loginWithGoogle 
 
                 signup: async (inEmail, inPassword, inFirstName, inLastName, inDob, inAvgDaysPerPeriod) => {
                     console.log("[AuthProvider] signup()")
