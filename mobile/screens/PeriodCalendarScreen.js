@@ -469,17 +469,18 @@ const PeriodCalendarScreen = ({ props }) => {
         
         return (
             <View className="flex flex-col">
-                <View className="flex-row">
+                <View className="flex-row justify-center">
                     {
                         weekDays.map(s => s.toLowerCase()).map((day) => 
-                            <WeekColumn 
-                                flow={weekData.flow[day]}
-                                discharge={weekData.discharge[day]}
-                                symptoms={weekData.symptoms[day]}
-                                moods={weekData.mood[day]}
-                                day={day}
-                                key={`weekcolumn-${day}`}
-                            />
+                            <View className="w-[calc(100%/7)] justify-center items-center" key={`weekcolumn-${day}`}>
+                                <WeekColumn
+                                    flow={weekData.flow[day]}
+                                    discharge={weekData.discharge[day]}
+                                    symptoms={weekData.symptoms[day]}
+                                    moods={weekData.mood[day]}
+                                    day={day}
+                                />
+                            </View>
                         )
                     }
                 </View>

@@ -57,27 +57,27 @@ const DailyGrid = ({ data=null }) => {
         <View className="items-center justify-center pt-1.5 mt-6">
             <View className="flex-row">
                 {/* pick flow icon to render */}
-                {SVG.renderFlow(data.symptoms.flow[0], true, iconDimensions, iconDimensions)}
+                {SVG.renderFlow(data.symptoms.flow[0], true, iconDimensions, iconDimensions, 1.5, 1.5)}
                 
                 {/* pick discharge icon to render */}
-                {SVG.renderDischarge(data.symptoms.discharge[0], true, iconDimensions, iconDimensions)}
+                {SVG.renderDischarge(data.symptoms.discharge[0], true, iconDimensions, iconDimensions, 1.5, 1.5)}
 
                 {/* pick symptom icons to render */}
-                {SVG.renderSymptom(`daily-symptom-1`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderSymptom(`daily-symptom-1`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
             </View>
             <View className="flex-row">
-                {SVG.renderSymptom(`daily-symptom-2`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderSymptom(`daily-symptom-2`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
 
-                {SVG.renderSymptom(`daily-symptom-3`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderSymptom(`daily-symptom-3`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
 
-                {SVG.renderSymptom(`daily-symptom-4`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderSymptom(`daily-symptom-4`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
             </View>
             <View className="flex-row">
-                {SVG.renderMood(`daily-mood-1`, nextMood(), moodsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderMood(`daily-mood-1`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
 
-                {SVG.renderMood(`daily-mood-2`, nextMood(), moodsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderMood(`daily-mood-2`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
 
-                {SVG.renderMood(`daily-mood-3`, nextMood(), moodsLeft, iconDimensions, iconDimensions)}
+                {SVG.renderMood(`daily-mood-3`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
             </View>
         </View>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import * as SVG from '../assets/svg.js';
 
 // There are 15 icons in each column
@@ -30,25 +30,26 @@ const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
 
     // TODO: Integrate custom moods
     // TODO: Backend integration
+    // TODO: refactor props to be passed in as lists
     return (
         <View className="flex-col mt-3">
             {/* flow icon for this row */}
-            {SVG.renderFlow(flow, true)}
+            {SVG.renderFlow(flow, true, 40, 40, 1.5, 0)}
             
             {/* discharge icon for this row */}
-            {SVG.renderDischarge(discharge, true)}
+            {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)}
 
             {/* symptoms icons for this row */}
             {
                 Object.keys(SVG.symptomSVGs.default).map(
-                    symptom => SVG.renderSymptom(key=`symptom-${symptom}-${day}`,symptom, symptoms[symptom])
+                    symptom => SVG.renderSymptom(`symptom-${symptom}-${day}`, symptom, symptoms[symptom], 40, 40, 1.5, 0)
                 )
             }
 
             {/* moods icons for this row */}
             {
                 Object.keys(SVG.moodSVGs.default).map(
-                    mood => SVG.renderMood(key=`mood-${mood}-${day}`, mood, moods[mood])
+                    mood => SVG.renderMood(`mood-${mood}-${day}`, mood, moods[mood], 40, 40, 1.5, 0)
                 )
             }
         </View>
