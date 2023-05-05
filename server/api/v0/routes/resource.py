@@ -33,6 +33,14 @@ class Resource(Base):
     category = Column("category", String)
     timestamp = Column("timestamp", Integer)
 
+    def __init__(self, id, title, s3_url, author, category, timestamp):
+        self.id = id
+        self.title = title
+        self.s3_url = s3_url
+        self.author = author
+        self.category = category
+        self.timestamp = timestamp
+
 # create the URL string
 url = f"postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
 
@@ -50,12 +58,12 @@ def resources_get_by_id(id):
     if request.method == "GET":
         resp = session.query(Resource).filter(Resource.id == id).first()
         current_app.logger.info(f"[GET] response: {resp}")
-        if resp != None:
-            # valid resource
-            return jsonify(resp)
-        else:
-            # resource is not in metadata table
+         # resource is not in metadata table
+        if not resp:
             return response.error_json_response(id)
+        # valid resource
+        return jsonify(resp)      
+        
     elif request.method == "POST":
         data = request.data.decode("utf-8")
         received_json_data = json.loads(data)
@@ -74,3 +82,17 @@ def resources_get_by_id(id):
             session.commit()
 
         return response.ok_json_response()
+    
+    elif request.method == "PUT":
+        data = request.data.decode("utf-8")
+        received_json_data = json.loads(data)
+        current_app.logger.info("[PUT] received data: ", received_json_data)
+
+        data2update = dict()
+        for k, v in received_json_data.items():
+            data2update[k] = {"Value": v}
+        try:
+            sas_aws.userTable.update_item(Key={"userId": userid}, AttributeUpdates=data2update)
+            return response.ok_json_response()
+        except Exception as e:
+            return response.error_json_response(e)
