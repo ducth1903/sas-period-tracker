@@ -88,11 +88,14 @@ def resources_get_by_id(id):
         received_json_data = json.loads(data)
         current_app.logger.info("[PUT] received data: ", received_json_data)
 
-        data2update = dict()
-        for k, v in received_json_data.items():
-            data2update[k] = {"Value": v}
-        try:
-            sas_aws.userTable.update_item(Key={"userId": userid}, AttributeUpdates=data2update)
-            return response.ok_json_response()
-        except Exception as e:
-            return response.error_json_response(e)
+        # Get the resource
+        resource = session.query(Resource).filter(Resource.id == id).first()
+
+        resource.title = received_json_data['name']
+        resource.s3_url = received_json_data['s3_url']
+        resource.author = received_json_data['author']
+        resource.category = received_json_data['category']
+        resource.timestamp = received_json_data['timestamp']
+        session.commit()
+
+        return received_json_data
