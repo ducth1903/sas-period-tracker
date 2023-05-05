@@ -43,3 +43,16 @@ engine = create_engine(url)
 Session = sessionmaker(bind=engine)
 # Create the actual session
 session = Session()
+
+# Get a resource by id
+@resource_api.route('/resources/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def resources_get_by_id(id):
+    if request.method == "GET":
+        resp = session.query(Resource).filter(Resource.id == id).first()
+        current_app.logger.info(f"[GET] response: {resp}")
+        if resp != None:
+            # valid resource
+            return jsonify(resp)
+        else:
+            # resource is not in metadata table
+            return response.error_json_response(id)
