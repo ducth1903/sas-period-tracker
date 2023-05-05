@@ -56,3 +56,21 @@ def resources_get_by_id(id):
         else:
             # resource is not in metadata table
             return response.error_json_response(id)
+    elif request.method == "POST":
+        data = request.data.decode("utf-8")
+        received_json_data = json.loads(data)
+        current_app.logger.info(f"[POST] received data: {received_json_data}")
+
+        for rec in received_json_data:
+            resource_obj = {
+                "id": rec["id"],
+                "title": rec["title"],
+                "s3_url": rec["s3_url"],
+                "author": rec["author"],
+                "category": rec["category"],
+                "timestamp": rec["timestamp"]
+            }
+            session.add(resource_obj)
+            session.commit()
+
+        return response.ok_json_response()
