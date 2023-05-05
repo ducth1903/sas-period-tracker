@@ -52,7 +52,6 @@ Session = sessionmaker(bind=engine)
 # Create the actual session
 session = Session()
 
-# Get a resource by id
 @resource_api.route('/resources/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def resources_get_by_id(id):
     if request.method == "GET":
@@ -99,3 +98,13 @@ def resources_get_by_id(id):
         session.commit()
 
         return received_json_data
+    
+    elif request.method == "DELETE":
+        resource = session.query(Resource).filter(Resource.id == id).first()
+        
+        if not resource:
+            return response.error_json_response(id)
+        
+        session.delete(resource)
+        session.commit()
+        return response.ok_json_response
