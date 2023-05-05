@@ -101,10 +101,24 @@ def resources_get_by_id(id):
     
     elif request.method == "DELETE":
         resource = session.query(Resource).filter(Resource.id == id).first()
-        
+
         if not resource:
             return response.error_json_response(id)
         
         session.delete(resource)
         session.commit()
         return response.ok_json_response
+    
+@resource_api.route('/resources/<category>')
+def resources_get_by_category(category):
+    resp = session.query(Resource).filter(Resource.category == category).all()
+    current_app.logger.info(f"[GET] response: {resp}")
+    # resource is not in metadata table
+    if len(resp) == 0:
+        return response.error_json_response(category)
+    # valid resources
+    resources = []
+    for rec in resp:
+        obj = {"id": rec.id, "title": rec.title, "s3_url": rec.s3_url, "author": rec.author, "category": rec.category, "timestamp": rec.timestamp}
+        resources.append(obj)
+    return jsonify(resources) 
