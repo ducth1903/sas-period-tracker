@@ -52,63 +52,69 @@ Session = sessionmaker(bind=engine)
 # Create the actual session
 session = Session()
 
-@resource_api.route('/resources/<id>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+# GET
+@resource_api.route('/resources/<id>')
 def resources_get_by_id(id):
-    if request.method == "GET":
-        resp = session.query(Resource).filter(Resource.id == id).first()
-        current_app.logger.info(f"[GET] response: {resp}")
-         # resource is not in metadata table
-        if not resp:
-            return response.error_json_response(id)
-        # valid resource
-        return jsonify(resp)      
-        
-    elif request.method == "POST":
-        data = request.data.decode("utf-8")
-        received_json_data = json.loads(data)
-        current_app.logger.info(f"[POST] received data: {received_json_data}")
+    resp = session.query(Resource).filter(Resource.id == id).first()
+    current_app.logger.info(f"[GET] response: {resp}")
+        # resource is not in metadata table
+    if not resp:
+        return response.error_json_response(id)
+    # valid resource
+    return jsonify(resp)      
 
-        for rec in received_json_data:
-            resource_obj = {
-                "id": rec["id"],
-                "title": rec["title"],
-                "s3_url": rec["s3_url"],
-                "author": rec["author"],
-                "category": rec["category"],
-                "timestamp": rec["timestamp"]
-            }
-            session.add(resource_obj)
-            session.commit()
+# POST
+@resource_api.route('/resources/<id>')
+def resources_post_by_id(id):
+    data = request.data.decode("utf-8")
+    received_json_data = json.loads(data)
+    current_app.logger.info(f"[POST] received data: {received_json_data}")
 
-        return response.ok_json_response()
-    
-    elif request.method == "PUT":
-        data = request.data.decode("utf-8")
-        received_json_data = json.loads(data)
-        current_app.logger.info("[PUT] received data: ", received_json_data)
-
-        # Get the resource
-        resource = session.query(Resource).filter(Resource.id == id).first()
-
-        resource.title = received_json_data['name']
-        resource.s3_url = received_json_data['s3_url']
-        resource.author = received_json_data['author']
-        resource.category = received_json_data['category']
-        resource.timestamp = received_json_data['timestamp']
+    for rec in received_json_data:
+        resource_obj = {
+            "id": rec["id"],
+            "title": rec["title"],
+            "s3_url": rec["s3_url"],
+            "author": rec["author"],
+            "category": rec["category"],
+            "timestamp": rec["timestamp"]
+        }
+        session.add(resource_obj)
         session.commit()
 
-        return received_json_data
-    
-    elif request.method == "DELETE":
-        resource = session.query(Resource).filter(Resource.id == id).first()
+    return response.ok_json_response()
 
-        if not resource:
-            return response.error_json_response(id)
-        
-        session.delete(resource)
-        session.commit()
-        return response.ok_json_response
+# PUT
+@resource_api.route('/resources/<id>')
+def resources_put_by_id(id):
+    data = request.data.decode("utf-8")
+    received_json_data = json.loads(data)
+    current_app.logger.info("[PUT] received data: ", received_json_data)
+
+    # Get the resource
+    resource = session.query(Resource).filter(Resource.id == id).first()
+
+    resource.title = received_json_data['name']
+    resource.s3_url = received_json_data['s3_url']
+    resource.author = received_json_data['author']
+    resource.category = received_json_data['category']
+    resource.timestamp = received_json_data['timestamp']
+    session.commit()
+
+    return received_json_data
+
+# DELETE
+@resource_api.route('/resources/<id>')
+def resources_delete_by_id(id):
+    resource = session.query(Resource).filter(Resource.id == id).first()
+
+    if not resource:
+        return response.error_json_response(id)
     
+    session.delete(resource)
+    session.commit()
+    return response.ok_json_response
+
 @resource_api.route('/resources/<category>')
 def resources_get_by_category(category):
     resp = session.query(Resource).filter(Resource.category == category).all()
