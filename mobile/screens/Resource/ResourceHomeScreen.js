@@ -7,7 +7,6 @@ import {
     Pressable, 
     SafeAreaView,  
     StatusBar,
-    Image,
     ScrollView,
     TouchableOpacity,
     ImageBackground
@@ -18,7 +17,9 @@ import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 import { mockData } from './mockData';
 
-const ResourceScreen = ({ navigation, props }) => {
+import SearchIcon from '../../assets/icons/search.svg'
+
+const ResourceHomeScreen = ({ navigation, props }) => {
     const resource_template = new RESOURCE_TEMPLATE();
     const [resourcesJson, setResourcesJson] = useState({});
     const [refreshing, setRefreshing] = useState(false);
@@ -53,10 +54,12 @@ const ResourceScreen = ({ navigation, props }) => {
         const image = images[item.image];
 
         return (
-            <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15  }}>
-                <View style={styles.darkness} />
-                <Text style={styles.purpleBoxText}>{item.text}</Text>
-            </ImageBackground>
+            <Pressable onPress={() => navigation.navigate('ResourceContent', {resource: item})}>
+                <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15  }}>
+                    <View style={styles.darkness} />
+                    <Text style={styles.purpleBoxText}>{item.text}</Text>
+                </ImageBackground>
+            </Pressable>
         );
     };
 
@@ -102,36 +105,38 @@ const ResourceScreen = ({ navigation, props }) => {
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>Education</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <Image source={require('../../assets/icons/search.png')} style={styles.headerSearchIcon}/>
+                        <SearchIcon style={styles.headerSearchIcon}/>
                     </TouchableOpacity>
                 </View>
                 {
                     mockData.map((ele, index) => {
                         if (index > 1) {
                             return (
-                                <>
+                                <View key={index}>
                                     <Text style={styles.subHeaderText}>{ele.title}</Text>
                                     <FlatList
                                         horizontal
                                         data={ele.data}
-                                        renderItem={({ item }) => <PurpleListItem item={item} />}
+                                        renderItem={({ item }) => <PurpleListItem item={item} key={item.key} />}
                                         showsHorizontalScrollIndicator={false}
                                         style={{marginBottom: -15}}
+                                        keyExtractor={(item, index) => item.key}
                                     />
-                                </>
+                                </View>
                             )
                         } else {
                             return (
-                                <>
+                                <View key={index}>
                                     <Text style={styles.subHeaderText}>{ele.title}</Text>
                                     <FlatList
                                         horizontal
                                         data={ele.data}
-                                        renderItem={({ item }) => <RedListItem item={item} />}
+                                        renderItem={({ item }) => <RedListItem item={item} key={item.key}/>}
                                         showsHorizontalScrollIndicator={false}
                                         style={{marginBottom: -15}}
+                                        keyExtractor={(item, index) => item.key}
                                     />
-                                </>
+                                </View>
                             )
                         }
                     })
@@ -305,4 +310,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ResourceScreen;
+export default ResourceHomeScreen;
