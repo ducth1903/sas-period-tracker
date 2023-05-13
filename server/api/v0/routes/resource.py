@@ -1,6 +1,7 @@
 from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from enum import Enum
 
 from ..services.get_aws import SasAws
 from ..utils import response
@@ -11,6 +12,17 @@ sas_aws = SasAws()
 # Create a base class for declarative ORM models
 Base = declarative_base()
 
+# Enum class for category
+class Category(Enum):
+    MENSTRUATION = "menstruation"
+    SEXUAL_HEALTH = "sexual health"
+    MATERNAL_HEALTH = "maternal health"
+    REPRODUCTIVE_HEALTH = "reproductive health"
+    NUTRITION = "nutrition"
+    EXERCISE = "exercise"
+    GROWING_UP = "growing up"
+    MENTAL_HEALTH = "mental health"
+
 # Define the resource class
 class Resource(Base):
     __tablename__ = 'metadata'
@@ -19,7 +31,7 @@ class Resource(Base):
     title = Column("title", String)
     s3_url = Column("s3_url", String)
     author = Column("author", String)
-    category = Column("category", String)
+    category = Column("category", Category)
     timestamp = Column("timestamp", Integer)
 
     def __init__(self, id, title, s3_url, author, category, timestamp):
