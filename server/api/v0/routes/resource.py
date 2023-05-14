@@ -73,34 +73,26 @@ def resources_get_by_id(id):
         return response.error_json_response(e)
 
 # POST
-@resource_api.route('/resources')
+@resource_api.route('/resources', methods=['POST'])
 def resources_post():
-    data = request.data.decode("utf-8")
-    received_json_data = json.loads(data)
-    current_app.logger.info(f"[POST] received data: {received_json_data}")
+    try: 
+        data = request.data.decode("utf-8")
+        received_json_data = json.loads(data)
+        current_app.logger.info(f"[POST] received data: {received_json_data}")
 
-    # for rec in received_json_data:
-    #     resource_obj = {
-    #         "title": rec["title"],
-    #         "s3_url": rec["s3_url"],
-    #         "author": rec["author"],
-    #         "category": rec["category"],
-    #         "timestamp": rec["timestamp"]
-    #     }
-    #     sas_aws.rds.add(resource_obj)
-    #     sas_aws.rds.commit()
+        resource_obj = Resource(
+            received_json_data["title"],
+            received_json_data["s3_url"],
+            received_json_data["author"],
+            received_json_data["category"],
+            received_json_data["timestamp"]
+        )
+        sas_aws.rds.add(resource_obj)
+        sas_aws.rds.commit()
 
-    resource_obj = {
-        "title": received_json_data["title"],
-        "s3_url": received_json_data["s3_url"],
-        "author": received_json_data["author"],
-        "category": received_json_data["category"],
-        "timestamp": received_json_data["timestamp"]
-    }
-    sas_aws.rds.add(resource_obj)
-    sas_aws.rds.commit()
-
-    return response.ok_json_response()
+        return response.ok_json_response()
+    except Exception as e:
+        return response.error_json_response(e)
 
 # PUT
 @resource_api.route('/resources/<id>')
