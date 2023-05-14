@@ -132,19 +132,22 @@ def resources_delete_by_id(id):
     except Exception as e:
         return response.error_json_response(e)
 
-@resource_api.route('/resources/<category>')
+@resource_api.route('/resources/category/<category>')
 def resources_get_by_category(category):
-    resp = sas_aws.rds.query(Resource).filter(Resource.category == category).all()
-    current_app.logger.info(f"[GET] response: {resp}")
-    # resource is not in metadata table
-    if len(resp) == 0:
-        return response.error_json_response(category)
-    # valid resources
-    resources = []
-    for rec in resp:
-        obj = {"id": rec.id, "title": rec.title, "s3_url": rec.s3_url, "author": rec.author, "category": rec.category, "timestamp": rec.timestamp}
-        resources.append(obj)
-    return jsonify(resources) 
+    try:
+        resp = sas_aws.rds.query(Resource).filter(Resource.category == category).all()
+        current_app.logger.info(f"[GET] response: {resp}")
+        # resource is not in metadata table
+        if len(resp) == 0:
+            return response.error_json_response(category)
+        # valid resources
+        resources = []
+        for rec in resp:
+            obj = rec.as_dict()
+            resources.append(obj)
+        return jsonify(resources) 
+    except Exception as e:
+        return response.error_json_response(e)
 
 @resource_api.route('/resources/<author>')
 def resources_get_by_author(author):
