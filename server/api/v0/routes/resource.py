@@ -1,6 +1,8 @@
 from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 from enum import Enum
 
 from ..services.get_aws import SasAws
@@ -27,20 +29,23 @@ class Category(Enum):
 class Resource(Base):
     __tablename__ = 'metadata'
 
-    id = Column("id", Integer, primary_key=True)
+    id = Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = Column("title", String)
     s3_url = Column("s3_url", String)
     author = Column("author", String)
-    category = Column("category", Category)
+    category = Column("category", String)
     timestamp = Column("timestamp", Integer)
 
-    def __init__(self, id, title, s3_url, author, category, timestamp):
-        self.id = id
+    def __init__(self, title, s3_url, author, category, timestamp):
         self.title = title
         self.s3_url = s3_url
         self.author = author
         self.category = category
         self.timestamp = timestamp
+
+# Create table in database
+Base.metadata.create_all(sas_aws.engine)
+print("After create table")
 
 # GET
 @resource_api.route('/resources/<id>')
