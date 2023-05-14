@@ -117,16 +117,20 @@ def resources_put_by_id(id):
         return response.error_json_response(e)
 
 # DELETE
-@resource_api.route('/resources/<id>')
+@resource_api.route('/resources/<id>', methods=['DELETE'])
 def resources_delete_by_id(id):
-    resource = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
+    try: 
+        resource = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
+        current_app.logger.info(f"[DELETE] response: {resource}")
 
-    if not resource:
-        return response.error_json_response(id)
-    
-    sas_aws.rds.delete(resource)
-    sas_aws.rds.commit()
-    return response.ok_json_response
+        if not resource:
+            return response.error_json_response(id)
+        
+        sas_aws.rds.delete(resource)
+        sas_aws.rds.commit()
+        return jsonify(resource.as_dict())
+    except Exception as e:
+        return response.error_json_response(e)
 
 @resource_api.route('/resources/<category>')
 def resources_get_by_category(category):
