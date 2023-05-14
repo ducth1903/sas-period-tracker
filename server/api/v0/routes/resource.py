@@ -90,28 +90,31 @@ def resources_post():
         sas_aws.rds.add(resource_obj)
         sas_aws.rds.commit()
 
-        return response.ok_json_response()
+        return received_json_data
     except Exception as e:
         return response.error_json_response(e)
 
 # PUT
-@resource_api.route('/resources/<id>')
+@resource_api.route('/resources/<id>', methods=['PUT'])
 def resources_put_by_id(id):
-    data = request.data.decode("utf-8")
-    received_json_data = json.loads(data)
-    current_app.logger.info("[PUT] received data: ", received_json_data)
+    try: 
+        data = request.data.decode("utf-8")
+        received_json_data = json.loads(data)
+        current_app.logger.info("[PUT] received data: ", received_json_data)
 
-    # Get the resource
-    resource = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
+        # Get the resource
+        resource = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
 
-    resource.title = received_json_data['name']
-    resource.s3_url = received_json_data['s3_url']
-    resource.author = received_json_data['author']
-    resource.category = received_json_data['category']
-    resource.timestamp = received_json_data['timestamp']
-    sas_aws.rds.commit()
+        resource.title = received_json_data['title']
+        resource.s3_url = received_json_data['s3_url']
+        resource.author = received_json_data['author']
+        resource.category = received_json_data['category']
+        resource.timestamp = received_json_data['timestamp']
+        sas_aws.rds.commit()
 
-    return received_json_data
+        return received_json_data
+    except Exception as e:
+        return response.error_json_response(e)
 
 # DELETE
 @resource_api.route('/resources/<id>')
