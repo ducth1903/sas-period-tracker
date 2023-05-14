@@ -7,6 +7,7 @@ from enum import Enum
 
 from ..services.get_aws import SasAws
 from ..utils import response
+from ..utils import conversion
 
 resource_api = Blueprint('resource_api', __name__)
 sas_aws = SasAws()
@@ -43,6 +44,16 @@ class Resource(Base):
         self.category = category
         self.timestamp = timestamp
 
+    def as_dict(self): 
+        return {
+            'id': str(self.id),
+            'title': self.title,
+            's3_url': self.s3_url,
+            'author': self.author,
+            'category': self.category,
+            'timestamp': self.timestamp
+        }
+
 # Create table in database
 Base.metadata.create_all(sas_aws.engine)
 print("After create table")
@@ -50,32 +61,44 @@ print("After create table")
 # GET
 @resource_api.route('/resources/<id>')
 def resources_get_by_id(id):
-    resp = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
-    current_app.logger.info(f"[GET] response: {resp}")
-        # resource is not in metadata table
-    if not resp:
-        return response.error_json_response(id)
-    # valid resource
-    return jsonify(resp)      
+    try: 
+        resp = sas_aws.rds.query(Resource).filter(Resource.id == id).first()
+        current_app.logger.info(f"[GET] response: {resp}")
+            # resource is not in metadata table
+        if not resp:
+            return response.error_json_response(id)
+        # valid resource
+        return jsonify(resp.as_dict())  
+    except Exception as e:
+        return response.error_json_response(e)
 
 # POST
-@resource_api.route('/resources/<id>')
-def resources_post_by_id(id):
+@resource_api.route('/resources')
+def resources_post():
     data = request.data.decode("utf-8")
     received_json_data = json.loads(data)
     current_app.logger.info(f"[POST] received data: {received_json_data}")
 
-    for rec in received_json_data:
-        resource_obj = {
-            "id": rec["id"],
-            "title": rec["title"],
-            "s3_url": rec["s3_url"],
-            "author": rec["author"],
-            "category": rec["category"],
-            "timestamp": rec["timestamp"]
-        }
-        sas_aws.rds.add(resource_obj)
-        sas_aws.rds.commit()
+    # for rec in received_json_data:
+    #     resource_obj = {
+    #         "title": rec["title"],
+    #         "s3_url": rec["s3_url"],
+    #         "author": rec["author"],
+    #         "category": rec["category"],
+    #         "timestamp": rec["timestamp"]
+    #     }
+    #     sas_aws.rds.add(resource_obj)
+    #     sas_aws.rds.commit()
+
+    resource_obj = {
+        "title": received_json_data["title"],
+        "s3_url": received_json_data["s3_url"],
+        "author": received_json_data["author"],
+        "category": received_json_data["category"],
+        "timestamp": received_json_data["timestamp"]
+    }
+    sas_aws.rds.add(resource_obj)
+    sas_aws.rds.commit()
 
     return response.ok_json_response()
 
