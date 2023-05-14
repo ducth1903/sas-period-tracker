@@ -7,6 +7,12 @@ def convert_dateStr_epoch(dateStr):
     # return int( datetime.strptime(dateStr.split('T')[0], '%Y-%m-%d').timestamp() )
     return int(datetime.strptime(dateStr.strip(), "%Y-%m-%d").timestamp())
 
+def convert_epoch_dateStr(epoch):
+    """
+    Convert epoch to 'YYYY-MM-DD'
+    """
+    return datetime.utcfromtimestamp(epoch).strftime("%Y-%m-%d")
+
 def extract_year_month(dateStr):
     """
     Input: YYYY-MM-DD
