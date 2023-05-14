@@ -9,8 +9,8 @@ load_dotenv()
 class SasAws:
     # AWS DynamoDB
     dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
-    userTable = self.dynamodb.Table("SasPeriodTrackerUserTable")
-    periodTable = self.dynamodb.Table("SasPeriodTrackerPeriodTable")
+    userTable = dynamodb.Table("SasPeriodTrackerUserTable")
+    periodTable = dynamodb.Table("SasPeriodTrackerPeriodTable")
 
     # AWS S3
     s3 = boto3.client("s3", region_name="us-east-1")
