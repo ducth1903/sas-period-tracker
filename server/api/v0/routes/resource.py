@@ -1,6 +1,7 @@
 from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from enum import Enum
@@ -135,16 +136,27 @@ def resources_delete_by_id(id):
 @resource_api.route('/resources/category/<category>')
 def resources_get_by_category(category):
     try:
-        resp = sas_aws.rds.query(Resource).filter(Resource.category == category).all()
-        current_app.logger.info(f"[GET] response: {resp}")
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 10))
+
+        offset = (page - 1) * per_page
+
+        # Get the resources by category and order by timestamp
+        query = sas_aws.rds.query(Resource).filter(Resource.category == category).order_by(Resource.timestamp.desc())
+
+        # From the resources get the resources in the specified page
+        pagination = query.limit(per_page).offset(offset).all()
+
+        current_app.logger.info(f"[GET] response: {pagination}")
         # resource is not in metadata table
-        if len(resp) == 0:
+        if len(pagination) == 0:
             return response.error_json_response(category)
         # valid resources
         resources = []
-        for rec in resp:
+        for rec in pagination:
             obj = rec.as_dict()
             resources.append(obj)
+
         return jsonify(resources) 
     except Exception as e:
         return response.error_json_response(e)
