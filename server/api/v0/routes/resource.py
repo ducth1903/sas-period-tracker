@@ -1,7 +1,6 @@
 from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from enum import Enum
@@ -161,16 +160,19 @@ def resources_get_by_category(category):
     except Exception as e:
         return response.error_json_response(e)
 
-@resource_api.route('/resources/<author>')
+@resource_api.route('/resources/author/<author>')
 def resources_get_by_author(author):
-    resp = sas_aws.rds.query(Resource).filter(Resource.category == author).all()
-    current_app.logger.info(f"[GET] response: {resp}")
-    # resource is not in metadata table
-    if len(resp) == 0:
-        return response.error_json_response(author)
-    # valid resources
-    resources = []
-    for rec in resp:
-        obj = {"id": rec.id, "title": rec.title, "s3_url": rec.s3_url, "author": rec.author, "category": rec.category, "timestamp": rec.timestamp}
-        resources.append(obj)
-    return jsonify(resources)
+    try: 
+        resp = sas_aws.rds.query(Resource).filter(Resource.author == author).all()
+        current_app.logger.info(f"[GET] response: {resp}")
+        # resource is not in metadata table
+        if len(resp) == 0:
+            return response.error_json_response(author)
+        # valid resources
+        resources = []
+        for rec in resp:
+            obj = rec.as_dict()
+            resources.append(obj)
+        return jsonify(resources)
+    except Exception as e:
+        return response.error_json_response(e)
