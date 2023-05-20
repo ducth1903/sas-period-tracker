@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
+from datetime import datetime
 from enum import Enum
 
 from ..services.get_aws import SasAws
@@ -85,7 +86,7 @@ def resources_post():
             received_json_data["s3_url"],
             received_json_data["author"],
             received_json_data["category"],
-            received_json_data["timestamp"]
+            conversion.convert_dateStr_epoch(f"{datetime.now().year}-{datetime.now().month}-{datetime.now().day}")
         )
         sas_aws.rds.add(resource_obj)
         sas_aws.rds.commit()
