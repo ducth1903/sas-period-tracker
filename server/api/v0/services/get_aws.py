@@ -1,6 +1,6 @@
 import boto3
 import os
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
@@ -14,7 +14,7 @@ class SasAws:
 
     # AWS S3
     s3 = boto3.client("s3", region_name="us-east-1")
-    S3_BUCKET = "s3-sas-period-tracker"
+    S3_BUCKET = os.getenv("AWS_S3_BUCKET")
     # S3_PROFILE_IMAGE_PATH = 'https://sas-period-tracker.s3.amazonaws.com/profile-images/'
 
     # AWS RDS
