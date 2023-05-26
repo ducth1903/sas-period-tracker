@@ -27,6 +27,7 @@ module.exports = {
         'turquoise': '#005C6A',
         'seafoam': '#5B9F8F',
         'greydark': '#272727',
+        'dullwhite': '#EDEEE0'
       }
     }
   },
