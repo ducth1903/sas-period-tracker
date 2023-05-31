@@ -57,7 +57,6 @@ class Resource(Base):
 
 # Create table in database
 Base.metadata.create_all(sas_aws.engine)
-print("After create table")
 
 # GET
 @resource_api.route('/resources/<id>')
