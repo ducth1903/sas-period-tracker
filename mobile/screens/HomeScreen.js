@@ -19,50 +19,13 @@ import { Skeleton } from '@rneui/themed';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { AuthContext } from '../navigation/AuthProvider';
+import { SettingsContext } from '../navigation/SettingsProvider';
 // import FormButton from '../components/FormButton';
 import DateCircle from '../components/DateCircle';
 import TextCard from '../components/TextCard';
 // import ProgressiveImage from '../components/ProgressiveImage';
 import i18n from '../translations/i18n';
 import * as SVG from '../assets/svg';
-
-const FLOWS = [
-    { key: 'none', label: 'None', selected: false, DefaultIcon: SVG.FlowNoneDefault, SelectedIcon: SVG.FlowNoneSelected },
-    { key: 'light', label: 'Light', selected: false, DefaultIcon: SVG.FlowLightDefault, SelectedIcon: SVG.FlowLightSelected },
-    { key: 'medium', label: 'Medium', selected: false, DefaultIcon: SVG.FlowMediumDefault, SelectedIcon: SVG.FlowMediumSelected },
-    { key: 'heavy', label: 'Heavy', selected: false, DefaultIcon: SVG.FlowHeavyDefault, SelectedIcon: SVG.FlowHeavySelected },
-    { key: 'notsure', label: 'Not Sure', selected: false, DefaultIcon: SVG.FlowNotSureDefault, SelectedIcon: SVG.FlowNotSureSelected },
-];
-
-const MOODS = [
-    { key: 'excited', DefaultIcon: SVG.MoodExcitedDefault, SelectedIcon: SVG.MoodExcitedSelected, label: 'Excited', },
-    { key: 'happy', DefaultIcon: SVG.MoodHappyDefault, SelectedIcon: SVG.MoodHappySelected, label: 'Happy', },
-    { key: 'sensitive', DefaultIcon: SVG.MoodSensitiveDefault, SelectedIcon: SVG.MoodSensitiveSelected, label: 'Sensitive', },
-    { key: 'sad', DefaultIcon: SVG.MoodSadDefault, SelectedIcon: SVG.MoodSadSelected, label: 'Sad', },
-    { key: 'anxious', DefaultIcon: SVG.MoodAnxiousDefault, SelectedIcon: SVG.MoodAnxiousSelected, label: 'Anxious', },
-    { key: 'angry', DefaultIcon: SVG.MoodAngryDefault, SelectedIcon: SVG.MoodAngrySelected, label: 'Angry', },
-    { key: 'customize', DefaultIcon: SVG.MoodCustomizeDefault, SelectedIcon: SVG.MoodCustomizeSelected, label: 'Customize', },
-];
-
-const SYMPTOMS = [
-    { key: 'cravings', label: 'Cravings', DefaultIcon: SVG.SymptomCravingsDefault, SelectedIcon: SVG.SymptomCravingsSelected },
-    { key: 'backache', label: 'Backache', DefaultIcon: SVG.SymptomBackacheDefault, SelectedIcon: SVG.SymptomBackacheSelected },
-    { key: 'cramps', label: 'Cramps', DefaultIcon: SVG.SymptomCrampsDefault, SelectedIcon: SVG.SymptomCrampsSelected },
-    { key: 'bloating', label: 'Bloating', DefaultIcon: SVG.SymptomBloatingDefault, SelectedIcon: SVG.SymptomBloatingSelected },
-    { key: 'tender', label: 'Tender', DefaultIcon: SVG.SymptomTenderDefault, SelectedIcon: SVG.SymptomTenderSelected },
-    { key: 'headache', label: 'Headache', DefaultIcon: SVG.SymptomHeadacheDefault, SelectedIcon: SVG.SymptomHeadacheSelected },
-    { key: 'fatigue', label: 'Fatigue', DefaultIcon: SVG.SymptomFatigueDefault, SelectedIcon: SVG.SymptomFatigueSelected },
-    { key: 'nausea', label: 'Nausea', DefaultIcon: SVG.SymptomNauseaDefault, SelectedIcon: SVG.SymptomNauseaSelected },
-    { key: 'stringy', label: 'Discharge: Stringy', DefaultIcon: SVG.SymptomDischargeStringy, SelectedIcon: SVG.SymptomDischargeStringySelected },
-    { key: 'watery', label: 'Discharge: Watery', DefaultIcon: SVG.SymptomDischargeWatery, SelectedIcon: SVG.SymptomDischargeWaterySelected },
-    { key: 'transparent', label: 'Discharge: Transparent', DefaultIcon: SVG.SymptomDischargeTransparent, SelectedIcon: SVG.SymptomDischargeTransparentSelected },
-    { key: 'creamy', label: 'Discharge: Creamy', DefaultIcon: SVG.SymptomDischargeCreamy, SelectedIcon: SVG.SymptomDischargeCreamySelected },
-    { key: 'clumpy', label: 'Discharge: Clumpy', DefaultIcon: SVG.SymptomDischargeClumpy, SelectedIcon: SVG.SymptomDischargeClumpySelected },
-    { key: 'sticky', label: 'Discharge: Sticky', DefaultIcon: SVG.SymptomDischargeSticky, SelectedIcon: SVG.SymptomDischargeStickySelected },
-];
-
-
-
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -71,14 +34,51 @@ const { API_URL } = getEnvVars();
 const HomeScreen = () => {
     const { height } = Dimensions.get("screen");
     const { userId } = useContext(AuthContext);
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [userObj, setUserObj] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [dateCircleArr, setDateCirleArr] = useState(null);
+    const [showRecommendationText, setShowRecommendationText] = useState(false);
+
+    const FLOWS = [
+        { label: i18n.t('flow.none'), key: 'none', selected: false, DefaultIcon: SVG.FlowNoneDefault, SelectedIcon: SVG.FlowNoneSelected },
+        { label: i18n.t('flow.light'), key: 'light', selected: false, DefaultIcon: SVG.FlowLightDefault, SelectedIcon: SVG.FlowLightSelected },
+        { label: i18n.t('flow.medium'), key: 'medium', selected: false, DefaultIcon: SVG.FlowMediumDefault, SelectedIcon: SVG.FlowMediumSelected },
+        { label: i18n.t('flow.heavy'), key: 'heavy', selected: false, DefaultIcon: SVG.FlowHeavyDefault, SelectedIcon: SVG.FlowHeavySelected },
+        { label: i18n.t('flow.notSure'), key: 'notSure', selected: false, DefaultIcon: SVG.FlowNotSureDefault, SelectedIcon: SVG.FlowNotSureSelected },
+    ];
+    
+    const MOODS = [
+        { label: i18n.t('moods.excited'), DefaultIcon: SVG.MoodExcitedDefault, SelectedIcon: SVG.MoodExcitedSelected, key: 'excited', },
+        { label: i18n.t('moods.happy'), DefaultIcon: SVG.MoodHappyDefault, SelectedIcon: SVG.MoodHappySelected, key: 'happy', },
+        { label: i18n.t('moods.sensitive'), DefaultIcon: SVG.MoodSensitiveDefault, SelectedIcon: SVG.MoodSensitiveSelected, key: 'sensitive', },
+        { label: i18n.t('moods.sad'), DefaultIcon: SVG.MoodSadDefault, SelectedIcon: SVG.MoodSadSelected, key: 'sad', },
+        { label: i18n.t('moods.anxious'), DefaultIcon: SVG.MoodAnxiousDefault, SelectedIcon: SVG.MoodAnxiousSelected, key: 'anxious', },
+        { label: i18n.t('moods.angry'), DefaultIcon: SVG.MoodAngryDefault, SelectedIcon: SVG.MoodAngrySelected, key: 'angry', },
+        { label: i18n.t('moods.customize'), DefaultIcon: SVG.MoodCustomizeDefault, SelectedIcon: SVG.MoodCustomizeSelected, key: 'customize', },
+    ];
+    
+    const SYMPTOMS = [
+        { label: i18n.t('symptoms.cravings'), key: 'cravings', DefaultIcon: SVG.SymptomCravingsDefault, SelectedIcon: SVG.SymptomCravingsSelected },
+        { label: i18n.t('symptoms.backache'), key: 'backache', DefaultIcon: SVG.SymptomBackacheDefault, SelectedIcon: SVG.SymptomBackacheSelected },
+        { label: i18n.t('symptoms.cramps'), key: 'cramps', DefaultIcon: SVG.SymptomCrampsDefault, SelectedIcon: SVG.SymptomCrampsSelected },
+        { label: i18n.t('symptoms.bloating'), key: 'bloating', DefaultIcon: SVG.SymptomBloatingDefault, SelectedIcon: SVG.SymptomBloatingSelected },
+        { label: i18n.t('symptoms.tenderBreasts'), key: 'tenderBreasts', DefaultIcon: SVG.SymptomTenderDefault, SelectedIcon: SVG.SymptomTenderSelected },
+        { label: i18n.t('symptoms.headache'), key: 'headache', DefaultIcon: SVG.SymptomHeadacheDefault, SelectedIcon: SVG.SymptomHeadacheSelected },
+        { label: i18n.t('symptoms.fatigue'), key: 'fatigue', DefaultIcon: SVG.SymptomFatigueDefault, SelectedIcon: SVG.SymptomFatigueSelected },
+        { label: i18n.t('symptoms.nausea'), key: 'nausea', DefaultIcon: SVG.SymptomNauseaDefault, SelectedIcon: SVG.SymptomNauseaSelected },
+        { label: i18n.t('discharge.stringy'), key: 'stringy', DefaultIcon: SVG.SymptomDischargeStringy, SelectedIcon: SVG.SymptomDischargeStringySelected },
+        { label: i18n.t('discharge.watery'), key: 'watery', DefaultIcon: SVG.SymptomDischargeWatery, SelectedIcon: SVG.SymptomDischargeWaterySelected },
+        { label: i18n.t('discharge.transparent'), key: 'transparent', DefaultIcon: SVG.SymptomDischargeTransparent, SelectedIcon: SVG.SymptomDischargeTransparentSelected },
+        { label: i18n.t('discharge.creamy'), key: 'creamy', DefaultIcon: SVG.SymptomDischargeCreamy, SelectedIcon: SVG.SymptomDischargeCreamySelected },
+        { label: i18n.t('discharge.clumpy'), key: 'clumpy', DefaultIcon: SVG.SymptomDischargeClumpy, SelectedIcon: SVG.SymptomDischargeClumpySelected },
+        { label: i18n.t('discharge.sticky'), key: 'sticky', DefaultIcon: SVG.SymptomDischargeSticky, SelectedIcon: SVG.SymptomDischargeStickySelected },
+    ];
+    
     const [flowIconEnable, setFlowIconEnable] = useState(FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
     const [moodIconEnable, setMoodIconEnable] = useState(MOODS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
     const [symptomIconEnable, setSymptomIconEnable] = useState(SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
-    const [showRecommendationText, setShowRecommendationText] = useState(false);
 
     // Async function to fetch user data
     async function fetchUserData() {
@@ -159,8 +159,13 @@ const HomeScreen = () => {
     }
 
     const currentDateStr = () => {
-        let [month, day, year] = (new Date()).toString().split(' ').splice(1, 3);
-        return day + ' ' + month + ', ' + year;
+        // TODO: go into SettingsContext and add a useState for currentLanguage
+        const now = new Date();
+        const day = now.getDate();
+        const month = now.toLocaleString(selectedSettingsLanguage, { month: selectedSettingsLanguage === 'en' ? 'short' : 'long' });
+        const year = now.getFullYear();
+
+        return `${day} ${month}, ${year}`
     }
 
     const toggleMood = (moodKey) => {
@@ -301,8 +306,17 @@ const HomeScreen = () => {
 
                 <View className="min-h-[90vw] flex-1 justify-center items-center">
                     <View className="flex-1 items-center justify-center h-[63%] aspect-square absolute rounded-full bg-salmon border-[17px] border-offwhite/50">
-                        <Text className="text-slate-50 text-3xl font-semibold">Day 1</Text>
-                        <Text className="text-slate-50 text-base font-semibold mt-1">of period</Text>
+                        {
+                            // TODO: get actual day of period from backend
+                            // NOTE: Unsure of how to split the string onto two lines in Kannada and Hindi
+                            selectedSettingsLanguage == "en" ?
+                            <>
+                                <Text className="text-slate-50 text-3xl font-semibold self-center text-center">Day 1</Text>
+                                <Text className="text-slate-50 text-base font-semibold mt-1">of period</Text>
+                            </>
+                            :
+                            <Text className="text-slate-50 text-3xl font-semibold self-center text-center">{i18n.t('home.dayOfPeriod').replace("{day}", 1)}</Text>
+                        }
                     </View>
                     <View className="flex items-center justify-center">
                         {dateCircleArr}
@@ -310,10 +324,10 @@ const HomeScreen = () => {
                 </View>
 
                 <View className="pl-7">
-                    <Text className="font-semibold text-lg mb-1.5">Blood flow</Text>
+                    <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.bloodFlow')}</Text>
                     <ScrollView horizontal className="flex flex-row gap-4 mb-3.5">
                         {FLOWS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
-                            <View key={key}>
+                            <View key={key} className="justify-center items-center">
                                 {flowIconEnable[key] ? (
                                     <SelectedIcon onPress={() => toggleFlow(key)} />
                                 ) : (
@@ -325,10 +339,10 @@ const HomeScreen = () => {
                         <View className="mr-1"></View>
                     </ScrollView>
 
-                    <Text className="font-semibold text-lg my-1.5">How do you feel?</Text>
+                    <Text className="font-semibold text-lg my-1.5">{i18n.t('home.yourMood')}</Text>
                     <ScrollView horizontal className="flex flex-row gap-4 mb-3.5">
                         {MOODS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
-                            <View key={key}>
+                            <View key={key} className="justify-center items-center">
                                 {moodIconEnable[key] ? (
                                     <SelectedIcon className="shadow shadow-turquoise" onPress={() => toggleMood(key)} />
                                 ) : (
@@ -340,10 +354,10 @@ const HomeScreen = () => {
                         <View className="mr-1"></View>
                     </ScrollView>
 
-                    <Text className="font-semibold text-lg my-1.5">Your symptoms</Text>
+                    <Text className="font-semibold text-lg my-1.5">{i18n.t('home.yourSymptoms')}</Text>
                     <ScrollView horizontal={true} className="flex flex-row gap-4 mb-3.5">
                         {SYMPTOMS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
-                            <View key={key}>
+                            <View key={key} className="justify-center items-center">
                                 {symptomIconEnable[key] ? (
                                     <SelectedIcon className="shadow shadow-turquoise" onPress={() => toggleSymptom(key)} />
                                 ) : (
@@ -358,13 +372,13 @@ const HomeScreen = () => {
 
                 <View className="px-7 w-screen">
                     <View className="w-full h-28 border-2 border-turquoise rounded-xl p-3">
-                        <TextInput className="text-teal font-light" placeholder="Add your notes here..." />
-                        <View className="bg-turquoise w-16 p-2 rounded-md absolute right-2 bottom-2"><Text className="self-center text-slate-50">Save</Text></View>
+                        <TextInput className="text-teal font-light" placeholder={i18n.t('home.addYourNotesHere')} />
+                        <View className="bg-turquoise p-2 rounded-md absolute right-2 bottom-2"><Text className="self-center text-slate-50">{i18n.t('home.save')}</Text></View>
                     </View>
                 </View>
 
                 <View className="p-7">
-                    <Text className="font-semibold text-lg mb-1.5">For you</Text>
+                    <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.forYou')}</Text>
                     <ScrollView horizontal={true} className="flex flex-row gap-6 mb-3.5">
                         <Image className="object-cover w-52 h-32 bg-teal rounded-xl" source={require("../assets/the_first_period.png")} />
                     </ScrollView>

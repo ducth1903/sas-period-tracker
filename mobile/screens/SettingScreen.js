@@ -12,9 +12,12 @@ import Notification from './Settings/Notification';
 import SecurityPage from './Settings/SecurityPage';
 import Survey from './Settings/Survey';
 import Contributors from './Settings/Contributors';
+import i18n from '../translations/i18n';
+import { SettingsContext } from '../navigation/SettingsProvider';
 
 const Stack = createNativeStackNavigator();
 const SettingScreen = () => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
 
     return (
         <Stack.Navigator screenOptions={{
@@ -32,42 +35,42 @@ const SettingScreen = () => {
                 name="Account"
                 component={AccountInfo} 
                 options={{ 
-                    title: "Account Info"
+                    title: i18n.t('settings.accountInfo.title')
                 }}
             />
             <Stack.Screen
                 name='Language'
                 component={LanguageSetting}
                 options={{ 
-                    title: "Language/Audio"
+                    title: i18n.t('settings.languageAudio.title')
                 }}
             />
             <Stack.Screen
                 name='Notification'
                 component={Notification}
                 options={{
-                    title: "Notification Preferences"
+                    title: i18n.t('settings.notificationPreferences.title')
                 }}
             />
             <Stack.Screen
                 name='SecurityPage'
                 component={SecurityPage}
                 options={{
-                    title: "Security"
+                    title: i18n.t('settings.security.title')
                 }}
             />
             <Stack.Screen
                 name='Survey'
                 component={Survey}
                 options={{
-                    title: "Survey"
+                    title: i18n.t('settings.accountInfo.survey.title')
                 }}
             />
             <Stack.Screen
                 name='Contributors'
                 component={Contributors}
                 options={{
-                    title: "Contributors"
+                    title: i18n.t('settings.contributors.title')
                 }}
             />
         </Stack.Navigator>

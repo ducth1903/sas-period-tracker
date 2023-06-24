@@ -1,28 +1,301 @@
 {
-    "appName": "Blitz Reading",
-    "authentication": {
-        "login": "Log In",
-        "signup": "Create an account",
-        "email": "Email Address",
-        "password": "Password",
-        "confirmPassword": "Confirm Password",
-        "signIn": "Sign In",
-        "forgotPassword": "Forgot Password",
-        "noAccount": "Don't have an account?",
-        "noAccountSignUp": "Sign up",
-        "firstName": "Name",
-        "lastName": "lastName",
-        "dob": "Date of Birth",
-        "avgPeriodDays": "On average, how many days is your period?",
-        "agreement": "",
-        "resetPassword": "Reset Password"
+    "appName": "App Name",
+    "languages": {
+        "kannada": "Kannada",
+        "hindi": "Hindi",
+        "english": "English"
     },
     "navigation": {
         "home": "Home",
-        "highScores": "High Scores",
+        "analysis": "Analysis",
+        "education": "Education",
         "settings": "Settings"
     },
+    "months": {
+        "long": {
+            "january": "January",
+            "february": "February",
+            "march": "March",
+            "april": "April",
+            "may": "May",
+            "june": "June",
+            "july": "July",
+            "august": "August",
+            "september": "September",
+            "october": "October",
+            "november": "November",
+            "december": "December"
+        },
+        "short": {
+            "january": "Jan",
+            "february": "Feb",
+            "march": "Mar",
+            "april": "Apr",
+            "may": "May",
+            "june": "Jun",
+            "july": "Jul",
+            "august": "Aug",
+            "september": "Sep",
+            "october": "Oct",
+            "november": "Nov",
+            "december": "Dec"
+        }
+    },
+    "days": {
+        "long": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday"
+        },
+        "short": {
+            "monday": "Mon",
+            "tuesday": "Tue",
+            "wednesday": "Wed",
+            "thursday": "Thu",
+            "friday": "Fri",
+            "saturday": "Sat",
+            "sunday": "Sun"
+        },
+        "singleLetter": {
+            "monday": "M",
+            "tuesday": "T",
+            "wednesday": "W",
+            "thursday": "R",
+            "friday": "F",
+            "saturday": "S",
+            "sunday": "S"
+        }
+    },
+    "flow": {
+        "none": "None",
+        "light": "Light",
+        "medium": "Medium",
+        "heavy": "Heavy",
+        "notSure": "Not Sure"
+    },
+    "moods": {
+        "excited": "Excited",
+        "happy": "Happy",
+        "sensitive": "Sensitive",
+        "sad": "Sad",
+        "anxious": "Anxious",
+        "angry": "Angry",
+        "customize": "Customize"
+    },
+    "symptoms": {
+        "cravings": "Cravings",
+        "backache": "Backache",
+        "cramps": "Cramps",
+        "bloating": "Bloating",
+        "tenderBreasts": "Tender Breasts",
+        "headache": "Headache",
+        "fatigue": "Fatigue",
+        "nausea": "Nausea"
+    },
+    "discharge": {
+        "stringy": "Discharge: Stringy",
+        "watery": "Discharge: Watery",
+        "transparent": "Discharge: Transparent",
+        "creamy": "Discharge: Creamy",
+        "clumpy": "Discharge: Clumpy",
+        "sticky": "Discharge: Sticky"
+    },
+    "onboarding": {
+        "stayHealthyWithYourCycle": "Stay healthy with your cycle",
+        "reminderOfUpcomingPeriod": "Reminder of upcoming period",
+        "dailyExercisesAndAdvice": "Daily exercises and advice"
+    },
+    "authentication": {
+        "name": "Name",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "dob": "Date of Birth",
+        "emailAddress": "Email Address",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "forgotPassword": "Forgot Password",
+        "resetPassword": "Reset Password",
+        "createAnAcount": "Create an Account",
+        "noAccount": "Don't have an account?",
+        "alreadyHaveAnAccountSignIn": "Already have an account? Sign In",
+        "dontHaveAnAccountSignUp": "Don't have an account? Sign Up",
+        "welcome": "Welcome!",
+        "welcomeBack": "Welcome Back!",
+        "signIn": "Sign In",
+        "login": "Login",
+        "signUp": "Sign Up"
+    },
+    "survey": {
+        "all": {
+            "hiName": "Hi, {name}",
+            "yes": "Yes",
+            "no": "No",
+            "next": "Next"
+        },
+        "intro": {
+            "toPersonalize": "To personalize your experience, we have a few questions for you.",
+            "start": "Start"
+        },
+        "dateOfBirth": {
+            "whatIsYourDateOfBirth": "What is your date of birth?"
+        },
+        "gottenFirstPeriod": {
+            "haveYouGottenYourFirstPeriod": "Have you gotten your first period?",
+            "whatsAPeriod": "What's a period?",
+            "imNotSure": "I'm not sure",
+            "yesIveGotten": "Yes, I've gotten my first period",
+            "noIhaventGotten": "No, I haven't gotten my first period",
+            "stillNotSure": "I'm still not sure",
+            "periodExplanation": "Menstruation, or a \"period\", is when a person loses blood through their vagina every month. This is a normal biological process. Taking care of yourself before, during, and after your period is important because you can experience many different health changes. In this section, you can learn more information about periods, how to contain bleeding, and what health issues to expect related to your period."
+        },
+        "whenStartFirstPeriod": {
+            "whenDidYouStartYourFirstPeriod": "When did you start your first period?",
+            "iDontRemember": "I don't remember"
+        },
+        "whenMostRecentPeriod": {
+            "whenWasYourMostRecentPeriod": "When was your most recent period?",
+            "imCurrentlyOnMyPeriod": "I'm currently on my period",
+            "iDontRemember": "I don't remember",
+            "finish": "Finish"
+        },
+        "conclusion": {
+            "thanks": "Thanks for completing our survey!",
+            "tour": "Let's give you a tour of the app.",
+            "haventGottenYet": "So you haven't gotten your first period yet. That's okay!",
+            "learnTogether": "Let's learn about periods together and then we'll give you a tour of the app.",
+            "noProblem": "No problem!",
+            "learnTogetherTour": "Let's learn more about periods together and then we'll give you a tour of the app.",
+            "skipTutorial": "Skip tutorial",
+            "startTutorial": "Start tutorial"
+        }
+    },
+    "tutorial": {
+        "welcome": "Welcome, {name}! Here you can view your current cycle and predictions. You can also tap on dates to view tracked symptoms.",
+        "home": "Here you can log your blood flow, emotions, and other symptoms. You can also add custom notes below.",
+        "analysis": "This is the analysis page. View your previous symptom logs in monthly, weekly, or daily views.",
+        "trends": "Tap here to view trends and learn more about your previous cycles.",
+        "export": "On the trends page, you can also export your data to share with your doctor.",
+        "education": {
+            "intro": "This is the resources page. Here you can learn more about menstruation and overall health. Happy learning!",
+            "periodBasics": "Let's start by selecting \"Period Basics.\"",
+            "moveOnFirstPeriodWhatToDo": "When you're finished reading, we'll move on to \"First Period\" and \"What to Do\" articles.",
+            "tapOnWhatToDo": "Tap on \"What to Do\" to learn about what to do when you have a period.",
+            "awesomeReturnLater": "Awesome! Now we'll give you a quick tour of the app. Feel free to return to this page to learn more about periods and health!"
+        }
+    },
     "home": {
-        "welcome": "Welcome to %{appName}!"
+        "welcome": "Hi, welcome to the Home page! To better assist you in tracking and making predictions about your period, please log your data for the first time below!",
+        "logYourData": "Log your data",
+        "bloodFlow": "Blood flow",
+        "yourMood": "Your mood",
+        "yourSymptoms": "Your symptoms",
+        "addYourNotesHere": "Add your notes here...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "forYou": "For you",
+        "nextPeriodInDays": "Next period in {days} days",
+        "dayOfPeriod": "Day {day} of period",
+        "ovulation": "Ovulation",
+        "customMood": "Type in your mood here...",
+        "customSymptom": "Type in your symptoms here..."
+    },
+    "analysis": {
+        "navigationHeaders": {
+            "month": "M",
+            "week": "W",
+            "day": "D"
+        },
+        "month": {
+
+        },
+        "week": {
+            "notes": "Notes"
+        },
+        "day": {
+            "flowDay": "Day {day1} of {day2} of menstrual flow"
+        },
+        "trends": {
+            "trends": "Trends",
+            "cycleLength": "Cycle Length: {days} Days",
+            "numberDayPeriod": "{day} Day Period",
+            "nextPeriodNotLogged": "Next period not logged",
+            "cycleStartedOn": "Cycle started on {date}",
+            "export": {
+                "export": "Export",
+                "format": "Format",
+                "pdf": "PDF",
+                "start": "Start",
+                "end": "End",
+                "exportedSuccessfully": "Exported successfully!"
+            }
+        }
+    },
+    "education": {
+        "education": "Education",
+        "scrolltoSeeTopics": "Scroll to see topics",
+        "back": "Back",
+        "next": "Next",
+        "saved": "Saved"
+    },
+    "settings": {
+        "accountInfo": {
+            "title": "Account Info",
+            "editSurveyResponses": "Edit Survey Responses",
+            "saveChanges": "Save Changes",
+            "changesSavedSuccessfully": "Changes saved successfully",
+            "accountDeletedSuccessfully": "Account deleted successfully",
+            "dataRemovedSuccessfully": "Data removed successfully",
+            "deleteAccount": "Are you sure you want to delete your account?",
+            "survey": {
+                "title": "Survey",
+                "firstPeriod": "First Period",
+                "recentPeriod": "Recent Period",
+                "start": "Start",
+                "end": "End",
+                "removeData": "Remove Data",
+                "saveChanges": "Save Changes",
+                "areYouSureRemove": "Are you sure you want to remove your survey data?"
+            }
+        },
+        "languageAudio": {
+            "title": "Language/Audio",
+            "language": "Language",
+            "audio": "Audio",
+            "off": "Off",
+            "on": "On"
+        },
+        "notificationPreferences": {
+            "title": "Notification Preferences",
+            "message": "Message",
+            "period": "Period",
+            "off": "Off",
+            "on": "On"
+        },
+        "security": {
+            "title": "Security",
+            "editPassword": "Edit Password",
+            "deleteAccount": "Delete Account",
+            "setANewPassword": "Set a New Password",
+            "currentPassword": "Current Password",
+            "newPassword": "New Password",
+            "newPasswordAgain": "New Password Again",
+            "saveChanges": "Save Changes"
+        },
+        "tutorial": {
+            "title": "Tutorial"
+        },
+        "contributors": {
+            "title": "Contributors"
+        },
+        "logOut": {
+            "title": "Log Out",
+            "areYouSure": "Are you sure you want to log out?",
+            "yes": "Yes",
+            "no": "No"
+        }
     }
 }

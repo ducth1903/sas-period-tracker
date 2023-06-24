@@ -5,9 +5,9 @@ import { SettingsContext } from '../navigation/SettingsProvider';
 
 const languages = [
   { label: "English", value: "English" },
-  { label: "Kannada", value: "Kannada" },
+  { label: "ಕನ್ನಡ", value: "Kannada" },
   // { label: "Vietnamese", value: "Vietnamese" },
-  { label: "Hindi", value: "Hindi" },
+  { label: "हिन्दी", value: "Hindi" },
 ];
 
 const LanguagePicker = () => {

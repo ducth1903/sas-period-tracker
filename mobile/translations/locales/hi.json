@@ -1,0 +1,302 @@
+{
+    "appName": "App Name",
+    "languages": {
+        "kannada": "कन्नड़",
+        "hindi": "हिन्दी",
+        "english": "अंग्रेज़ी"
+    },
+    "navigation": {
+        "home": "घर",
+        "analysis": "विश्लेषण",
+        "education": "शिक्षा",
+        "settings": "सेटिंग्स"
+    },
+    "months": {
+        "long": {
+            "january": "जनवरी",
+            "february": "फ़रवरी",
+            "march": "मार्च",
+            "april": "अप्रेल",
+            "may": "मई",
+            "june": "जून",
+            "july": "जुलाई",
+            "august": "अगस्त",
+            "september": "सितम्बर",
+            "october": "अक्टूबर",
+            "november": "नवम्बर",
+            "december": "दिसम्बर"
+        },
+        "short": {
+            "january": "जन",
+            "february": "फर",
+            "march": "मार्च",
+            "april": "अप्रैल",
+            "may": "मई",
+            "june": "जून",
+            "july": "जुलाई",
+            "august": "अग",
+            "september": "सित",
+            "october": "अक्टू",
+            "november": "नव",
+            "december": "दिस"
+        }
+    },
+    "days": {
+        "long": {
+            "monday": "सोमवार",
+            "tuesday": "मंगलवार",
+            "wednesday": "बुधवार",
+            "thursday": "गुरुवार",
+            "friday": "शुक्रवार",
+            "saturday": "शनिवार",
+            "sunday": "रविवार"
+        },
+        "short": {
+            "monday": "सोम",
+            "tuesday": "मंगल",
+            "wednesday": "बुध",
+            "thursday": "गुरु",
+            "friday": "शुक्र",
+            "saturday": "शनि",
+            "sunday": "रवि"
+        },
+        "singleLetter": {
+            "monday": "सो॰",
+            "tuesday": "मं॰",
+            "wednesday": "बु॰",
+            "thursday": "गु॰",
+            "friday": "शु॰",
+            "saturday": "श॰",
+            "sunday": "र॰"
+        }
+    },
+    "flow": {
+        "none": "कोई नहीं",
+        "light": "हल्का",
+        "medium": "माध्यम",
+        "heavy": "तेज़",
+        "notSure": "मालूम नहीं"
+    },
+    "moods": {
+        "excited": "उत्तेजित",
+        "happy": "ख़ुश",
+        "sensitive": "साम्वेदनशील",
+        "sad": "दुखी",
+        "anxious": "चिंतित",
+        "angry": "आक्रोश",
+        "customize": "उपयुक्त बनाएँ"
+    },
+    "symptoms": {
+        "cravings": "इच्छाएँ",
+        "backache": "कमर दर्द",
+        "cramps": "ऐंठन",
+        "bloating": "सूजन",
+        "tenderBreasts": "नाज़ुक स्तन",
+        "headache": "सिर दर्द",
+        "fatigue": "थकान",
+        "nausea": "जी मिचलाना"
+    },
+    "discharge": {
+        "stringy": "रेशेदार स्त्राव",
+        "watery": "पानी जैसा स्त्राव",
+        "transparent": "पारदर्शी स्त्राव",
+        "creamy": "सफ़ेद स्त्राव",
+        "clumpy": "टुकडेदार स्त्राव",
+        "sticky": "चिपचिपा स्त्राव"
+    },
+    "onboarding": {
+        "stayHealthyWithYourCycle": "अपने मासिक धर्म के साथ स्वस्थ रहें",
+        "reminderOfUpcomingPeriod": "आगामी मासिक धर्म की अग्रिम अवगति",
+        "dailyExercisesAndAdvice": "दैनिक व्यायाम और सलाह"
+    },
+    "authentication": {
+        "name": "नाम",
+        "firstName": "पहला नाम",
+        "lastName": "उपनाम",
+        "dob": "जन्म तिथि",
+        "emailAddress": "ई मेल पता",
+        "password": "पासवर्ड",
+        "confirmPassword": "पासवर्ड की पुष्टि करें",
+        "forgotPassword": "पासवर्ड भूल गए",
+        "resetPassword": "पासवर्ड रीसेट करें",
+        "createAnAcount": "खाता बनाएँ",
+        "noAccount": "खाता नहीं है?",
+        "alreadyHaveAnAccountSignIn": "क्या आपके पास पहले से खाता मौजूद है? दाख़िल करें",
+        "dontHaveAnAccountSignUp": "खाता नहीं है? नया खाता बनाएँ",
+        "welcome": "स्वागत!",
+        "welcomeBack": "स्वागत है!",
+        "signIn": "दाख़िल करें",
+        "login": "लॉगिन",
+        "signUp": "साइन अप करें"
+
+    },
+    "survey": {
+        "all": {
+            "hiName": "नमस्ते, {name}",
+            "yes": "हाँ",
+            "no": "नहीं",
+            "next": "अगला"
+        },
+        "intro": {
+            "toPersonalize": "आपके अनुभवों को व्यक्तिगत बनाने के लिए हमारे  पास आपके लिए कुछ प्रश्न हैं।",
+            "start": "शुरू"
+        },
+        "dateOfBirth": {
+            "whatIsYourDateOfBirth": "आपका जन्म दिनांक क्या है?"
+        },
+        "gottenFirstPeriod": {
+            "haveYouGottenYourFirstPeriod": "क्या आपका पहला मासिक धर्म हो चुका है?",
+            "whatsAPeriod": "मासिक धर्म क्या है?",
+            "imNotSure": "मुझे मालूम नहीं",
+            "yesIveGotten": "हाँ, मुझे पहला मासिक धर्म हो चुका है",
+            "noIhaventGotten": "नहीं मुझे अभी तक मासिक धर्म नहीं हुआ है",
+            "stillNotSure": "मुझे मालूम नहीं",
+            "periodExplanation": "माहवारी उर्फ़ रजोधर्म या पीरियड तब होती है जब एक लड़की या महिला की योनि से हर महीने खून निकलता है। यह एक सामान्य जैविक प्रक्रिया है। अपनी अवधि के लिए अपना ख्याल रखना महत्वपूर्ण है क्योंकि आप कई अलग-अलग स्वास्थ्य परिवर्तनों का अनुभव कर सकते हैं। इस खंड में, आप मासिक धर्म के बारे में अधिक जानकारी, रक्तस्राव को कैसे रोका जाए, और आपकी अवधि से संबंधित किन स्वास्थ्य समस्याओं की उम्मीद की जा सकती है, के बारे में जान सकते हैं।"
+        },
+        "whenStartFirstPeriod": {
+            "whenDidYouStartYourFirstPeriod": "आपको  पहला मासिक धर्म कब शुरू हुआ?",
+            "iDontRemember": "मुझे याद नहीं"
+        },
+        "whenMostRecentPeriod": {
+            "whenWasYourMostRecentPeriod": "आपका पिछला मासिक धर्म कब था?",
+            "imCurrentlyOnMyPeriod": "मुझे अभी मासिक धर्म चल रहा है।",
+            "iDontRemember": "मुझे याद नहीं",
+            "finish": "ख़त्म"
+        },
+        "conclusion": {
+            "thanks": "इस सर्वे को पूरा करने के लिए धन्यवाद!",
+            "tour": "आइए आपको इस आप का भ्रमण कराते हैं।",
+            "haventGottenYet": "तो आपको अभी मासिक धर्म शुरू नहीं हुआ है, कोई बात नहीं।",
+            "learnTogether": "चलिए पहले साथ में मासिक धर्म के बारे में जानकारी लेते हैं और फिर आपको आप के बारे में बताएँगे",
+            "noProblem": "कोई बात नहीं!",
+            "learnTogetherTour": "चलिए पहले साथ में मासिक धर्म के बारे में जानकारी लेते हैं और फिर आपको आप के बारे में बताएँगे",
+            "skipTutorial": "टूटोरीयल को छोड़ दें",
+            "startTutorial": "टूटोरीयल को शुरू करें"
+        }
+    },
+    "tutorial": {
+        "welcome": "स्वागत, {name}! यहाँ आप वर्तमान मासिक चक्र देख सकते हैं।यहाँ आप तारीख़ पर टैप करके ट्रैक किए गए लक्षण भी देख सकते हैं।",
+        "home": "यहाँ आप अपने रक्त प्रवाह, भावनाओं और लक्षणों को लॉग इन कर सकते हैI आप नीचे कस्टम नोट्स भी जोड़ सकते है।",
+        "analysis": "यह विश्लेषण पृष्ठ हैI यहाँ आप अपने पिछले लक्षणों को मासिक, साप्ताहिक या दैनिक सेट्टिंग में देख सकते हैं।",
+        "trends": "अपने पिछले मासिक चक्रों के बारे में ज़्यादा जानकारी के लिए यहाँ टैप करें।",
+        "export": "ट्रेंड्ज़ पृष्ठ पर अप अपनी जानकारी को अपने डॉक्टर के साथ साझा भी कर सकते हैं।",
+        "education": {
+            "intro": "इस पृष्ठ पर आप अपने मासिक धर्म और सम्पूर्ण स्वास्थ के बारे में और जानकारी ले सकते हैं।",
+            "periodBasics": "आइए ‘पिरीयड बेसिक्स’ से शुरू करें।",
+            "moveOnFirstPeriodWhatToDo": "इन सभी  जनकारियों को पढ़ लेने के बाद हम ‘पहले मासिक धर्म' और ‘क्या करें’ इस बारे में लेख पढ़ेंगे।",
+            "tapOnWhatToDo": "इमसिक धर्म होने पर क्या करना है, यह जानने के लिए ‘क्या करें' पर टैप करीं।",
+            "awesomeReturnLater": "बहुत बढ़िया! अब हम आपको इस आप के बारे में एक त्वरित दौरा देंगे। मासिक धर्म और स्वास्थ के बारे में और अधिक जानने के लिए इस पृष्ठ पर बेझिझक वापस लौटें।"
+        }
+    },
+    "home": {
+        "welcome": "मुख्य पृष्ठ पर आपका स्वागत है। अपने मासिक धर्म की सही भविष्यवाणी के लिये कृपया अपना डेटा नीचे लोग इन करें।",
+        "logYourData": "अपना डेटा लोग करें।",
+        "bloodFlow": "ख़ून का दौरा",
+        "yourMood": "आपका मिज़ाज",
+        "yourSymptoms": "आपके लक्षण",
+        "addYourNotesHere": "अपने टिप्पणी यहाँ लिखें।",
+        "save": "सम्भालें",
+        "cancel": "वापस लें",
+        "forYou": "आपके लिए",
+        "nextPeriodInDays": "अगला मासिक धर्म {days} दिनो में",
+        "dayOfPeriod": "मासिक धर्म का {day} दिन",
+        "ovulation": "ऑव्युलेशन",
+        "customMood": "अपनी भावनाएँ यहाँ टाइप करें",
+        "customSymptom": "अपने लक्षणों को यहाँ टाइप  करें"
+    },
+    "analysis": {
+        "navigationHeaders": {
+            "month": "माह",
+            "week": "सप्ताह",
+            "day": "दिन"
+        },
+        "month": {
+
+        },
+        "week": {
+            "notes": "टिप्पणी"
+        },
+        "day": {
+            "flowDay": "{day2} दिनो के मासिक चक्र का {day1} दिन"
+        },
+        "trends": {
+            "trends": "रुझान",
+            "cycleLength": "मासिक धर्म चक्र अवधि: {days} दिन",
+            "numberDayPeriod": "{day} दिन का चक्र ",
+            "nextPeriodNotLogged": "अगली मासिक धर्म अप्रमाणित नहीं हुई है",
+            "cycleStartedOn": "मासिक धर्म का चक्र {date} को शुरू हुआ",
+            "export": {
+                "export": "निर्यात",
+                "format": "प्रारूप",
+                "pdf": "PDF",
+                "start": "शुरू",
+                "end": "आख़िरी",
+                "exportedSuccessfully": "निर्यात सफल!"
+            }
+        }
+    },
+    "education": {
+        "education": "शिक्षा",
+        "scrolltoSeeTopics": "विषयों को देखने के लिए स्क्रोल करें",
+        "back": "पीछे",
+        "next": "अगला",
+        "saved": "बचा लिया"
+    },
+    "settings": {
+        "accountInfo": {
+            "title": "अकाउंट नम्बर",
+            "editSurveyResponses": "सर्व के जवाबों को सम्पादित करें",
+            "saveChanges": "बदलाव को सम्भालें",
+            "changesSavedSuccessfully": "परिवर्तनों को सफलता पूर्वक सहेजा",
+            "accountDeletedSuccessfully": "खाता सफलतापूर्वक हटा दिया गया",
+            "dataRemovedSuccessfully": "डेटा सफलतापूर्वक हटा दिया गया",
+            "deleteAccount": "क्या आप वाक़ई अपना खाता मिटाना चाहते हैं?",
+            "survey": {
+                "title": "सर्वेक्षण",
+                "firstPeriod": "पहला मासिक धर्म",
+                "recentPeriod": "पिछला मासिक धर्म",
+                "start": "शुरू",
+                "end": "आख़िरी",
+                "removeData": "डेटा निकालें",
+                "saveChanges": "बदलाव को सम्भालें",
+                "areYouSureRemove": "क्या आप सचमुच अपना सर्वेक्षण डेटा निकलना चाहते हैं?"
+            }
+        },
+        "languageAudio": {
+            "title": "भाषा/ध्वनि",
+            "language": "भाषा",
+            "audio": "ध्वनि",
+            "off": "बंद",
+            "on": "शुरू"
+        },
+        "notificationPreferences": {
+            "title": "सूचना प्रथ्मिक्तायें",
+            "message": "संदेश",
+            "period": "चक्र",
+            "off": "बंद",
+            "on": "शुरू"
+        },
+        "security": {
+            "title": "सुरक्षा",
+            "editPassword": "पासवर्ड सम्पादित करें",
+            "deleteAccount": "अकाउंट  मिटाएँ",
+            "setANewPassword": "नया पासवर्ड बनाएँ ",
+            "currentPassword": "वर्तमान पासवर्ड",
+            "newPassword": "नया पासवर्ड",
+            "newPasswordAgain": "नया पासवर्ड दुबारा",
+            "saveChanges": "बदलाव को सम्भालें"
+        },
+        "tutorial": {
+            "title": "टूटोरीयल"
+        },
+        "contributors": {
+            "title": "योगदानकर्ता"
+        },
+        "logOut": {
+            "title": "लोग आउट",
+            "areYouSure": "क्या आप वाकई लॉगआउट करना चाहते हैं?",
+            "yes": "हाँ",
+            "no": "नहीं"
+        }
+    }
+}

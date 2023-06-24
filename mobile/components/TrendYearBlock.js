@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text } from 'react-native';
 import TrendYearBar from './TrendYearBar';
+
+import { SettingsContext } from '../navigation/SettingsProvider';
+import i18n from '../translations/i18n';
 
 /**
  * 
@@ -22,6 +25,8 @@ import TrendYearBar from './TrendYearBar';
  * 3. the days in each period are sorted by earliest date in descending order
  */
 const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
+
     const dateDiff = (earlierDate, laterDate) => {
         // returns number of days between two dates
         return Math.floor((laterDate - earlierDate) / (1000 * 60 * 60 * 24))  // add 1 to include first day
@@ -46,7 +51,7 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
         const first = {
             day: firstDate.getDate(),
             monthNum: firstDate.getMonth(),
-            monthString: firstDate.toLocaleString('default', {month: 'short'}),
+            monthString: firstDate.toLocaleString(selectedSettingsLanguage, {month: 'short'}),
             year: firstDate.getFullYear()
         }
         
@@ -57,14 +62,14 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
         const last = {
             day: secondDate.getDate(),
             monthNum: secondDate.getMonth(),
-            monthString: secondDate.toLocaleString('default', {month: 'short'}),
+            monthString: secondDate.toLocaleString(selectedSettingsLanguage, {month: 'short'}),
             year: secondDate.getFullYear()
         }
 
         return `${first.monthString} ${first.day} - ${first.monthNum !== last.monthNum ? last.monthString + ' ' : ''}${last.day}`;
     }
 
-    const getCycleLengthString = (period, index) => {
+    const getCycleLength = (period, index) => {
         let nextPeriod = undefined;
         if (index > 0) {
             nextPeriod = yearData[index - 1];
@@ -76,20 +81,20 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
         const periodMonth = period.year_month.split('-')[1];
         const nextPeriodMonth = nextPeriod ? nextPeriod.year_month.split('-')[1] : null;
         if (!nextPeriod || nextPeriodMonth - periodMonth % 12 > 1) { // index === 0 && !firstPeriodOfNextYear
-            return "Next period not logged"
+            return i18n.t('analysis.trends.nextPeriodNotLogged')
         }
 
         const firstDateOfCurrentPeriod = getFirstDateOfPeriod(period);
         const firstDateOfNextPeriod = getFirstDateOfPeriod(nextPeriod);
 
-        return `${dateDiff(firstDateOfCurrentPeriod, firstDateOfNextPeriod)} Days`;
+        return dateDiff(firstDateOfCurrentPeriod, firstDateOfNextPeriod);
     }
 
     const getCycleDateRangeString = (period, index) => {
         const firstDateOfCurrentPeriod = getFirstDateOfPeriod(period);
         let dateRangeString = getDateRangeString(firstDateOfCurrentPeriod);
         if (index === 0) {
-            return `Cycle started on ${dateRangeString}`;
+            return i18n.t('analysis.trends.cycleStartedOn').replace('{date}', dateRangeString);
         }
         
         const firstDateOfNextPeriod = getFirstDateOfPeriod(yearData[index - 1]);
@@ -108,7 +113,7 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
                     return (
                         <View className="pt-4" key={`monthblock-${index}`}>
                             <Text className="text-greydark text-[16px]">
-                                {`Cycle length: ${getCycleLengthString(period, index)}`}
+                                {i18n.t('analysis.trends.cycleLength').replace('{days}', getCycleLength(period, index))}
                             </Text>
                             <Text className="text-greydark text-[14px]">
                                 {getCycleDateRangeString(period, index)}
