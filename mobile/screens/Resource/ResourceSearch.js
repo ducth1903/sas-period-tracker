@@ -14,6 +14,9 @@ import {
     KeyboardAvoidingView
 } from 'react-native';
 
+import SearchIcon from '../../assets/icons/search.svg'
+import HistoryIcon from '../../assets/icons/history.svg'
+
 const mockData = [
     {
         title: 'Menstruation',
@@ -83,7 +86,7 @@ const PurpleListItem = ({ item }) => {
 const ResourceSearch = ({ navigation, props }) => {
     const [searchText, setSearchText] = useState('');
     const [showResults, setShowResults] = useState(true);
-    // ../../assets/icons/search.png
+    // ../../assets/icons/search.svg
 
     const handleCancel = () => {
         searchText === '' ? navigation.goBack() : setSearchText('');
@@ -100,10 +103,8 @@ const ResourceSearch = ({ navigation, props }) => {
 
     const renderHistoryItem = ({ item }) => (
         <View style={styles.item}>
-            <Image
-                style={styles.icon}
-                source={require('../../assets/icons/history.png')}
-            />
+            <HistoryIcon style={styles.icon}/>
+            
             <Text style={styles.title} onPress={() => {
                 setShowResults(false)
                 setSearchText(item.text)
@@ -115,7 +116,7 @@ const ResourceSearch = ({ navigation, props }) => {
         <SafeAreaView>
             <View style={styles.container}>
                 <View style={styles.searchContainer}>
-                <Image source={require('../../assets/icons/search.png')} style={styles.searchIcon} />
+                <SearchIcon style={styles.searchIcon}/>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Search"

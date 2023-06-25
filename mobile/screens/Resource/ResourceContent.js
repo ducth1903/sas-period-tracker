@@ -17,7 +17,7 @@ import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 
 import BackIcon from '../../assets/icons/back.svg';
-import SearchIcon from '../../assets/icons/search.svg';
+import ScrollIcon from '../../assets/icons/scroll.svg';
 
 const mockData = [
     {
@@ -69,15 +69,19 @@ const mockData = [
     }
 ]
 
-const PurpleListItem = ({ item }) => {
-    return (
-      <View style={styles.purpleBox}>
-        <Text style={styles.purpleBoxText}>{item.text}</Text>
-      </View>
-    );
-};
+const ResourceContent = ({ route, navigation }) => {
 
-const ResourceSaved = ({ navigation, props }) => {
+    const { resource } = route.params;
+
+    const PurpleListItem = ({ item }) => {
+        return (
+          <Pressable onPress={() => navigation.navigate('ResourceArticle', {outerResource: resource, resource: item})}>
+                <View style={styles.purpleBox}>
+                    <Text style={styles.purpleBoxText}>{item.text}</Text>
+                </View>
+          </Pressable>
+        );
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -85,18 +89,41 @@ const ResourceSaved = ({ navigation, props }) => {
                     <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
                         <BackIcon style={styles.headerBackIcon}/>
                     </TouchableOpacity>
-                    <Text style={styles.headerText}>Saved</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <SearchIcon style={styles.headerSearchIcon}/>
-                    </TouchableOpacity>
+                    <Text style={styles.headerText}>{resource.text}</Text>
+                    {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                        <Image source={require('../../assets/icons/search.svg')} style={styles.headerSearchIcon}/>
+                    </TouchableOpacity> */}
             </View>
-            <FlatList
-                    data={mockData[2].data}
-                    numColumns={1}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginTop: 20}}
-                />
+            <ScrollView>
+                <View style={styles.introText}>
+                    <Text style={styles.introTextContent}>{resource.introText}</Text>
+                </View>
+                <View style={{marginTop: 20, marginBottom: 10}}>
+                    <Text style={styles.scrollText}>scroll to see topics</Text>
+                    <ScrollIcon style={styles.scrollIcon}/>
+                </View>
+                
+                <View style={styles.topicsList}>
+                    {
+                        // group into pairs of two
+                        resource.topics.reduce((groupedArr, topic, index) => {       
+                            if (index % 2 == 0) {
+                                groupedArr.push([topic]);
+                            } else {
+                                groupedArr[groupedArr.length - 1].push(topic);
+                            }
+                            return groupedArr;
+                        }, []).map((pair, index) => {
+                            return (
+                                <View style={{marginLeft: 'auto', marginRight: 'auto'}} key={index}>
+                                    <PurpleListItem item={pair[0]}/>
+                                    {pair.length > 1 ? <PurpleListItem item={pair[1]}/> : null}
+                                </View>
+                            )
+                        })
+                    }
+                </View>
+            </ScrollView>
         </SafeAreaView>
     )
 }
@@ -115,6 +142,7 @@ const styles = StyleSheet.create({
         height: 21,
         marginTop: 10,
         marginRight: 40,
+        marginLeft: 35
     },
     headerSearchIcon: {
         width: 30, 
@@ -125,9 +153,36 @@ const styles = StyleSheet.create({
     inline: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'left',
         alignItems: 'center',
         width: '100%',
+    },
+    introText: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '80%',
+        marginLeft: '8%',
+        marginTop: 25,
+    },
+    introTextContent: {
+        fontSize: 15.8,
+        fontWeight: "400",
+        color: "black",
+        textAlign: "left",
+    },
+    scrollText: {
+        fontSize: 17.8,
+        fontWeight: "600",
+        color: "black",
+        textAlign: "center",
+    },
+    scrollIcon: {
+        width: 20,
+        height: 12.43,
+        alignSelf: 'center',
+        marginTop: 15,
     },
     redBox: {
         margin: 20,
@@ -150,10 +205,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         width: '80%',
     },
+    // not the same style as purpleBox in ResourceHomeScreen.js; this style has no built-in margins to be more flexible
     purpleBox: {
-        margin: 20,
-        width: 330,
-        height: 180,
+        marginBottom: 30,
+        width: 150,
+        height: 150,
         backgroundColor: '#D9D1F7',
         borderRadius: 15,
         justifyContent: 'center',
@@ -162,106 +218,23 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3,
         elevation: 5,
-        marginLeft: 30,
-        marginTop: 20,
-        marginBottom: 10,
     },
     purpleBoxText: {
         color: 'black',
-        fontSize: 22,
+        fontSize: 15,
         fontWeight: '600',
         textAlign: 'center',
         width: '100%',
     },
-    subHeaderText: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "black",
-        textAlign: "left",
-        marginTop: 20,
-        marginLeft: 20,
-        marginBottom: -5
-    },
-    container: {
-        flex: 1,
-        justifyContent: 'flex-start',
-        // alignContent: 'center',
-        backgroundColor: '#FEFFF4',
-        paddingTop: StatusBar.currentHeight,
-    },
-    menurow: {
+    topicsList: {
         flex: 1,
         flexDirection: 'row',
         flexWrap: 'wrap',
-        //alignSelf: 'center',
-        width: '100%',
-        height: '100%',
         justifyContent: 'center',
-        // alignContent: 'center',
-        //marginTop: 10,
-        //borderWidth: 2,
-        //borderColor: 'black',
-        // backgroundColor: 'skyblue',
-        //marginHorizontal: 20,
-    },
-    menubox: {
-        flex: 1,
-        justifyContent: "center",
-        alignContent: "center",
-        width: '80%',
-        height: '50%',
-        marginTop: '10%',
-        marginBottom: '10%',
-        marginLeft: '10%',
-        marginRight: '10%',
-        backgroundColor: 'blue',
-        borderRadius: 20,
-    },
-    // scrollView: {
-    //   backgroundColor: 'pink',
-    //   marginHorizontal: 20,
-    // },
-    // heading: {
-    //   fontSize: 40,
-    //   fontWeight: "bold",
-    //   color: "#ff7120",
-    //   textAlign: "center",
-    //   marginTop: 50,
-    // },
-    button: {
-        alignItems: "center",
-        justifyContent: "flex-end",
-        //paddingVertical: 10,
-        //paddingHorizontal: 20,
-        //borderRadius: 5,
-        //borderWidth: 2,
-        elevation: 1,
-        // backgroundColor: "orange",
-        height: "100%",
-        width: "100%",
-        paddingBottom: "6%"
-        },
-        buttontext: {
-        textAlign: "center",
-        fontSize: 20,
-        // fontWeight: "bold",
-        color: "black",
-    },
-    footnote: {
-        flex: 1,
-        bottom: 0,
-        alignItems: "center",
-        justifyContent: "flex-end",
-        marginBottom: 10,
-    },
-    imageButton: {
-        flex: 1,
-        resizeMode: "stretch",
-        width: "100%",
-        height: 150,
-        paddingBottom: "10%",
-        borderRadius: 20
+        alignSelf: 'center',
+        marginBottom: 60,
+        width: '90%'
     }
 })
 
-export default ResourceSaved;
+export default ResourceContent;
