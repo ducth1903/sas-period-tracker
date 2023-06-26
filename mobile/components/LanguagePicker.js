@@ -1,17 +1,76 @@
 import { View, StyleSheet, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import DropDownPicker from "react-native-dropdown-picker";
+import { SettingsContext } from '../navigation/SettingsProvider';
 
 const languages = [
   { label: "English", value: "English" },
   { label: "Kannada", value: "Kannada" },
-  { label: "Vietnamese", value: "Vietnamese" },
+  // { label: "Vietnamese", value: "Vietnamese" },
   { label: "Hindi", value: "Hindi" },
 ];
 
 const LanguagePicker = () => {
+  const { setLanguage, getLanguage } = useContext(SettingsContext);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("English");
+
+  // translate language to short form stored in AsyncStorage (e.g., "English" --> "en")
+  const langLongToShort = (longLang) => {
+    let settingsLang = undefined;
+    switch (longLang) {
+      case "English":
+        settingsLang = "en";
+        break;
+      case "Kannada":
+        settingsLang = "kn";
+        break;
+      case "Hindi":
+        settingsLang = "hi";
+        break;
+      default:
+        throw new TypeError(`Language ${longLang} not supported`);
+    }
+
+    return settingsLang;
+  }
+
+  const langShortToLong = (shortLang) => {
+    let settingsLang = undefined;
+    switch (shortLang) {
+      case "en":
+        settingsLang = "English";
+        break;
+      case "kn":
+        settingsLang = "Kannada";
+        break;
+      case "hi":
+        settingsLang = "Hindi";
+        break;
+      default:
+        throw new TypeError(`Language ${shortLang} not supported`);
+    }
+
+    return settingsLang;
+  }
+
+  useEffect(() => {
+    // can't directly pass an async function to useEffect() https://devtrium.com/posts/async-functions-useeffect
+    const getLanguageWrapper = async () => {
+        let language = await getLanguage();
+        return langShortToLong(language);
+    }
+    
+    getLanguageWrapper().then((language) => {
+      setSelectedLanguage(language);
+    }).catch((error) => {
+      console.log(`[LanguagePicker] getLanguageWrapper() failed: ${error}`);
+    });
+  }, []);
+
+  const setLanguageFromDropdownSelection = (language) => {
+    setLanguage(langLongToShort(language));
+  }
 
   return (
     <View style={styles.rowLayout}>
@@ -38,6 +97,7 @@ const LanguagePicker = () => {
         setOpen={() => setIsOpen(!isOpen)}
         value={selectedLanguage}
         setValue={setSelectedLanguage}
+        onChangeValue={setLanguageFromDropdownSelection}
       />
     </View>
   );

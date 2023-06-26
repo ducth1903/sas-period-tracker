@@ -1,12 +1,15 @@
 import React from 'react';
 import Routes from './Routes';
-import AuthProvider from './AuthProvider';
+import { AuthProvider } from './AuthProvider';
+import { SettingsProvider } from './SettingsProvider';
 
 const Providers = () => {
     return (
-        <AuthProvider>
-            <Routes/>
-        </AuthProvider>
+        <SettingsProvider>
+            <AuthProvider>
+                <Routes/>
+            </AuthProvider>
+        </SettingsProvider> 
     )
 }
 
