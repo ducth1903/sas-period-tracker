@@ -1,21 +1,29 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState, useCallback} from 'react';
 import {
     Dimensions,
-    Modal,
     SafeAreaView,
     ScrollView,
-    Systrace,
     Text,
     TouchableHighlight,
-    View,
+    TouchableOpacity,
+    Pressable,
+    View
 } from 'react-native'
+import Modal from 'react-native-modal';
+import DropDownPicker from "react-native-dropdown-picker";
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
 import CalendarCircle from '../components/CalendarCircle';
 import WeekColumn from '../components/WeekColumn';
+import TrendYearBlock from '../components/TrendYearBlock';
+import ScrollPicker from '../components/ScrollPicker';
 
 import TimelineIcon from '../assets/icons/timeline.svg';
+import BackArrowIcon from '../assets/icons/back_arrow.svg';
+import ShareIcon from '../assets/icons/share.svg';
+import XIcon from '../assets/icons/x.svg';
+import ExportCheckIcon from '../assets/icons/export_check.svg';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -44,7 +52,19 @@ const PeriodCalendarScreen = ({ props }) => {
     const [symptomSetting, setSymptomSetting]   = useState(new Set());
     const [symptomSettingArray, setSymptomSettingArray]       = useState([]);       // for Switch values (true/false)
 
-    const [trendsModalVisible, setTrendsModalVisible]               = useState(false);
+    const [trendsModalVisible, setTrendsModalVisible] = useState(false);
+    const [exportModalVisible, setExportModalVisible] = useState(false);
+    const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+    const [exportDropdownValue, setExportDropdownValue] = useState("PDF");
+    const [exportDropdownItems, setExportDropdownItems] = useState([
+        { label: "PDF", value: "PDF" },
+    ]);
+    const [exportButtonPressed, setExportButtonPressed] = useState(false);
+    const [exportButtonColor,  setExportButtonColor] = useState("#00394E"); // default teal
+    const [exportStartMonth, setExportStartMonth] = useState(new Date().getMonth());
+    const [exportStartYear, setExportStartYear] = useState(new Date().getFullYear());
+    const [exportEndMonth, setExportEndMonth] = useState(new Date().getMonth());
+    const [exportEndYear, setExportEndYear] = useState(new Date().getFullYear());
     const [modalInfo, setModalInfo]             = useState("");
     const [modalHistory, setModalHistory]       = useState(false);
     const [modalEmailHistory, setModalEmailHistory]           = useState(false);
@@ -60,7 +80,8 @@ const PeriodCalendarScreen = ({ props }) => {
     const [mwdDividersVisible, setMwdDividersVisible] = useState([false, true]);
 
     // For Calendar
-    const [fetchedData, setFetchedData] = useState({});
+    const [fetchedPeriodData, setFetchedPeriodData] = useState({});
+    const [periodDataByYear, setPeriodDataByYear] = useState({});
     const [markedDates, setMarkedDates] = useState({
         // i.e.
         // '2021-05-22': {startingDay: true, color: 'green'},
@@ -81,6 +102,7 @@ const PeriodCalendarScreen = ({ props }) => {
 
     // TODO: translations
     const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const scrollPickerItemHeight = 46;
     
     async function fetchUserData() {
         await fetch(`${API_URL}/users/${userId}`, { method: "GET" })
@@ -92,28 +114,33 @@ const PeriodCalendarScreen = ({ props }) => {
     }
 
     async function fetchPeriodData() {
-        // let todayDateEpoch = getDateEpoch(new Date());
-        // let numMonthsToFetch = 2;
-        // let startMonthToFetch = todayDateEpoch - numMonthsToFetch*30*24*3600;
-        // let endMonthToFetch   = todayDateEpoch + numMonthsToFetch*30*24*3600;
-        let currDateFormat = formatDate(currDateObject);
-        
-        await fetch(`${API_URL}/periods/${userId}/${currDateFormat}`, { method: "GET" })
-        .then(resp => resp.json())
-        .then(data => {
-            let tmpData = {};
-            let styleData = {};
+        try {
+            console.log(`[PeriodCalendarScreen] fetching period data at ${API_URL}/periods/${userId}`)
+            const resp = await fetch(`${API_URL}/periods/${userId}`, { method: "GET" })
+            const data = await resp.json();
 
-            data.map((obj) => {
-                let currDate = obj['dateStr'].split('T')[0];
-                tmpData[currDate] = new PeriodDate(currDate, obj['symptoms'])
-                styleData[currDate] = {customStyles: markedDateStyle}
-            })
+            // data is an array of objects {"details": object[], "year_month": string}[] where each represents one period corresponding to one month
+            setFetchedPeriodData(data);
 
-            setFetchedData(tmpData);
-            setMarkedDates(styleData);
-        })
-        .catch(error => {console.log(error)})
+            // group by years, e.g., periodDataByYear[2021] = [period1, period2, ...] where period{n} represents an array of individual period days for one period
+            let periodDataByYear = {};
+
+            // each period is an array of individual period days
+            data.forEach((periodMonth) => {
+                const currYear = periodMonth.year_month.substring(0, 4);
+                if (!Object.keys(periodDataByYear).includes(currYear)) {
+                  periodDataByYear[currYear] = [];
+                }
+                
+                periodDataByYear[currYear].push(periodMonth);
+            });
+
+            setPeriodDataByYear(periodDataByYear);
+        }
+        catch (error) {
+            // TODO: Display error Toast popup?
+            console.log(`[PeriodCalendarScreen] fetchPeriodData() error: ${error}`);
+        }
     }
 
     async function fetchLastPeriod() {
@@ -493,6 +520,32 @@ const PeriodCalendarScreen = ({ props }) => {
         }
     }
         
+    const onEveryPress = () => {
+        setExportDropdownOpen(false);
+    }
+
+    // gross code duplication, but can revisit later if needed (not necessary to make it more scalable at this point)
+    const handleViewableItemsChangedStartMonth = useCallback(({viewableItems, changed}) => {
+        let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
+        setExportStartMonth(centerViewable);
+    }, []);
+
+    const handleViewableItemsChangedStartYear = useCallback(({viewableItems, changed}) => {
+        let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
+        setExportStartYear(centerViewable);
+    }, []);
+
+    const handleViewableItemsChangedEndMonth = useCallback(({viewableItems, changed}) => {
+        if (viewableItems.length < 2) return; // for the first moments of rendering, it might error without this check
+        let centerViewable = viewableItems[1].item.id;
+        setExportEndMonth(centerViewable);
+    }, []);
+
+    const handleViewableItemsChangedEndYear = useCallback(({viewableItems, changed}) => {
+        let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
+        setExportEndYear(centerViewable);
+    }, []);
+
     // TODO: Satoshi Font
     // TODO: Add padding at bottom for navigation bar
     return (
@@ -511,6 +564,7 @@ const PeriodCalendarScreen = ({ props }) => {
                         <TouchableHighlight
                             className={`flex-1 rounded-[7px] items-center pt-1 pb-1 ${monthWeekDaySelector == "month" ? "bg-seafoam" : "bg-teal"}`}
                             onPressIn={() => {
+                                onEveryPress();
                                 console.log('Selected Month!');
                                 if (!(monthWeekDaySelector == "month")) {
                                     setMonthWeekDaySelector("month");
@@ -529,6 +583,7 @@ const PeriodCalendarScreen = ({ props }) => {
                         <TouchableHighlight
                             className={`flex-1 rounded-[7px] items-center pt-1 pb-1 ${monthWeekDaySelector == "week" ? "bg-seafoam" : "bg-teal"}`}
                             onPressIn={() => {
+                                onEveryPress();
                                 console.log('Selected Week!');
                                 if (!(monthWeekDaySelector == "week")) {
                                     setMonthWeekDaySelector("week");
@@ -547,6 +602,7 @@ const PeriodCalendarScreen = ({ props }) => {
                         <TouchableHighlight
                             className={`flex-1 rounded-[7px] items-center pt-1 pb-1 ${monthWeekDaySelector == "day" ? "bg-seafoam" : "bg-teal"}`}
                             onPressIn={() => {
+                                onEveryPress();
                                 console.log('Selected Day!');
                                 if (!(monthWeekDaySelector == "day")) {
                                     setMonthWeekDaySelector("day");
@@ -562,28 +618,235 @@ const PeriodCalendarScreen = ({ props }) => {
                     </View>
 
                     <Modal
-                        animationType="slide"
-                        transparent={false}
-                        visible={trendsModalVisible}
+                        animationIn={"slideInRight"}
+                        animationOut={"slideOutRight"}
+                        animationInTiming={500}
+                        animationOutTiming={500}
+                        hasBackdrop={false}
+                        isVisible={trendsModalVisible}
                         onRequestClose={() => {
                             setTrendsModalVisible(!trendsModalVisible);
                         }}
+                        // margin 0 makes modal fullscreen,
+                        className="m-0"
                     >
-                        <SafeAreaView>
-                            <Text className="text-[20px] font-bold">This is the trends screen</Text>
+                        <SafeAreaView className="flex-grow flex-col items-start bg-offwhite">
+                            <ScrollView className="w-full h-full p-[35px]">
+                                {/* Header */}
+                                <View className="flex-row items-center w-full">
+                                    <Pressable
+                                        onPress={() => {
+                                            onEveryPress();
+                                            setTrendsModalVisible(!trendsModalVisible)
+                                        }}
+                                        hitSlop={25}
+                                    >
+                                        <BackArrowIcon className="self-start"/>
+                                    </Pressable>
+                                    <View className="flex-grow"/>
+                                    <Text className="text-[32px] font-bold self-center">
+                                        Trends
+                                    </Text>
+                                    <View className="flex-grow"/>
+                                    <Pressable
+                                        onPress={() => {
+                                            onEveryPress();
+                                            setExportModalVisible(!exportModalVisible);
+                                        }}
+                                        hitSlop={25}
+                                    >
+                                        <ShareIcon className="self-end"/>
+                                    </Pressable>
+                                </View>
+
+                                {/* Content */}
+                                {
+                                    Object.keys(periodDataByYear).map(year => Number(year))
+                                                                 .sort((a, b) => b - a) // sort by year descending
+                                                                 .map((year) =>
+                                        {
+                                            // sort year data by descending first day of period for each month (first day to account for multiple periods same month edge case)
+                                            return <TrendYearBlock
+                                                    year={year}
+                                                    firstPeriodOfNextYear={String(year + 1) in periodDataByYear ? periodDataByYear[year + 1][periodDataByYear[year + 1].length - 1] : null}
+                                                    yearData={
+                                                        periodDataByYear[year].sort((periodA, periodB) => {
+                                                            const getEarliestDateOfPeriod = (period) => {
+                                                                // first map each day to an array of the dates on which the period occurred, then reduce to get earliest
+                                                                return period.details.map((dayOfPeriod) => {
+                                                                    // assuming format YYYY-MM-DD
+                                                                    const [year, month, day] = dayOfPeriod.dateStr.split('-')
+                                                                                                                  .map(str => Number(str));
+                                                                    return new Date(year, month - 1, day)
+                                                                }).reduce((min, curr) => curr < min ? curr : min, new Date());
+                                                            }
+
+                                                            const aDate = getEarliestDateOfPeriod(periodA);
+                                                            const bDate = getEarliestDateOfPeriod(periodB);
+                                                            return bDate - aDate;
+                                                        }).map((period) => { // then sort in-place individual periods by descending date
+                                                            // sort period.details in-place then just return period
+                                                            period.details.sort((periodDayA, periodDayB) => {
+                                                                const [yearA, monthA, dayA] = periodDayA.dateStr.split('-')
+                                                                                                          .map(str => Number(str));
+                                                                const [yearB, monthB, dayB] = periodDayB.dateStr.split('-')
+                                                                                                          .map(str => Number(str));
+                                                                return new Date(yearB, monthB - 1, dayB) - new Date(yearA, monthA - 1, dayA);
+                                                            })
+                                                            return period;
+                                                        })
+                                                    }
+                                                    key={`trendyearblock-${year}`}/>
+                                        }
+                                    )
+                                }
+
+                                <Modal
+                                    animationIn={"slideInUp"}
+                                    animationOut={"slideOutUp"}
+                                    animationTiming={500}
+                                    backdropOpacity={0.5}
+                                    isVisible={exportModalVisible}
+                                    onBackdropPress={() => {
+                                        onEveryPress();
+                                        setExportModalVisible(!exportModalVisible);
+                                    }}
+                                    onRequestClose={() => {
+                                        onEveryPress();
+                                        setTrendsModalVisible(!exportModalVisible);
+                                    }}
+                                >
+                                    <Pressable
+                                        onPress={() => {
+                                            setExportDropdownOpen(false);
+                                        }}
+                                    >
+                                        <View className="bg-offwhite rounded-[20px] border-[3px] border-seafoam mx-6 py-4 px-6">
+                                            <View className="flex-row justify-center">
+                                                <Text className="text-[22px] font-bold">
+                                                    Export
+                                                </Text>
+                                                <TouchableOpacity 
+                                                    className="absolute right-0"
+                                                    onPress={() => {
+                                                        onEveryPress();
+                                                        setExportModalVisible(!exportModalVisible);
+                                                    }}
+                                                >
+                                                    <XIcon/>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View className="flex-row mt-3 items-center justify-between">
+                                                <Text className="text-[20px] font-bold">
+                                                    Format
+                                                </Text>
+                                                <DropDownPicker
+                                                    open={exportDropdownOpen}
+                                                    value={exportDropdownValue}
+                                                    items={exportDropdownItems}
+                                                    setOpen={setExportDropdownOpen}
+                                                    setValue={setExportDropdownValue}
+                                                    setItems={setExportDropdownItems}
+                                                    placeholder={exportDropdownValue}
+                                                    style={{backgroundColor: '#EDEEE0', borderWidth: 0, borderRadius: 3, minHeight: 35}}
+                                                    containerStyle={{width: 90}}
+                                                    dropDownContainerStyle={{backgroundColor: '#EDEEE0', borderColor: '#777', borderWidth: 1, borderRadius: 3}}
+                                                    textStyle={{color: '#272727', fontSize: 16, fontWeight: 'bold'}}
+                                                />
+                                            </View>
+
+                                            <Text className="text-[20px] font-bold mt-3">
+                                                Start
+                                            </Text>
+                                            <View className="flex-row mt-3">
+                                                <ScrollPicker
+                                                    data={[...Array(12).keys()].map((monthIndex) => {
+                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString('default', {month: 'short'}), id: monthIndex}
+                                                    })}
+                                                    initialScrollIndex={currDateObject.getMonth()}
+                                                    onViewableItemsChanged={handleViewableItemsChangedStartMonth}
+                                                    itemHeight={scrollPickerItemHeight}
+                                                    keyPrefix="month"
+                                                    roundLeft={true}
+                                                />
+                                                <ScrollPicker
+                                                    data={[...Array(10_000).keys()].map((yearIndex) => {
+                                                        return {title: yearIndex + 1, id: yearIndex}
+                                                    })}
+                                                    initialScrollIndex={currDateObject.getFullYear() - 1}
+                                                    onViewableItemsChanged={handleViewableItemsChangedStartYear}
+                                                    itemHeight={scrollPickerItemHeight}
+                                                    keyPrefix="year"
+                                                    roundRight={true}
+                                                />
+                                            </View>
+                                            <Text className="text-[20px] font-bold mt-3">
+                                                End
+                                            </Text>
+                                            <View className="flex-row mt-3">
+                                                <ScrollPicker
+                                                    data={[...Array(12).keys()].map((monthIndex) => {
+                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString('default', {month: 'short'}), id: monthIndex}
+                                                    })}
+                                                    initialScrollIndex={currDateObject.getMonth()}
+                                                    onViewableItemsChanged={handleViewableItemsChangedEndMonth}
+                                                    itemHeight={scrollPickerItemHeight}
+                                                    keyPrefix="month"
+                                                    roundLeft={true}
+                                                />
+                                                <ScrollPicker
+                                                    data={[...Array(10_000).keys()].map((yearIndex) => {
+                                                        return {title: yearIndex + 1, id: yearIndex}
+                                                    })}
+                                                    initialScrollIndex={currDateObject.getFullYear() - 1}
+                                                    onViewableItemsChanged={handleViewableItemsChangedEndYear}
+                                                    itemHeight={scrollPickerItemHeight}
+                                                    keyPrefix="year"
+                                                    roundRight={true}
+                                                />
+                                            </View>
+
+                                            {/* Export Button */}
+                                            <Pressable
+                                                onPress={() => {
+                                                    setExportButtonPressed(true);
+                                                    setExportButtonColor("#5B9F8F");
+                                                    setTimeout(() => {
+                                                        // TODO: Check for success in sending email to user
+                                                        setExportModalVisible(false);
+
+                                                        // letting modal fly out before setting variables to ensure animation fluidity
+                                                        setTimeout(() => {
+                                                            setExportButtonColor("#00394E");
+                                                            setExportButtonPressed(false);
+                                                        }, 1000);
+                                                    }, 1000);
+                                                }}
+                                            >
+                                                <View 
+                                                    className="flex-row rounded-[50px] justify-center items-center mt-4 py-4 px-6"
+                                                    style={{ backgroundColor: exportButtonColor }}
+                                                >
+                                                    {
+                                                        exportButtonPressed
+                                                        &&
+                                                        <View className="mr-3">
+                                                            <ExportCheckIcon width={25} height={25} />
+                                                        </View>
+                                                    }
+                                                    <View className="justify-center items-center h-[25px]">
+                                                        <Text className="text-offwhite text-[16px]">
+                                                            {exportButtonPressed ? "Exported Successfully" : "Export"}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            </Pressable>
+                                        </View>
+
+                                    </Pressable>
+                                </Modal>
+                            </ScrollView>
                         </SafeAreaView>
-                        <TouchableHighlight
-                            className="flex rounded-[50px] self-start items-center justify-center bg-turquoise px-3 py-1 mt-4"
-                            onPress={() => {
-                               setTrendsModalVisible(!trendsModalVisible)
-                            }}
-                        >
-                            <View className="flex-row items-center">
-                                <Text className="text-offwhite text-[14px] font-bold py-1">
-                                    Exit Trends
-                                </Text>
-                            </View>
-                        </TouchableHighlight>
                     </Modal>
 
                     {/* Month & Year + Trends Button View */}
@@ -608,6 +871,7 @@ const PeriodCalendarScreen = ({ props }) => {
                         <TouchableHighlight
                             className="flex rounded-[50px] self-start items-center justify-center bg-turquoise px-3 py-1"
                             onPress={() => {
+                                onEveryPress();
                                 setTrendsModalVisible(true);
                             }}
                             underlayColor="#5B9F8F"
