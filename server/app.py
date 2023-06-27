@@ -8,7 +8,7 @@ from api.v0.routes.users import users_api
 from api.v0.routes.periods import periods_api
 from api.v0.routes.mixed import mixed_api
 from api.v0.routes.tests import tests_api
-from api.v0.routes.resource import resource_api
+from api.v0.routes.resources import resource_api
 
 app = Flask(__name__)
 app.register_blueprint(users_api)

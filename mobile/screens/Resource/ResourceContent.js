@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState}  from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View,  
+import React, { useEffect, useContext, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
     FlatList,
-    Pressable, 
-    SafeAreaView,  
+    Pressable,
+    SafeAreaView,
     StatusBar,
     Image,
     ScrollView,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
-import { MARKDOWN_S3_URL } from '@env';
+// import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 
 import BackIcon from '../../assets/icons/back.svg';
@@ -23,27 +23,27 @@ const mockData = [
     {
         title: 'Saved',
         data: [
-          {
-            key: '1',
-            text: 'How to Soothe Cramps'
-          },
-          {
-            key: '2',
-            text: 'See All'
-          },
+            {
+                key: '1',
+                text: 'How to Soothe Cramps'
+            },
+            {
+                key: '2',
+                text: 'See All'
+            },
         ],
     },
     {
         title: 'Recently Viewed',
         data: [
-          {
-            key: '1',
-            text: 'What to Do on Your Period'
-          },
-          {
-            key: '2',
-            text: 'The First Period'
-          }
+            {
+                key: '1',
+                text: 'What to Do on Your Period'
+            },
+            {
+                key: '2',
+                text: 'The First Period'
+            }
         ],
     },
     {
@@ -75,22 +75,22 @@ const ResourceContent = ({ route, navigation }) => {
 
     const PurpleListItem = ({ item }) => {
         return (
-          <Pressable onPress={() => navigation.navigate('ResourceArticle', {outerResource: resource, resource: item})}>
+            <Pressable onPress={() => navigation.navigate('ResourceArticle', { outerResource: resource, resource: item })}>
                 <View style={styles.purpleBox}>
                     <Text style={styles.purpleBoxText}>{item.text}</Text>
                 </View>
-          </Pressable>
+            </Pressable>
         );
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.inline}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
-                        <BackIcon style={styles.headerBackIcon}/>
-                    </TouchableOpacity>
-                    <Text style={styles.headerText}>{resource.text}</Text>
-                    {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
+                    <BackIcon style={styles.headerBackIcon} />
+                </TouchableOpacity>
+                <Text style={styles.headerText}>{resource.text}</Text>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
                         <Image source={require('../../assets/icons/search.svg')} style={styles.headerSearchIcon}/>
                     </TouchableOpacity> */}
             </View>
@@ -98,15 +98,15 @@ const ResourceContent = ({ route, navigation }) => {
                 <View style={styles.introText}>
                     <Text style={styles.introTextContent}>{resource.introText}</Text>
                 </View>
-                <View style={{marginTop: 20, marginBottom: 10}}>
+                <View style={{ marginTop: 20, marginBottom: 10 }}>
                     <Text style={styles.scrollText}>scroll to see topics</Text>
-                    <ScrollIcon style={styles.scrollIcon}/>
+                    <ScrollIcon style={styles.scrollIcon} />
                 </View>
-                
+
                 <View style={styles.topicsList}>
                     {
                         // group into pairs of two
-                        resource.topics.reduce((groupedArr, topic, index) => {       
+                        resource.topics.reduce((groupedArr, topic, index) => {
                             if (index % 2 == 0) {
                                 groupedArr.push([topic]);
                             } else {
@@ -115,9 +115,9 @@ const ResourceContent = ({ route, navigation }) => {
                             return groupedArr;
                         }, []).map((pair, index) => {
                             return (
-                                <View style={{marginLeft: 'auto', marginRight: 'auto'}} key={index}>
-                                    <PurpleListItem item={pair[0]}/>
-                                    {pair.length > 1 ? <PurpleListItem item={pair[1]}/> : null}
+                                <View style={{ marginLeft: 'auto', marginRight: 'auto' }} key={index}>
+                                    <PurpleListItem item={pair[0]} />
+                                    {pair.length > 1 ? <PurpleListItem item={pair[1]} /> : null}
                                 </View>
                             )
                         })
@@ -145,9 +145,9 @@ const styles = StyleSheet.create({
         marginLeft: 35
     },
     headerSearchIcon: {
-        width: 30, 
-        height: 30, 
-        marginTop: 10, 
+        width: 30,
+        height: 30,
+        marginTop: 10,
         marginLeft: 30,
     },
     inline: {

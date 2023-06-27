@@ -1,42 +1,56 @@
-import React, { useEffect, useState}  from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    StyleSheet, 
-    Text, 
-    View,  
+    StyleSheet,
+    Text,
+    View,
     FlatList,
-    Pressable, 
-    SafeAreaView,  
+    Pressable,
+    SafeAreaView,
     StatusBar,
     ScrollView,
     TouchableOpacity,
     ImageBackground
 } from 'react-native';
-import RESOURCE_TEMPLATE from '../../models/ResourceModel';
+import Markdown from 'react-native-simple-markdown';
+// import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
-import { MARKDOWN_S3_URL } from '@env';
+// import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 import { mockData } from './mockData';
-
 import SearchIcon from '../../assets/icons/search.svg'
 
+// Loading env variables
+import getEnvVars from '../../environment';
+const { API_URL } = getEnvVars();
+
 const ResourceHomeScreen = ({ navigation, props }) => {
-    const resource_template = new RESOURCE_TEMPLATE();
-    const [resourcesJson, setResourcesJson] = useState({});
+    // const resource_template = new RESOURCE_TEMPLATE();
+    const [resourcesMap, setResourcesMap] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
     // const { userId } = useContext(AuthContext);
 
-    async function fetchResoucesJson() {
-        await fetch(MARKDOWN_S3_URL, { method: "GET" })
-        .then(resp => resp.json())
-        .then(data => {
-            // console.log('[ResourceHomeScreen] fetchResourcesJson(): ', data);
-            setResourcesJson(data)
-        })
-        .catch(error => {console.log(error)})
+    async function fetchAllResources() {
+        // `${API_URL}/resources`
+        const resp = await fetch(`http://127.0.0.1:5000/resources`, { method: "GET" });
+        const data = await resp.json();
+
+        let promises = data.map(async (item, index, arr) => {
+            const resource_data = await fetchSingleResource(item["resource_url"]);
+            console.log('here...', item.resource_url, resource_data)
+            arr[index] = { ...item, "resource_data": resource_data }
+        });
+        await Promise.all(promises);
+        setResourcesMap(data);
     }
 
-    useEffect(()=>{
-        fetchResoucesJson();
+    async function fetchSingleResource(resource_url) {
+        const resp = await fetch(resource_url, { method: "GET" });
+        const data = await resp.text();
+        return data;
+    }
+
+    useEffect(() => {
+        // fetchAllResources();
     }, []);
 
     const images = {
@@ -48,14 +62,13 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         nutrition: require('../../assets/resources_images/nutrition_banner.png'),
         reproductive_health: require('../../assets/resources_images/reproductive_health_banner.png'),
         sexual_health: require('../../assets/resources_images/sexual_health_banner.png'),
-    }   
+    }
 
     const PurpleListItem = ({ item }) => {
         const image = images[item.image];
-
         return (
-            <Pressable onPress={() => navigation.navigate('ResourceContent', {resource: item})}>
-                <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15  }}>
+            <Pressable onPress={() => navigation.navigate('ResourceContent', { resource: item })}>
+                <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15 }}>
                     <View style={styles.darkness} />
                     <Text style={styles.purpleBoxText}>{item.text}</Text>
                 </ImageBackground>
@@ -81,7 +94,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                 )}
             </>
         );
-      };
+    };
 
     // Pull down to refresh
     const onRefresh = React.useCallback(() => {
@@ -90,24 +103,16 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         setRefreshing(false);
     }, []);
 
-    function getResourceContentForSection(sectionName) {
-        const result = resourcesJson.map((ele) => {
-            if (ele['id'] == sectionName) {
-                return ele
-            }
-        })
-        return result
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>Education</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <SearchIcon style={styles.headerSearchIcon}/>
+                        <SearchIcon style={styles.headerSearchIcon} />
                     </TouchableOpacity>
                 </View>
+                {resourcesMap && resourcesMap.map(r => <Markdown key={r.resource_url}>{r.resource_data}</Markdown>)}
                 {
                     mockData.map((ele, index) => {
                         if (index > 1) {
@@ -119,7 +124,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                                         data={ele.data}
                                         renderItem={({ item }) => <PurpleListItem item={item} key={item.key} />}
                                         showsHorizontalScrollIndicator={false}
-                                        style={{marginBottom: -15}}
+                                        style={{ marginBottom: -15 }}
                                         keyExtractor={(item, index) => item.key}
                                     />
                                 </View>
@@ -131,9 +136,9 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                                     <FlatList
                                         horizontal
                                         data={ele.data}
-                                        renderItem={({ item }) => <RedListItem item={item} key={item.key}/>}
+                                        renderItem={({ item }) => <RedListItem item={item} key={item.key} />}
                                         showsHorizontalScrollIndicator={false}
-                                        style={{marginBottom: -15}}
+                                        style={{ marginBottom: -15 }}
                                         keyExtractor={(item, index) => item.key}
                                     />
                                 </View>
@@ -156,9 +161,9 @@ const styles = StyleSheet.create({
         marginLeft: 70,
     },
     headerSearchIcon: {
-        width: 30, 
-        height: 30, 
-        marginTop: 10, 
+        width: 30,
+        height: 30,
+        marginTop: 10,
         marginLeft: 50
     },
     inline: {
@@ -286,8 +291,8 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         paddingBottom: "6%"
-        },
-        buttontext: {
+    },
+    buttontext: {
         textAlign: "center",
         fontSize: 20,
         // fontWeight: "bold",

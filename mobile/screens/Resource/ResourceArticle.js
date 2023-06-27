@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState}  from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View,  
+import React, { useEffect, useContext, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
     FlatList,
-    Pressable, 
-    SafeAreaView,  
+    Pressable,
+    SafeAreaView,
     StatusBar,
     Image,
     ScrollView,
@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
-import { MARKDOWN_S3_URL } from '@env';
+// import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 
 import BackIcon from '../../assets/icons/back.svg';
@@ -28,27 +28,27 @@ const mockData = [
     {
         title: 'Saved',
         data: [
-          {
-            key: '1',
-            text: 'How to Soothe Cramps'
-          },
-          {
-            key: '2',
-            text: 'See All'
-          },
+            {
+                key: '1',
+                text: 'How to Soothe Cramps'
+            },
+            {
+                key: '2',
+                text: 'See All'
+            },
         ],
     },
     {
         title: 'Recently Viewed',
         data: [
-          {
-            key: '1',
-            text: 'What to Do on Your Period'
-          },
-          {
-            key: '2',
-            text: 'The First Period'
-          }
+            {
+                key: '1',
+                text: 'What to Do on Your Period'
+            },
+            {
+                key: '2',
+                text: 'The First Period'
+            }
         ],
     },
     {
@@ -82,31 +82,31 @@ const ResourceArticle = ({ route, navigation }) => {
 
     const PurpleListItem = ({ item }) => {
         return (
-          <Pressable onPress={() => navigation.navigate('ResourceArticle', {resource: resource})}>
+            <Pressable onPress={() => navigation.navigate('ResourceArticle', { resource: resource })}>
                 <View style={styles.purpleBox}>
                     <Text style={styles.purpleBoxText}>{item.text}</Text>
                 </View>
-          </Pressable>
+            </Pressable>
         );
     };
 
     return (
         <SafeAreaView>
             <View style={styles.topBarInline}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceContent', { resource: outerResource })}>
-                        <BackIcon style={styles.headerBackIcon} />
-                    </TouchableOpacity>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '13%', marginRight: 35, marginTop: 10}}>
-                        <TranslateIcon style={styles.translateIcon}/>
-                        <SpeakerIcon style={styles.speakerIcon}/>
-                    </View>
+                <TouchableOpacity onPress={() => navigation.navigate('ResourceContent', { resource: outerResource })}>
+                    <BackIcon style={styles.headerBackIcon} />
+                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '13%', marginRight: 35, marginTop: 10 }}>
+                    <TranslateIcon style={styles.translateIcon} />
+                    <SpeakerIcon style={styles.speakerIcon} />
+                </View>
             </View>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.headerInline}>
                     <Text style={styles.headerText}>{resource.text}</Text>
                     <TouchableOpacity onPress={() => setSave(!save)}>
                         {/* TODO: upload to user's saved articles */}
-                        {save ? <SaveAfterIcon style={styles.saveIcon}/> : <SaveInitialIcon style={styles.saveIcon}/>}
+                        {save ? <SaveAfterIcon style={styles.saveIcon} /> : <SaveInitialIcon style={styles.saveIcon} />}
                     </TouchableOpacity>
                 </View>
                 {/* <View style={styles.introText}>
@@ -126,7 +126,7 @@ const ResourceArticle = ({ route, navigation }) => {
                         style={styles.noteInput}
                     />
                 </View>
-                <View style={{marginTop: 20, marginBottom: 10}}>
+                <View style={{ marginTop: 20, marginBottom: 10 }}>
                     {/* TODO: link to next article */}
                     <Text style={styles.scrollText}>tap to see next article</Text>
                 </View>
@@ -156,9 +156,9 @@ const styles = StyleSheet.create({
         marginLeft: 35
     },
     headerSearchIcon: {
-        width: 30, 
-        height: 30, 
-        marginTop: 10, 
+        width: 30,
+        height: 30,
+        marginTop: 10,
         marginLeft: 30,
     },
     inline: {
