@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import ResourceHomeScreen from './ResourceHomeScreen';
 import ResourceMenstruationScreen from './ResourceMenstruationScreen';
 import ResourceNutritionScreen from './ResourceNutritionScreen';
@@ -9,10 +8,10 @@ import ResourceExerciseScreen from './ResourceExerciseScreen';
 import ResourceMentalHealthScreen from './ResourceMentalHealthScreen';
 import ResourceSexEducationScreen from './ResourceSexEducationScreen';
 import ResourceSustainabilityScreen from './ResourceSustainabilityScreen';
-import ResourceSearch  from './ResourceSearch';
-import ResourceSaved  from './ResourceSaved';
-import ResourceContent  from './ResourceContent';
-import ResourceArticle  from './ResourceArticle';
+import ResourceSearch from './ResourceSearch';
+import ResourceSaved from './ResourceSaved';
+import ResourceContent from './ResourceContent';
+import ResourceArticle from './ResourceArticle';
 
 const rStack = createStackNavigator();
 
@@ -31,21 +30,21 @@ const ResourceStack = () => {
                 <rStack.Screen
                     name="ResourceSaved"
                     component={ResourceSaved}
-                    options={ {header: ()=>null} } />
+                    options={{ header: () => null }} />
                 <rStack.Screen
                     name="ResourceContent"
                     component={ResourceContent}
-                    options={ {header: ()=>null}} />
+                    options={{ header: () => null }} />
                 <rStack.Screen
                     name="ResourceArticle"
                     component={ResourceArticle}
-                    options={ {header: ()=>null}} />
-                <rStack.Screen 
-                    name="ResourceMenstruationScreen" 
-                    component={ResourceMenstruationScreen} 
-                    options={ {title: "Menstruation"} }/>
-                <rStack.Screen 
-                    name="ResourceNutritionScreen" 
+                    options={{ header: () => null }} />
+                <rStack.Screen
+                    name="ResourceMenstruationScreen"
+                    component={ResourceMenstruationScreen}
+                    options={{ title: "Menstruation" }} />
+                <rStack.Screen
+                    name="ResourceNutritionScreen"
                     component={ResourceNutritionScreen}
                     options={{ title: "Nutrition" }} />
                 <rStack.Screen

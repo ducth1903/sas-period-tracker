@@ -1,11 +1,11 @@
-import React, { useEffect, useContext, useState}  from 'react';
-import { 
-    StyleSheet, 
-    Text, 
-    View,  
+import React, { useEffect, useContext, useState } from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
     FlatList,
-    Pressable, 
-    SafeAreaView,  
+    Pressable,
+    SafeAreaView,
     StatusBar,
     Image,
     ScrollView,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
-import { MARKDOWN_S3_URL } from '@env';
+// import { MARKDOWN_S3_URL } from '@env';
 import { useNavigation } from '@react-navigation/native';
 
 import BackIcon from '../../assets/icons/back.svg';
@@ -23,27 +23,27 @@ const mockData = [
     {
         title: 'Saved',
         data: [
-          {
-            key: '1',
-            text: 'How to Soothe Cramps'
-          },
-          {
-            key: '2',
-            text: 'See All'
-          },
+            {
+                key: '1',
+                text: 'How to Soothe Cramps'
+            },
+            {
+                key: '2',
+                text: 'See All'
+            },
         ],
     },
     {
         title: 'Recently Viewed',
         data: [
-          {
-            key: '1',
-            text: 'What to Do on Your Period'
-          },
-          {
-            key: '2',
-            text: 'The First Period'
-          }
+            {
+                key: '1',
+                text: 'What to Do on Your Period'
+            },
+            {
+                key: '2',
+                text: 'The First Period'
+            }
         ],
     },
     {
@@ -71,9 +71,9 @@ const mockData = [
 
 const PurpleListItem = ({ item }) => {
     return (
-      <View style={styles.purpleBox}>
-        <Text style={styles.purpleBoxText}>{item.text}</Text>
-      </View>
+        <View style={styles.purpleBox}>
+            <Text style={styles.purpleBoxText}>{item.text}</Text>
+        </View>
     );
 };
 
@@ -82,21 +82,21 @@ const ResourceSaved = ({ navigation, props }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.inline}>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
-                        <BackIcon style={styles.headerBackIcon}/>
-                    </TouchableOpacity>
-                    <Text style={styles.headerText}>Saved</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <SearchIcon style={styles.headerSearchIcon}/>
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
+                    <BackIcon style={styles.headerBackIcon} />
+                </TouchableOpacity>
+                <Text style={styles.headerText}>Saved</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                    <SearchIcon style={styles.headerSearchIcon} />
+                </TouchableOpacity>
             </View>
             <FlatList
-                    data={mockData[2].data}
-                    numColumns={1}
-                    renderItem={({ item }) => <PurpleListItem item={item} />}
-                    showsHorizontalScrollIndicator={false}
-                    style={{marginTop: 20}}
-                />
+                data={mockData[2].data}
+                numColumns={1}
+                renderItem={({ item }) => <PurpleListItem item={item} />}
+                showsHorizontalScrollIndicator={false}
+                style={{ marginTop: 20 }}
+            />
         </SafeAreaView>
     )
 }
@@ -117,9 +117,9 @@ const styles = StyleSheet.create({
         marginRight: 40,
     },
     headerSearchIcon: {
-        width: 30, 
-        height: 30, 
-        marginTop: 10, 
+        width: 30,
+        height: 30,
+        marginTop: 10,
         marginLeft: 30,
     },
     inline: {
@@ -240,8 +240,8 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         paddingBottom: "6%"
-        },
-        buttontext: {
+    },
+    buttontext: {
         textAlign: "center",
         fontSize: 20,
         // fontWeight: "bold",

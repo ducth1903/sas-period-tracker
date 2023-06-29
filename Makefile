@@ -21,10 +21,6 @@ build_server_local:
 run_server_local:
 	cd server && source ./venv/bin/activate && python app.py
 
-# Must run 'make build_mobile_local' first
-run_server_dummy:
-	cd mobile && node dserver.js
-
 clean:
 	cd mobile && npm prune && rm -rf node_modules package-lock.json
 	cd server && rm -rf ./venv ./.venv

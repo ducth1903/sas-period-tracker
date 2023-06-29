@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,6 +13,7 @@ from ..utils import conversion
 
 resource_api = Blueprint('resource_api', __name__)
 sas_aws = SasAws()
+RESOURCE_BUCKET = "sas-public"
 
 # Create a base class for declarative ORM models
 Base = declarative_base()
@@ -27,6 +29,24 @@ class Category(Enum):
     GROWING_UP = "growing up"
     MENTAL_HEALTH = "mental health"
 
+# GET
+@resource_api.route('/resources')
+def resources_get_by_id():
+    try:
+        result = []
+        resp = sas_aws.s3.list_objects_v2(Bucket=RESOURCE_BUCKET, StartAfter="resources/markdowns")
+        for obj in resp["Contents"]:
+            object_key, object_size, object_last_modified = obj["Key"], obj["Size"], obj["LastModified"]
+            if object_size > 0:
+                result.append({
+                    "resource_url": sas_aws.S3_BUCKET + object_key,
+                    "resource_last_modified": object_last_modified,
+                })
+        return jsonify(result)
+    except Exception as e:
+        return response.error_json_response(e)
+
+"""
 # Define the resource class
 class Resource(Base):
     __tablename__ = 'metadata'
@@ -176,3 +196,4 @@ def resources_get_by_author(author):
         return jsonify(resources)
     except Exception as e:
         return response.error_json_response(e)
+"""
