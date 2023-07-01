@@ -13,7 +13,7 @@ def query_all(userid):
     return SasAws.periodTable.query(
                 KeyConditionExpression=Key("userId").eq(userid),
                 ScanIndexForward=False,
-                ProjectionExpression="dateStr, symptoms",
+                ProjectionExpression="dateStr, flow, moods, symptoms, discharge",
             )
 
 def query_start_end(userid, startEpoch, endEpoch): 
