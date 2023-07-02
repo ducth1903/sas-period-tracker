@@ -139,10 +139,10 @@ const moodSVGs = {
 };
 
 // TODO: relative fractional/percent width and height inputs
-const renderFlow = (flow=null, selected=false, width=40, height=40) => {
+const renderFlow = (flow=null, selected=false, width=40, height=40, mb=0, mr=0) => {
   if (!flow || !Object.keys(flowSVGs.default).includes(flow)) {
     return (
-      <View className="mb-1.5 mr-1.5">
+      <View className={`mb-[${mb}] mr-[${mr}]`}>
         <FlowNoneDefault width={width} height={width} />
       </View>
     );
@@ -150,17 +150,17 @@ const renderFlow = (flow=null, selected=false, width=40, height=40) => {
 
   const FlowIcon = flowSVGs[`${selected ? 'selected' : 'default'}`][flow];
   return (
-    <View className="mb-1.5 mr-1.5">
+    <View className={`mb-[${mb}] mr-[${mr}]`}>
       <FlowIcon width={width} height={height} />
     </View>
   );
 }
 
 // renders the correct discharge icon, renders default creamy icon if no discharge
-const renderDischarge = (discharge=null, selected=false, width=40, height=40) => {
+const renderDischarge = (discharge=null, selected=false, width=40, height=40, mb=0, mr=0) => {
   if (!discharge || !Object.keys(dischargeSVGs.default).includes(discharge)) {
     return (
-      <View className="mb-1.5 mr-1.5">
+      <View className={`mb-[${mb}] mr-[${mr}]`}>
         <SymptomDischargeCreamy width={width} height={height} />
       </View>
     );
@@ -168,44 +168,44 @@ const renderDischarge = (discharge=null, selected=false, width=40, height=40) =>
   
   const DischargeIcon = dischargeSVGs[`${selected ? 'selected' : 'default'}`][discharge];
   return (
-    <View className="mb-1.5 mr-1.5">
+    <View className={`mb-[${mb}] mr-[${mr}]`}>
       <DischargeIcon width={width} height={height} />
     </View>
   );
 }
 
 // TODO: Add drop shadow to selected icons
-const renderSymptom = (key, symptom, selected=false, width=40, height=40) => {
+const renderSymptom = (key, symptom, selected=false, width=40, height=40, mb=0, mr=0) => {
   if (!Object.keys(symptomSVGs.default).includes(symptom)) {
     return (
-      <View className="mb-1.5 mr-1.5">
-        <SymptomCravingsDefault width={width} height={height} key={key} />
+      <View className={`mb-[${mb}] mr-[${mr}]`} key={key}>
+        <SymptomCravingsDefault width={width} height={height} />
       </View>
     );
   }
   
   const SymptomIcon = symptomSVGs[`${selected ? 'selected' : 'default'}`][symptom];
   return (
-    <View className="mb-1.5 mr-1.5">
-      <SymptomIcon width={width} height={height} key={key} />
+    <View className={`mb-[${mb}] mr-[${mr}]`} key={key}>
+      <SymptomIcon width={width} height={height} />
     </View>
   );
 }
 
 
-const renderMood = (key, mood, selected=false, width=40, height=40) => {
+const renderMood = (key, mood, selected=false, width=40, height=40, mb=0, mr=0) => {
   if (!Object.keys(moodSVGs.default).includes(mood)) {
     return (
-      <View className="mb-1.5 mr-1.5">
-        <MoodCustomizeDefault className="mb-1.5 mr-1.5" width={width} height={height} key={key} />
+      <View className={`mb-[${mb}] mr-[${mr}]`} key={key}>
+        <MoodCustomizeDefault width={width} height={height} />
       </View>
     );
   }
   
   const MoodIcon = moodSVGs[`${selected ? 'selected' : 'default'}`][mood];
   return (
-    <View className="mb-1.5 mr-1.5">
-      <MoodIcon width={width} height={height} key={key} />
+    <View className={`mb-[${mb}] mr-[${mr}]`} key={key}>
+      <MoodIcon width={width} height={height} />
     </View>
   );
 }
