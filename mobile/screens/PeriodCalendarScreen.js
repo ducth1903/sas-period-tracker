@@ -7,7 +7,8 @@ import {
     TouchableHighlight,
     TouchableOpacity,
     Pressable,
-    View
+    View,
+    useWindowDimensions,
 } from 'react-native'
 import Modal from 'react-native-modal';
 import DropDownPicker from "react-native-dropdown-picker";
@@ -16,6 +17,8 @@ import { AuthContext } from '../navigation/AuthProvider';
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
 import CalendarCircle from '../components/CalendarCircle';
 import WeekColumn from '../components/WeekColumn';
+import StaticNote from '../components/StaticNote';
+import DailyGrid from '../components/DailyGrid';
 import TrendYearBlock from '../components/TrendYearBlock';
 import ScrollPicker from '../components/ScrollPicker';
 
@@ -51,6 +54,7 @@ const PeriodCalendarScreen = ({ props }) => {
     const { userId }                            = useContext(AuthContext);
     const [symptomSetting, setSymptomSetting]   = useState(new Set());
     const [symptomSettingArray, setSymptomSettingArray]       = useState([]);       // for Switch values (true/false)
+    const { height, width } = useWindowDimensions();
 
     const [trendsModalVisible, setTrendsModalVisible] = useState(false);
     const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -181,11 +185,6 @@ const PeriodCalendarScreen = ({ props }) => {
         let dayAtDiff = new Date(date.getTime());
         dayAtDiff.setDate(dayAtDiff.getDate() + diff);
         return dayAtDiff;
-    }
-
-    // TODO: make async and actually fetch
-    function fetchNotesForDate(date) {
-        return "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit";
     }
 
     // fetch methods here will return an object for each day in the week
@@ -485,18 +484,13 @@ const PeriodCalendarScreen = ({ props }) => {
                     }
                 </View>
                 
-                <Text className="text-[20px] font-bold mt-14 mb-2">
+                <Text className="text-[20px] font-bold mt-12 mb-2">
                     Notes
                 </Text>
 
                 {
                     getWeekDates().map((date) => 
-                        <View key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}>
-                            <Text className="text-[18px] font-bold mt-4">{`${weekDays[date.getDay()]}, ${date.toLocaleString('default', { month: 'long' })} ${date.getDate()}`}</Text>
-                            <View className="items-center justify-center border-2 min-h-[112px] border-turquoise rounded-xl mt-1.5 px-4 py-8">
-                                <Text className="text-teal">{fetchNotesForDate()}</Text>
-                            </View>
-                        </View>
+                        <StaticNote date={date} key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}/>
                     )
                 }
 
@@ -505,7 +499,18 @@ const PeriodCalendarScreen = ({ props }) => {
     }
 
     const renderDaily = () => {
-        return null;
+        return (
+            <View className="flex-col">
+                <View>
+                    {/* TODO: Data */}
+                    <DailyGrid />
+                </View>
+                <Text className="text-[20px] font-bold mt-10 mb-2">
+                    Notes
+                </Text>
+                <StaticNote date={currDateObject}></StaticNote>
+            </View>
+        );
     }
     
     const renderMwdContent = () => {
@@ -886,11 +891,27 @@ const PeriodCalendarScreen = ({ props }) => {
                     </View>
 
                     {/* Days (S, M, T ... S) Header */}
-                    <View className="flex-row justify-center items-center rounded-[7px] bg-[#EDEEE0] mt-3 py-1">
-                        {
-                            ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => {
+                    {
+                    monthWeekDaySelector === "day" ? (
+                        <View className="flex-row justify-center items-center rounded-[7px] bg-[#EDEEE0] mt-3 py-1 px-2">
+                            {/* NOTE: Add in DD/MM/YYYY here? Not the same format in India, goes  */}
+                            <Text className="text-[12px] text-greydark">
+                                {weekDays[currDateObject.getDay()]}
+                            </Text>
+                            <View className="flex-grow"/>
+                            <Text className="text-[12px] text-greydark">
+                                {/* TODO: un-hardcode this */}
+                                {`Day ${1} of ${6} of menstrual flow`}
+                            </Text>
+                        </View>
+                    )
+                    :
+                    (
+                        <View className="flex-row justify-center items-center rounded-[7px] bg-[#EDEEE0] mt-3 py-1">
+                            {
+                            weekDays.map((day) => {
                                 return (
-                                    <View className="flex-grow items-center" key={day}>
+                                    <View className="flex-grow items-center" key={`daybar-${day}`}>
                                         {/* pass first letter of 3-letter abbreviation keys */}
                                         <Text className="text-[11px] font-normal text-greydark">
                                             {day !== "Thu" ? day[0] : "R"}
@@ -900,6 +921,9 @@ const PeriodCalendarScreen = ({ props }) => {
                             })
                         }
                     </View>
+                    )
+
+                    }
 
                     {/* Main content (calendaar, weekly view, or daily view) */}
                     {renderMwdContent()}

@@ -28,81 +28,28 @@ const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
     const [weekSymptoms, setWeekSymptoms] = useState(null);
     const [weekMood, setWeekMood] = useState(null);
 
-    // console.log(`WeekColumn: ${flow}, ${discharge}, ${JSON.stringify(symptoms)}, ${JSON.stringify(moods)}`);
-
-    const flowSVGs = {
-        light: SVG.FlowLightSelected,
-        medium: SVG.FlowMediumSelected,
-        heavy: SVG.FlowHeavySelected,
-        notsure: SVG.FlowNotSureSelected,
-        none: SVG.FlowNoneSelected
-    };
-
-    const dischargeSVGs = {
-        stringy: SVG.SymptomDischargeStringySelected,
-        watery: SVG.SymptomDischargeWaterySelected,
-        transparent: SVG.SymptomDischargeTransparentSelected,
-        creamy: SVG.SymptomDischargeCreamySelected,
-        clumpy: SVG.SymptomDischargeClumpySelected,
-        sticky: SVG.SymptomDischargeStickySelected
-    };
-
-    const symptomSVGs = {
-        cravings: symptoms['cravings'] ? SVG.SymptomCravingsSelected : SVG.SymptomCravingsDefault,
-        backache: symptoms['backache'] ? SVG.SymptomBackacheSelected : SVG.SymptomBackacheDefault,
-        tenderBreasts: symptoms['tenderBreasts'] ? SVG.SymptomTenderSelected : SVG.SymptomTenderDefault,
-        headache: symptoms['headache'] ? SVG.SymptomHeadacheSelected : SVG.SymptomHeadacheDefault,
-        fatigue: symptoms['fatigue'] ? SVG.SymptomFatigueSelected : SVG.SymptomFatigueDefault,
-        nausea: symptoms['nausea'] ? SVG.SymptomNauseaSelected : SVG.SymptomNauseaDefault
-    };
-
-    const moodSVGs = {
-        excited: moods['excited'] ? SVG.MoodExcitedSelected : SVG.MoodExcitedDefault,
-        happy: moods['happy'] ? SVG.MoodHappySelected : SVG.MoodHappyDefault,
-        sensitive: moods['sensitive'] ? SVG.MoodSensitiveSelected : SVG.MoodSensitiveDefault,
-        sad: moods['sad'] ? SVG.MoodSadSelected : SVG.MoodSadDefault,
-        anxious: moods['anxious'] ? SVG.MoodAnxiousSelected : SVG.MoodAnxiousDefault,
-        angry: moods['angry'] ? SVG.MoodAngrySelected : SVG.MoodAngryDefault
-    };
-
-    const renderFlow = () => {
-        const FlowIcon = flowSVGs[flow];
-        return <FlowIcon className="mb-1.5 mr-1.5" width={40} height={40} />;
-    }
-
-    const renderDischarge = () => {
-        const DischargeIcon = dischargeSVGs[discharge];
-        return <DischargeIcon className="mb-1.5 mr-1.5" width={40} height={40} />;
-    }
-
-    const renderSymptom = (symptomName) => {
-        const SymptomIcon = symptomSVGs[symptomName];
-        return <SymptomIcon className="mb-1.5 mr-1.5" width={40} height={40} key={`${day}-${symptomName}`} />;
-    }
-
-    const renderMood = (moodName) => {
-        const MoodIcon = moodSVGs[moodName];
-        return <MoodIcon className="mb-1.5 mr-1.5" width={40} height={40} key={`${day}-${moodName}`} />;
-    }
-    
     // TODO: Integrate custom moods
     // TODO: Backend integration
     return (
         <View className="flex-col mt-3">
             {/* flow icon for this row */}
-            {renderFlow()}
+            {SVG.renderFlow(flow, true)}
             
             {/* discharge icon for this row */}
-            {renderDischarge()}
+            {SVG.renderDischarge(discharge, true)}
 
             {/* symptoms icons for this row */}
             {
-                Object.keys(symptoms).map((symptomName) => renderSymptom(symptomName))
+                Object.keys(SVG.symptomSVGs.default).map(
+                    symptom => SVG.renderSymptom(key=`symptom-${symptom}-${day}`,symptom, symptoms[symptom])
+                )
             }
 
             {/* moods icons for this row */}
             {
-                Object.keys(moods).map((moodName) => renderMood(moodName))
+                Object.keys(SVG.moodSVGs.default).map(
+                    mood => SVG.renderMood(key=`mood-${mood}-${day}`, mood, moods[mood])
+                )
             }
         </View>
     );

@@ -55,7 +55,170 @@ import SymptomDischargeCreamySelected from './icons/symptoms/discharge_creamy_se
 import SymptomDischargeClumpySelected from './icons/symptoms/discharge_clumpy_selected.svg';
 import SymptomDischargeStickySelected from './icons/symptoms/discharge_sticky_selected.svg';
 
+import { View, Text, useWindowDimensions, StyleSheet } from 'react-native';
+
+const flowSVGs = {
+  selected: {
+    light: FlowLightSelected,
+    medium: FlowMediumSelected,
+    heavy: FlowHeavySelected,
+    notsure: FlowNotSureSelected,
+    none: FlowNoneSelected 
+  },
+  default: {
+    light: FlowLightDefault,
+    medium: FlowMediumDefault,
+    heavy: FlowHeavyDefault,
+    notsure: FlowNotSureDefault,
+    none: FlowNoneDefault
+  }
+};
+
+const dischargeSVGs = {
+  selected: {
+    stringy: SymptomDischargeStringySelected,
+    watery: SymptomDischargeWaterySelected,
+    transparent: SymptomDischargeTransparentSelected,
+    creamy: SymptomDischargeCreamySelected,
+    clumpy: SymptomDischargeClumpySelected,
+    sticky: SymptomDischargeStickySelected
+  },
+  default: {
+    stringy: SymptomDischargeStringy,
+    watery: SymptomDischargeWatery,
+    transparent: SymptomDischargeTransparent,
+    creamy: SymptomDischargeCreamy,
+    clumpy: SymptomDischargeClumpy,
+    sticky: SymptomDischargeSticky
+  }
+};
+
+// NOTE: Order matters in these objects for the weekly view; they are rendered in order of keys
+const symptomSVGs = {
+  selected: {
+    cravings: SymptomCravingsSelected,
+    backache: SymptomBackacheSelected,
+    cramps: SymptomCrampsSelected,
+    bloating: SymptomBloatingSelected,
+    tenderBreasts: SymptomTenderSelected,
+    headache: SymptomHeadacheSelected,
+    fatigue: SymptomFatigueSelected,
+    nausea: SymptomNauseaSelected
+  },
+  default: {
+    cravings: SymptomCravingsDefault,
+    backache: SymptomBackacheDefault,
+    cramps: SymptomCrampsDefault,
+    bloating: SymptomBloatingDefault,
+    tenderBreasts: SymptomTenderDefault,
+    headache: SymptomHeadacheDefault,
+    fatigue: SymptomFatigueDefault,
+    nausea: SymptomNauseaDefault
+  }
+};
+
+const moodSVGs = {
+  selected: {
+    excited: MoodExcitedSelected,
+    happy: MoodHappySelected,
+    sensitive: MoodSensitiveSelected,
+    sad: MoodSadSelected,
+    anxious: MoodAnxiousSelected,
+    angry: MoodAngrySelected,
+    customize: MoodCustomizeSelected
+  },
+  default: {
+    excited: MoodExcitedDefault,
+    happy: MoodHappyDefault,
+    sensitive: MoodSensitiveDefault,
+    sad: MoodSadDefault,
+    anxious: MoodAnxiousDefault,
+    angry: MoodAngryDefault,
+    customize: MoodCustomizeDefault
+  }
+};
+
+// TODO: relative fractional/percent width and height inputs
+const renderFlow = (flow=null, selected=false, width=40, height=40) => {
+  if (!flow || !Object.keys(flowSVGs.default).includes(flow)) {
+    return (
+      <View className="mb-1.5 mr-1.5">
+        <FlowNoneDefault width={width} height={width} />
+      </View>
+    );
+  }
+
+  const FlowIcon = flowSVGs[`${selected ? 'selected' : 'default'}`][flow];
+  return (
+    <View className="mb-1.5 mr-1.5">
+      <FlowIcon width={width} height={height} />
+    </View>
+  );
+}
+
+// renders the correct discharge icon, renders default creamy icon if no discharge
+const renderDischarge = (discharge=null, selected=false, width=40, height=40) => {
+  if (!discharge || !Object.keys(dischargeSVGs.default).includes(discharge)) {
+    return (
+      <View className="mb-1.5 mr-1.5">
+        <SymptomDischargeCreamy width={width} height={height} />
+      </View>
+    );
+  }
+  
+  const DischargeIcon = dischargeSVGs[`${selected ? 'selected' : 'default'}`][discharge];
+  return (
+    <View className="mb-1.5 mr-1.5">
+      <DischargeIcon width={width} height={height} />
+    </View>
+  );
+}
+
+// TODO: Add drop shadow to selected icons
+const renderSymptom = (key, symptom, selected=false, width=40, height=40) => {
+  if (!Object.keys(symptomSVGs.default).includes(symptom)) {
+    return (
+      <View className="mb-1.5 mr-1.5">
+        <SymptomCravingsDefault width={width} height={height} key={key} />
+      </View>
+    );
+  }
+  
+  const SymptomIcon = symptomSVGs[`${selected ? 'selected' : 'default'}`][symptom];
+  return (
+    <View className="mb-1.5 mr-1.5">
+      <SymptomIcon width={width} height={height} key={key} />
+    </View>
+  );
+}
+
+
+const renderMood = (key, mood, selected=false, width=40, height=40) => {
+  if (!Object.keys(moodSVGs.default).includes(mood)) {
+    return (
+      <View className="mb-1.5 mr-1.5">
+        <MoodCustomizeDefault className="mb-1.5 mr-1.5" width={width} height={height} key={key} />
+      </View>
+    );
+  }
+  
+  const MoodIcon = moodSVGs[`${selected ? 'selected' : 'default'}`][mood];
+  return (
+    <View className="mb-1.5 mr-1.5">
+      <MoodIcon width={width} height={height} key={key} />
+    </View>
+  );
+}
+
 export {
+  flowSVGs,
+  dischargeSVGs,
+  symptomSVGs,
+  moodSVGs,
+  renderFlow,
+  renderDischarge,
+  renderSymptom,
+  renderMood,
   FlowLightDefault,
   FlowMediumDefault,
   FlowHeavyDefault,
