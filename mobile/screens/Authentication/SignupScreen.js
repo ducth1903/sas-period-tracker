@@ -184,7 +184,7 @@ const SignupScreen = ({ navigation }) => {
           />
           <FormInput
             labelValue="Email"
-            placeholderText={i18n.t("authentication.email")}
+            placeholderText={i18n.t("authentication.emailAddress")}
             isRequired={true}
             iconType="user"
             color="black"
@@ -214,7 +214,7 @@ const SignupScreen = ({ navigation }) => {
             }}
           />
           <FormButton
-            btnTitle={i18n.t("authentication.signup")}
+            btnTitle={i18n.t("authentication.signUp")}
             isHighlight={true}
             // disabled={inUserData.isValidPassword}
             onPress={handleSignUpClicked}

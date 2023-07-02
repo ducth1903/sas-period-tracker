@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {
     StyleSheet,
     Text,
@@ -15,9 +15,11 @@ import Markdown from 'react-native-simple-markdown';
 // import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
 // import { MARKDOWN_S3_URL } from '@env';
+import { SettingsContext } from '../../navigation/SettingsProvider';
 import { useNavigation } from '@react-navigation/native';
 import { mockData } from './mockData';
 import SearchIcon from '../../assets/icons/search.svg'
+import i18n from '../../translations/i18n';
 
 // Loading env variables
 import getEnvVars from '../../environment';
@@ -25,6 +27,7 @@ const { API_URL } = getEnvVars();
 
 const ResourceHomeScreen = ({ navigation, props }) => {
     // const resource_template = new RESOURCE_TEMPLATE();
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [resourcesMap, setResourcesMap] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
     // const { userId } = useContext(AuthContext);
@@ -107,7 +110,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         <SafeAreaView style={styles.container}>
             <ScrollView>
                 <View style={styles.inline}>
-                    <Text style={styles.headerText}>Education</Text>
+                    <Text style={styles.headerText}>{ i18n.t('navigation.education') }</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
                         <SearchIcon style={styles.headerSearchIcon} />
                     </TouchableOpacity>

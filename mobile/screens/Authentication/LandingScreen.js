@@ -12,7 +12,7 @@ const LandingScreen = ({ navigation }) => {
             <View style={styles.footer}>
                 <View className="w-1/2">
                     <FormButton
-                        btnTitle={i18n.t('authentication.signup')}
+                        btnTitle={i18n.t('authentication.signUp')}
                         isHighlight={true}
                         onPress={() => { navigation.navigate("SignupScreen") }}
                     />

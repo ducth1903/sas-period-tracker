@@ -14,6 +14,7 @@ import Modal from 'react-native-modal';
 import DropDownPicker from "react-native-dropdown-picker";
 
 import { AuthContext } from '../navigation/AuthProvider'; 
+import { SettingsContext } from '../navigation/SettingsProvider';
 import PeriodDate, { MODAL_TEMPLATE, formatDate } from '../models/PeriodDate';
 import CalendarCircle from '../components/CalendarCircle';
 import WeekColumn from '../components/WeekColumn';
@@ -21,6 +22,7 @@ import StaticNote from '../components/StaticNote';
 import DailyGrid from '../components/DailyGrid';
 import TrendYearBlock from '../components/TrendYearBlock';
 import ScrollPicker from '../components/ScrollPicker';
+import i18n from '../translations/i18n';
 
 import TimelineIcon from '../assets/icons/timeline.svg';
 import BackArrowIcon from '../assets/icons/back_arrow.svg';
@@ -49,6 +51,9 @@ const markedDateStyle = {
 }
 
 const PeriodCalendarScreen = ({ props }) => {
+    // make this component aware of the user's current language selection state so it refreshes on change
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
+
     const modal_default_template                = new MODAL_TEMPLATE();
 
     const { userId }                            = useContext(AuthContext);
@@ -101,11 +106,16 @@ const PeriodCalendarScreen = ({ props }) => {
     const [calendarViewWidth, setCalendarViewWidth] = useState(0);
     const calendarViewRef = useRef(null);
 
+    let headerRenderCount = 0;
+
     // For Collapsible History
     const [activeSections, setActiveSections] = useState([]);
 
     // TODO: translations
-    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekDaysEnglish = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekDays = [i18n.t('days.long.sunday'), i18n.t('days.long.monday'), i18n.t('days.long.tuesday'), i18n.t('days.long.wednesday'), i18n.t('days.long.thursday'), i18n.t('days.long.friday'), i18n.t('days.long.saturday')];
+    const weekDaysShort = [i18n.t('days.short.sunday'), i18n.t('days.short.monday'), i18n.t('days.short.tuesday'), i18n.t('days.short.wednesday'), i18n.t('days.short.thursday'), i18n.t('days.short.friday'), i18n.t('days.short.saturday')];
+    const weekDaysSingleLetter = [i18n.t('days.singleLetter.sunday'), i18n.t('days.singleLetter.monday'), i18n.t('days.singleLetter.tuesday'), i18n.t('days.singleLetter.wednesday'), i18n.t('days.singleLetter.thursday'), i18n.t('days.singleLetter.friday'), i18n.t('days.singleLetter.saturday')];
     const scrollPickerItemHeight = 46;
     
     async function fetchUserData() {
@@ -191,6 +201,7 @@ const PeriodCalendarScreen = ({ props }) => {
     const fetchWeekFlow = (startDate) => {
         // TODO: ACTUALLY FETCH FROM BACKEND
         // returning it in this object format will take some manipulation of the data
+        
         return {
             sunday: "light",
             monday: "medium",
@@ -388,14 +399,14 @@ const PeriodCalendarScreen = ({ props }) => {
         const first = {
             day: firstDateOfWeek.getDate(),
             monthNum: firstDateOfWeek.getMonth(),
-            monthString: firstDateOfWeek.toLocaleString('default', {month: 'short'}),
+            monthString: firstDateOfWeek.toLocaleString(selectedSettingsLanguage, {month: 'short'}),
             year: firstDateOfWeek.getFullYear()
         }
         
         const last = {
             day: lastDateOfWeek.getDate(),
             monthNum: lastDateOfWeek.getMonth(),
-            monthString: lastDateOfWeek.toLocaleString('default', {month: 'short'}),
+            monthString: lastDateOfWeek.toLocaleString(selectedSettingsLanguage, {month: 'short'}),
             year: lastDateOfWeek.getFullYear()
         }
 
@@ -426,7 +437,7 @@ const PeriodCalendarScreen = ({ props }) => {
             <View className="flex-col mt-4" ref={calendarViewRef}>
                 <View>
                     <Text className="text-[20px] font-bold mb-3">
-                        {currDateObject.toLocaleString('default', { month: 'long' })}
+                        {currDateObject.toLocaleString(selectedSettingsLanguage, { month: 'long' })}
                     </Text>
                     {
                         [...Array(weekCount).keys()].map((rowN) => {
@@ -466,27 +477,28 @@ const PeriodCalendarScreen = ({ props }) => {
             symptoms: fetchWeekSymptoms(),
             mood: fetchWeekMood()
         }
-        
+
         return (
             <View className="flex flex-col">
                 <View className="flex-row justify-center">
                     {
-                        weekDays.map(s => s.toLowerCase()).map((day) => 
+                        weekDaysEnglish.map(s => s.toLowerCase()).map((day) => 
                             <View className="w-[calc(100%/7)] justify-center items-center" key={`weekcolumn-${day}`}>
-                                <WeekColumn
+                                <WeekColumn 
                                     flow={weekData.flow[day]}
                                     discharge={weekData.discharge[day]}
                                     symptoms={weekData.symptoms[day]}
                                     moods={weekData.mood[day]}
-                                    day={day}
+                                    day={weekDays[weekDaysEnglish.indexOf(day)]}
+                                    key={`weekcolumn-${day}`}
                                 />
                             </View>
                         )
                     }
                 </View>
                 
-                <Text className="text-[20px] font-bold mt-12 mb-2">
-                    Notes
+                <Text className="text-[20px] font-bold mt-14 mb-2">
+                    { i18n.t('analysis.week.notes') }
                 </Text>
 
                 {
@@ -507,7 +519,7 @@ const PeriodCalendarScreen = ({ props }) => {
                     <DailyGrid />
                 </View>
                 <Text className="text-[20px] font-bold mt-10 mb-2">
-                    Notes
+                    { i18n.t('analysis.week.notes') }
                 </Text>
                 <StaticNote date={currDateObject}></StaticNote>
             </View>
@@ -561,7 +573,7 @@ const PeriodCalendarScreen = ({ props }) => {
                     {/* Header */}
                     <View className="flex-row justify-center items-center">
                         <Text className="text-[32px] font-bold">
-                            Analysis
+                            {i18n.t('navigation.analysis')}
                         </Text>
                     </View>
 
@@ -580,7 +592,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             underlayColor="#5B9F8F"
                         >
                             <Text className="text-[11px] font-normal text-offwhite">
-                                M
+                                {i18n.t('analysis.navigationHeaders.month')}
                             </Text>
                         </TouchableHighlight>
 
@@ -599,7 +611,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             underlayColor="#5B9F8F"
                         >
                             <Text className="text-[11px] font-normal text-offwhite">
-                                W
+                                {i18n.t('analysis.navigationHeaders.week')}
                             </Text>
                         </TouchableHighlight>
                         
@@ -618,11 +630,12 @@ const PeriodCalendarScreen = ({ props }) => {
                             underlayColor="#5B9F8F"
                         >
                             <Text className="text-[11px] font-normal text-offwhite">
-                                D
+                                {i18n.t('analysis.navigationHeaders.day')}
                             </Text>
                         </TouchableHighlight>
                     </View>
 
+                    {/* Trends modal */}
                     <Modal
                         animationIn={"slideInRight"}
                         animationOut={"slideOutRight"}
@@ -651,7 +664,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                     </Pressable>
                                     <View className="flex-grow"/>
                                     <Text className="text-[32px] font-bold self-center">
-                                        Trends
+                                        {i18n.t('analysis.trends.trends')}
                                     </Text>
                                     <View className="flex-grow"/>
                                     <Pressable
@@ -707,6 +720,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                     )
                                 }
 
+                                {/* Export modal */}
                                 <Modal
                                     animationIn={"slideInUp"}
                                     animationOut={"slideOutUp"}
@@ -730,7 +744,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                         <View className="bg-offwhite rounded-[20px] border-[3px] border-seafoam mx-6 py-4 px-6">
                                             <View className="flex-row justify-center">
                                                 <Text className="text-[22px] font-bold">
-                                                    Export
+                                                    {i18n.t('analysis.trends.export.export')}
                                                 </Text>
                                                 <TouchableOpacity 
                                                     className="absolute right-0"
@@ -744,7 +758,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                             </View>
                                             <View className="flex-row mt-3 items-center justify-between">
                                                 <Text className="text-[20px] font-bold">
-                                                    Format
+                                                    {i18n.t('analysis.trends.export.format')}
                                                 </Text>
                                                 <DropDownPicker
                                                     open={exportDropdownOpen}
@@ -762,12 +776,12 @@ const PeriodCalendarScreen = ({ props }) => {
                                             </View>
 
                                             <Text className="text-[20px] font-bold mt-3">
-                                                Start
+                                                {i18n.t('analysis.trends.export.start')}
                                             </Text>
                                             <View className="flex-row mt-3">
                                                 <ScrollPicker
                                                     data={[...Array(12).keys()].map((monthIndex) => {
-                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString('default', {month: 'short'}), id: monthIndex}
+                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString(selectedSettingsLanguage, {month: 'short'}), id: monthIndex}
                                                     })}
                                                     initialScrollIndex={currDateObject.getMonth()}
                                                     onViewableItemsChanged={handleViewableItemsChangedStartMonth}
@@ -787,12 +801,12 @@ const PeriodCalendarScreen = ({ props }) => {
                                                 />
                                             </View>
                                             <Text className="text-[20px] font-bold mt-3">
-                                                End
+                                                {i18n.t('analysis.trends.export.end')}
                                             </Text>
                                             <View className="flex-row mt-3">
                                                 <ScrollPicker
                                                     data={[...Array(12).keys()].map((monthIndex) => {
-                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString('default', {month: 'short'}), id: monthIndex}
+                                                        return {title: new Date(2021, monthIndex, 1).toLocaleString(selectedSettingsLanguage, {month: 'short'}), id: monthIndex}
                                                     })}
                                                     initialScrollIndex={currDateObject.getMonth()}
                                                     onViewableItemsChanged={handleViewableItemsChangedEndMonth}
@@ -842,7 +856,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                                     }
                                                     <View className="justify-center items-center h-[25px]">
                                                         <Text className="text-offwhite text-[16px]">
-                                                            {exportButtonPressed ? "Exported Successfully" : "Export"}
+                                                            {exportButtonPressed ? i18n.t('analysis.trends.export.exportedSuccessfully') : i18n.t('analysis.trends.export.export')}
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -861,15 +875,12 @@ const PeriodCalendarScreen = ({ props }) => {
                             <Text adjustsFontSizeToFit={true} numberOfLines={1} className="font-bold text-[22px]">
                                 {
                                     monthWeekDaySelector == "month" ? 
-                                    currDateObject.toLocaleString('default', {year: 'numeric'})
+                                    currDateObject.toLocaleString(selectedSettingsLanguage, {year: 'numeric'})
                                     :
-                                    // need to get date of the most recent sunday
-                                    // currDateObject.toLocaleString('default', {month: 'long', year: 'numeric'})
                                     monthWeekDaySelector == "week" ?
-                                    // "test"
                                     getCurrWeekRangeString()
                                     :
-                                    `${currDateObject.toLocaleString('default', {month: 'long', day: 'numeric'})}, ${currDateObject.toLocaleString('default', {year: 'numeric'})}`
+                                    `${currDateObject.toLocaleString(selectedSettingsLanguage, {month: 'long', day: 'numeric'})}, ${currDateObject.toLocaleString(selectedSettingsLanguage, {year: 'numeric'})}`
                                 }
                             </Text>
                         </View>
@@ -885,7 +896,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             <View className="flex-row items-center">
                                 <TimelineIcon width={22} height={12}/>
                                 <Text className="text-offwhite text-[14px] font-bold ml-[6px] py-1">
-                                    Trends
+                                    {i18n.t('analysis.trends.trends')}
                                 </Text>
                             </View>
                         </TouchableHighlight>
@@ -901,7 +912,7 @@ const PeriodCalendarScreen = ({ props }) => {
                             </Text>
                             <View className="flex-grow"/>
                             <Text className="text-[12px] text-greydark">
-                                {/* TODO: un-hardcode this */}
+                                {/* TODO: un-hardcode this. Leaving untranslated for now because I'm replacing it anyway */}
                                 {`Day ${1} of ${6} of menstrual flow`}
                             </Text>
                         </View>
@@ -910,17 +921,16 @@ const PeriodCalendarScreen = ({ props }) => {
                     (
                         <View className="flex-row justify-center items-center rounded-[7px] bg-[#EDEEE0] mt-3 py-1">
                             {
-                            weekDays.map((day) => {
+                            weekDaysSingleLetter.map((day, index) => {
                                 return (
-                                    <View className="flex-grow items-center" key={`daybar-${day}`}>
-                                        {/* pass first letter of 3-letter abbreviation keys */}
+                                    <View className="flex-grow items-center" key={`weekdayheader-${weekDaysEnglish[index]}`}>
                                         <Text className="text-[11px] font-normal text-greydark">
-                                            {day !== "Thu" ? day[0] : "R"}
+                                            {day}
                                         </Text>
-                                    </View>
+                                    </View>   
                                 )
-                            })
-                        }
+                            }
+                        )}
                     </View>
                     )
 

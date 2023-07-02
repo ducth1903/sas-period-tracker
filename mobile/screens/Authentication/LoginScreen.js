@@ -64,7 +64,7 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.viewWelcome}>
-        <Text style={styles.welcomeText}>Welcome back!</Text>
+        <Text style={styles.welcomeText}>{i18n.t('authentication.welcomeBack')}</Text>
       </View>
 
       <View style={styles.footer}>
@@ -72,7 +72,7 @@ const LoginScreen = ({ navigation }) => {
           <LanguagePicker />
           <FormInput
             labelValue="Email"
-            placeholderText={i18n.t("authentication.email")}
+            placeholderText={i18n.t("authentication.emailAddress")}
             iconType="user"
             color="black"
             keyboardType="email-address"
@@ -143,7 +143,7 @@ const LoginScreen = ({ navigation }) => {
               }}
             >
               {" "}
-              {i18n.t("authentication.noAccountSignUp")}
+              {i18n.t("authentication.signUp")}
             </Text>
           </Text>
         </View>
