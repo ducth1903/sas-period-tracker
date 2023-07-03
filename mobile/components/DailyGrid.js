@@ -1,84 +1,100 @@
+import { useContext } from 'react';
 import { View, Text, useWindowDimensions } from 'react-native';
 import * as SVG from '../assets/svg.js'
 
-const tempData = {
-    dateStr: "2021-09-09",
-    symptoms: {
-        discharge: [
-            "stringy"
-        ],
-        mood: [
-            "happy",
-            "excited"
-        ],
-        symptoms: [
-            "backache",
-            "headache"
-        ],
-        flow: [
-            "medium"
-        ]
-    }
-}
+import i18n from '../translations/i18n.js';
+import { SettingsContext } from '../navigation/SettingsProvider.js';
 
 // takes in a specific date's data and renders symptoms grid in the daily view
-const DailyGrid = ({ data=null }) => {
-    // TODO: remove this once backend in place
-    data = tempData;
-
+const DailyGrid = ({ data }) => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
     const { height, width } = useWindowDimensions();
     const iconDimensions = width/5;
 
-    const moodCopy = [...data.symptoms.mood];
-    const symptomsCopy = [...data.symptoms.symptoms];
-    let moodsLeft = moodCopy.length > 0;
-    let symptomsLeft = symptomsCopy.length > 0;
-
-    const nextMood = () => {
-        if (moodCopy.length === 0) {
-            moodsLeft = false;
-            // handled in renderMood
-            return null;
-        }
-        return moodCopy.shift();
+    let moods = [];
+    let symptoms = [];
+    if (data) {
+        moods = data.moods ? [...data.moods] : [];
+        symptoms = data.symptoms ? [...data.symptoms] : [];
     }
-
-    const nextSymptom = () => {
-        if (symptomsCopy.length === 0) {
-            symptomsLeft = false;
-            // handled in renderSymptom
-            return null;
-        }
-        return symptomsCopy.shift();
-    }
-
+    
+    let tileCount = 0;
     return (
-        // 1.5 extra top padding to match the 1.5 bottom padding of the bottom row of icons
         <View className="items-center justify-center pt-1.5 mt-6">
-            <View className="flex-row">
-                {/* pick flow icon to render */}
-                {SVG.renderFlow(data.symptoms.flow[0], true, iconDimensions, iconDimensions, 1.5, 1.5)}
-                
-                {/* pick discharge icon to render */}
-                {SVG.renderDischarge(data.symptoms.discharge[0], true, iconDimensions, iconDimensions, 1.5, 1.5)}
+            {
+                data && (data.flow || data.discharge || data.moods || data.symptoms) ? (
+                    <View style={{ width: iconDimensions * 3.1, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                        {/* pick flow icon to render */}
+                        {(() => {
+                            if (!data || !data.flow) {
+                                return null;
+                            }
+                            ++tileCount;
+                            return (
+                                <View style={{ flexDirection: 'column' }}>
+                                    {SVG.renderFlow(data.flow, true, iconDimensions, iconDimensions, 0, 1.5)}
+                                    <View style={{ width: iconDimensions }}>
+                                        <Text className="text-[12px] text-center text-greydark font-semibold">{i18n.t(`flow.${data.flow}`)}</Text>
+                                    </View>
+                                </View>
+                            );
+                        })()}
+                        
+                        {/* pick discharge icon to render */}
+                        {(() => {
+                            if (!data || !data.discharge) {
+                                return null;
+                            }
+                            ++tileCount;
+                            return (
+                                <View style={{ flexDirection: 'column', overflow: 'hidden' }}>
+                                    {SVG.renderDischarge(data.discharge, true, iconDimensions, iconDimensions, 0, 1.5)}
+                                    <View style={{ width: iconDimensions }}>
+                                        <Text className="text-[12px] text-center text-greydark font-semibold">{i18n.t(`discharge.${data.discharge}`)}</Text>
+                                    </View>
+                                </View>
+                            );
+                        })()}
 
-                {/* pick symptom icons to render */}
-                {SVG.renderSymptom(`daily-symptom-1`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-            </View>
-            <View className="flex-row">
-                {SVG.renderSymptom(`daily-symptom-2`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
+                        {/* render moods */}
+                        {moods.map((mood, index) => {
+                            ++tileCount;
+                            return (
+                                <View key={`daily-mood-${index}`} style={{ flexDirection: 'column', overflow: 'hidden' }}>
+                                    {SVG.renderMood(`daily-mood-icon-${index}`, mood, true, iconDimensions, iconDimensions, 0, 1.5)}
+                                    <View style={{ width: iconDimensions }}>
+                                        <Text className="text-[12px] text-center text-greydark font-semibold">{i18n.t(`moods.${mood}`)}</Text>
+                                    </View>
+                                </View>
+                            );
+                        })}
 
-                {SVG.renderSymptom(`daily-symptom-3`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-
-                {SVG.renderSymptom(`daily-symptom-4`, nextSymptom(), symptomsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-            </View>
-            <View className="flex-row">
-                {SVG.renderMood(`daily-mood-1`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-
-                {SVG.renderMood(`daily-mood-2`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-
-                {SVG.renderMood(`daily-mood-3`, nextMood(), moodsLeft, iconDimensions, iconDimensions, 1.5, 1.5)}
-            </View>
+                        {/* render symptoms */}
+                        {symptoms.map((symptom, index) => {
+                            ++tileCount;
+                            return (
+                                <View key={`daily-symptom-${index}`} style={{ flexDirection: 'column', overflow: 'hidden' }}>
+                                    {SVG.renderSymptom(`daily-symptom-icon-${index}`, symptom, true, iconDimensions, iconDimensions, 0, 1.5)}
+                                    <View style={{ width: iconDimensions }}>
+                                        <Text className="text-[12px] text-center text-greydark font-semibold">{i18n.t(`symptoms.${symptom}`)}</Text>
+                                    </View>
+                                </View>
+                            );
+                        })}
+                        
+                        {
+                            // fill in empty tiles (this prints 3 blank tiles for null data, but that's actually good because it creates some spoce)
+                            tileCount % 3 === 0 ? null : [...Array(3 - (tileCount % 3))].map((_, index) => {
+                                return (
+                                    <View key={`empty-${index}`} style={{ width: iconDimensions, height: iconDimensions }}/>
+                                )
+                            })
+                        }
+                    </View>
+                )
+                :
+                <Text className="text-[22px]">{i18n.t('analysis.day.noData')}</Text>
+            }
         </View>
     );
 }

@@ -97,6 +97,7 @@
         "nausea": "Nausea"
     },
     "discharge": {
+        "discharge": "Discharge",
         "stringy": "Discharge: Stringy",
         "watery": "Discharge: Watery",
         "transparent": "Discharge: Transparent",
@@ -216,7 +217,9 @@
             "notes": "Notes"
         },
         "day": {
-            "flowDay": "Day {day1} of {day2} of menstrual flow"
+            "flowDay": "Day {day} of menstrual flow",
+            "notInPeriod": "Not currently on your period",
+            "noData": "No data logged for this day"
         },
         "trends": {
             "trends": "Trends",
@@ -230,8 +233,13 @@
                 "pdf": "PDF",
                 "start": "Start",
                 "end": "End",
-                "exportedSuccessfully": "Exported successfully!"
+                "exportedSuccessfully": "Exported successfully!",
+                "notLogged": "Not logged"
             }
+        },
+        "ovulation": {
+            "ovulationInfo": "Ovulation Info",
+            "infoText": "A typical fertility window and menstrual cycle will vary by individual. Ovulation is when an egg is released from an ovary. It occurs approximately 14 days before the onset of your next period."
         }
     },
     "education": {

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { View, useWindowDimensions } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text } from 'react-native';
 import * as SVG from '../assets/svg.js';
+import i18n from '../translations/i18n.js';
+import { SettingsContext } from '../navigation/SettingsProvider.js';
+import { Hyphenate } from 'react-native-hyphenate';
 
 // There are 15 icons in each column
 const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
@@ -22,34 +25,60 @@ const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
      * 14. Angry (selected or default depending on user data)
      */
 
-    const [isLoading, setIsLoading] = useState(true);
-    const [weekFlow, setWeekFlow] = useState(null);
-    const [weekDischarge, setWeekDischarge] = useState(null);
-    const [weekSymptoms, setWeekSymptoms] = useState(null);
-    const [weekMood, setWeekMood] = useState(null);
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
 
     // TODO: Integrate custom moods
-    // TODO: Backend integration
-    // TODO: refactor props to be passed in as lists
     return (
         <View className="flex-col mt-3">
             {/* flow icon for this row */}
-            {SVG.renderFlow(flow, true, 40, 40, 1.5, 0)}
+            {
+                (() => 
+                    <View className="h-[70px]">
+                        {SVG.renderFlow(flow, true, 40, 40, 1.5, 0)}
+                        <View style={{ width: 40, overflow: 'hidden' }}>
+                            <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">{flow ? i18n.t(`flow.${flow}`) : i18n.t('analysis.trends.export.notLogged')}</Text>
+                        </View>
+                    </View>
+                )()
+            }
             
             {/* discharge icon for this row */}
-            {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)}
+            {(() => 
+                <View className="h-[70px]">
+                    {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)}
+                        <View style={{ width: 40, overflow: 'hidden' }}>
+                            <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">{discharge ? i18n.t(`discharge.${discharge}`) : i18n.t('analysis.trends.export.notLogged')}</Text>
+                        </View>
+                </View>
+            )()}
+            
+            {/* {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)} */}
 
             {/* symptoms icons for this row */}
             {
                 Object.keys(SVG.symptomSVGs.default).map(
-                    symptom => SVG.renderSymptom(`symptom-${symptom}-${day}`, symptom, symptoms[symptom], 40, 40, 1.5, 0)
+                    (symptom, index) => (
+                        <View className="h-[70px]" key={`symptom-${index}-${day}`}>
+                            {SVG.renderSymptom(`symptom-${symptom}-${day}`, symptom, symptoms ? symptoms.includes(symptom) : false, 40, 40, 1.5, 0)}
+                            <View style={{ width: 40 }}>
+                                <Text className="text-[8px] text-center text-greydark font-semibold inline-block">{i18n.t(`symptoms.${symptom}`)}</Text>
+                            </View>
+                        </View>
+                    )
                 )
             }
 
             {/* moods icons for this row */}
             {
                 Object.keys(SVG.moodSVGs.default).map(
-                    mood => SVG.renderMood(`mood-${mood}-${day}`, mood, moods[mood], 40, 40, 1.5, 0)
+                    (mood, index) => (
+                        <View className="h-[70px]" key={`mood-${index}-${day}`}>
+                            {SVG.renderMood(`mood-${mood}-${day}`, mood, moods ? moods.includes(mood) : false, 40, 40, 1.5, 0)}
+                            <View style={{ width: 40 }}>
+                                <Text className="text-[8px] text-center text-greydark font-semibold inline-block">{i18n.t(`moods.${mood}`)}</Text>
+                            </View>
+                        </View>
+                    )
                 )
             }
         </View>
