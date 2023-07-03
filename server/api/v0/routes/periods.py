@@ -79,12 +79,15 @@ def post_period(userid):
             "userId": userid,
             "timestamp": conversion.convert_dateStr_epoch(rec["date"]),
             "dateStr": rec["date"],
-            "symptoms": rec["symptomIds"],
+            "flow": rec["flow"],
+            "moods": rec["moods"],
+            "symptoms": rec["symptoms"],
+            "discharge": rec["discharge"],
             "year": int(rec["date"].strip().split("-")[0]),
             "month": int(rec["date"].strip().split("-")[1]),
             "day": int(rec["date"].strip().split("-")[2]),
         }
-        # print(period_obj)
+
         SasAws.periodTable.put_item(Item=period_obj)
 
     return response.ok_json_response()

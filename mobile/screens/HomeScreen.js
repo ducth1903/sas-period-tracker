@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import {
     StyleSheet,
     Text,
@@ -6,12 +6,13 @@ import {
     RefreshControl,
     ScrollView,
     SafeAreaView,
-    // Pressable,
     // Platform,
     // ImageBackground,
     // Animated,
     Dimensions,
     Image,
+    Pressable,
+    Platform
 } from 'react-native';
 // import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
@@ -36,6 +37,7 @@ const HomeScreen = () => {
     const { userId } = useContext(AuthContext);
     const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [userObj, setUserObj] = useState(null);
+    const [periodObj, setPeriodObj] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [dateCircleArr, setDateCirleArr] = useState(null);
@@ -75,21 +77,47 @@ const HomeScreen = () => {
         { label: i18n.t('discharge.clumpy'), key: 'clumpy', DefaultIcon: SVG.SymptomDischargeClumpy, SelectedIcon: SVG.SymptomDischargeClumpySelected },
         { label: i18n.t('discharge.sticky'), key: 'sticky', DefaultIcon: SVG.SymptomDischargeSticky, SelectedIcon: SVG.SymptomDischargeStickySelected },
     ];
-    
-    const [flowIconEnable, setFlowIconEnable] = useState(FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
-    const [moodIconEnable, setMoodIconEnable] = useState(MOODS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
-    const [symptomIconEnable, setSymptomIconEnable] = useState(SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {}));
+    const [flowIconEnable, setFlowIconEnable] = useState(null);
+    const [moodIconEnable, setMoodIconEnable] = useState(null);
+    const [symptomIconEnable, setSymptomIconEnable] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [periodDayData, setPeriodDayData] = useState(null);
+    const [currentPeriodDay, setCurrentPeriodDay] = useState(1);
+
+    const dischargeKeys = SYMPTOMS.filter(({ label, key }) => label.toLowerCase().includes('discharge')).map(({ key }) => key);
 
     // Async function to fetch user data
-    async function fetchUserData() {
+    async function fetchUserInfoData() {
         try {
             const resp = await fetch(`${API_URL}/users/${userId}`, { method: "GET" });
-            const resp_json = await resp.json();
-            setUserObj(resp_json);
-            // getImagePresignedUrl(resp_json['profileImageId']);
-            setIsLoading(false);
+            return resp.json();
         } catch (error) {
             console.log("[HomeScreen] fetchUserData() error:", error);
+        }
+    }
+
+    async function fetchUserPeriodData() {
+        try {
+            const resp = await fetch(`${API_URL}/periods/${userId}`, { method: "GET" });
+            return resp.json();
+        }
+        catch (error) {
+            console.log("[HomeScreen] fetchUserPeriodData() error:", error);
+        }
+    }
+
+    // TODO: Occasional "cannot convert null value to object" error
+    async function fetchUserData() {
+        try {
+            // fetch user info data
+            const userRespJson = await fetchUserInfoData();
+            setUserObj(userRespJson);
+
+            // fetch user period data
+            const periodRespJson = await fetchUserPeriodData();
+            setPeriodObj(periodRespJson);
+        }
+        catch (error) {
             Toast.show({
                 type: 'error',
                 text1: 'Failed to fetch from server',
@@ -98,6 +126,87 @@ const HomeScreen = () => {
         }
     }
 
+    async function postDayPeriodData(data) {
+        try {
+            const response = await fetch(`${API_URL}/periods/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: (
+                    () => {
+                        return JSON.stringify([data])
+                    }
+                )()
+            });
+
+            const resp = await response.json();
+        }
+        catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to upload data to server',
+                text2: error
+            });
+        }
+    }
+
+    function getPeriodDataForDate(date) {
+        if (!periodObj) return null;
+        const periodDays = periodObj.reduce((acc, obj) => {
+            const daysForCurrentMonth = obj.details;
+            acc.push(...daysForCurrentMonth);
+            return acc;
+        }, []);
+
+        let dateStr = `${date.getFullYear()}-${date.getMonth() + 1 < 10 ? "0" : ""}${date.getMonth() + 1}-${date.getDate() < 10 ? "0" : ""}${date.getDate()}`;
+        let periodDataForDate = periodDays.find(obj => obj.dateStr === dateStr);
+        return periodDataForDate; // undefined if not found
+    }
+
+    // find the days of the month (1-31 at most) that are period days 
+    // a day will be considered a "period day" if (user logs any flow || (the day before and after are period days && at least 1 symptom or discharge is recorded))
+    function getPeriodDays() {
+        if (!periodObj) return null;
+
+        // flows above none
+        const positiveFlows = ['light', 'medium', 'heavy'];
+
+        // selectedDate can only be in current month, so new Date is fine to avoid situations where selectedDate is null
+        const currentDate = new Date();
+        const daysForCurrentMonth = [...Array(daysInMonth()).keys()].map(num => num + 1);
+        const datesForCurrentMonth = daysForCurrentMonth.map(day => new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
+        const periodDataForCurrentMonth = datesForCurrentMonth.map(date => getPeriodDataForDate(date)).filter(obj => obj);
+        
+        const periodDays = [];
+        // first pass to add all days with flows above none
+        periodDataForCurrentMonth.forEach((obj, index) => {
+            if (positiveFlows.includes(obj.flow)) {
+                periodDays.push(obj);
+                return;
+            };
+        });
+        // second pass to add any days that are between two period days and have at least 1 symptom or discharge
+        periodDataForCurrentMonth.forEach((obj, index) => {
+            const prevObj = periodDataForCurrentMonth[index - 1];
+            const nextObj = periodDataForCurrentMonth[index + 1];
+            if (prevObj && nextObj) {
+                const symptomsLength = obj.symptoms ? obj.symptoms.length : 0;
+                const dischargeLength = obj.discharge ? obj.discharge.length : 0;
+                if (periodDays.includes(prevObj) && periodDays.includes(nextObj)) {
+                    if (symptomsLength > 0 || dischargeLength > 0) {
+                        periodDays.push(obj);
+                        return;
+                    }
+                }
+            }
+        });
+
+        // at this point, it has the objects that correspond to period days, now we just need to extract the days of the month
+        return periodDays.map(obj => Number(obj.dateStr.split('-')[2]))
+    }
+    
+    // initial useEffect for fetching data
     // This will be run after the component is mounted and after every render cycle
     // i.e. whenever your functional component re-runs/re-renders
     useEffect(() => {
@@ -105,27 +214,117 @@ const HomeScreen = () => {
         // https://www.debuggr.io/react-update-unmounted-component/
         fetchUserData();
 
+        // selected date will be tracked in local timezone 
+        setSelectedDate(new Date());
+    }, []);
+
+    // initialize dateCircleArr and initial icon values
+    useEffect(() => {
+        // dateCircleArr init
+        if (!userObj || !periodObj || !selectedDate) return;
         // Get number of days for this month and populate dateCircleArr
         const numDaysInMonth = daysInMonth();
         const dateCircleRotateDegree = 360 / numDaysInMonth;
+        const periodDays = getPeriodDays();
+        const currentPeriodDay = periodDays.indexOf(selectedDate.getDate()) + 1;
+        setCurrentPeriodDay(currentPeriodDay);
         const tmp = [];
         for (let i = 0; i < numDaysInMonth; i++) {
             let rotateDeg = Math.round(dateCircleRotateDegree * i);
             tmp.push(
-                <DateCircle inText={i + 1}
+                <DateCircle
+                    inText={i + 1}
                     outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
                     innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }}
-                    currentDay={new Date().getDate()}
+                    selectedDate={selectedDate}
                     key={i + 1}
-                    periodDays={[3, 4, 5, 6, 7]}
+                    periodDays={periodDays}
                     dayStatus={dayStatus}
                 />
             );
         }
         setDateCirleArr(tmp);
-        // return in useEffect() specifies how to "clean up" after effects
-        // return () => mounted = false;
-    }, []);
+
+        // TODO: undefined error here
+        const periodDataForDate = getPeriodDataForDate(selectedDate);
+        let { flow, moods, symptoms, discharge } = { flow: null, moods: [], symptoms: [], discharge: null };
+
+        if (periodDataForDate) {
+            ({ flow, moods, symptoms, discharge } = periodDataForDate);
+        }
+
+        let symptomsAndDischarge = [];
+        if (symptoms) {
+            symptomsAndDischarge.push(...symptoms);
+        }
+        if (discharge) {
+            symptomsAndDischarge.push(discharge);
+        }
+
+        // flowIconEnable, moodIconEnable, symptomIconEnable init
+        setFlowIconEnable(FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: flow ? flow === key : false }), {}));
+        setMoodIconEnable(MOODS.reduce((acc, { key }) => ({ ...acc, [key]: moods ? moods.includes(key) : false }), {}));
+        setSymptomIconEnable(SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: symptomsAndDischarge.includes(key)}), {}));
+
+        // set loading to false if both user info and period data are fetched
+        setIsLoading(false);
+
+        // console.log(`periodobj = ${JSON.stringify(periodObj, null, 2)}`)
+    }, [userObj, periodObj, selectedDate])
+
+    // update interface and post most up-to-date data to server (and track it locally in periodDayData)
+    useEffect(() => {
+        if (!flowIconEnable || !moodIconEnable || !symptomIconEnable) return;
+
+        // get current values of flow, mood, symptom        
+        let currentFlow = null;
+        for (const [key, value] of Object.entries(flowIconEnable)) {
+            if (value) {
+                currentFlow = key;
+                break;
+            }
+        }   
+        
+        let currentMoods = [];
+        for (const [key, value] of Object.entries(moodIconEnable)) {
+            if (value) {
+                currentMoods.push(key);
+            }
+        }
+
+        let currentSymptoms = [];
+        let currentDischarge = null;
+        // console.log(`symptomIconEnable = ${JSON.stringify(symptomIconEnable, null, 2)}`)
+        for (const [key, value] of Object.entries(symptomIconEnable)) {
+            if (value) {
+                if (dischargeKeys.includes(key)) {
+                    currentDischarge = key;
+                }
+                else {
+                    currentSymptoms.push(key);
+                }
+            }
+        }
+ 
+        // construct object to post for the current day
+        const periodData = {
+            // TODO: add check for mood, flow, symptom being one of the possible values (i.e., "happy", "sad", "angry", etc. with enum)
+            userId: userId,
+            timestamp: selectedDate.toISOString(),
+            date: `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1 < 10 ? "0" : ""}${selectedDate.getMonth() + 1}-${selectedDate.getDate() < 10 ? "0" : ""}${selectedDate.getDate()}`,
+            flow: currentFlow,
+            moods: currentMoods,
+            symptoms: currentSymptoms,
+            discharge: currentDischarge
+        }
+
+        setPeriodDayData(periodData);
+        postDayPeriodData(periodData);
+    }, [flowIconEnable, moodIconEnable, symptomIconEnable]);
+    
+    useEffect(() => {
+        onRefresh();
+    }, [selectedDate])
 
     // Pull down to refresh
     const onRefresh = React.useCallback(() => {
@@ -133,21 +332,6 @@ const HomeScreen = () => {
         fetchUserData();
         setRefreshing(false);
     }, []);
-
-    // Utils
-    // const getImagePresignedUrl = async (inImageId) => {
-    //     try {
-    //         await fetch(`${API_URL}/imagepresigned/${inImageId}`, { method: "GET" })
-    //             .then(resp => resp.json())
-    //             .then(data => {
-    //                 // console.log('presigned url = ', data);
-    //                 setProfileImageUri(data['presignedUrl']);
-    //             })
-    //             .catch(error => console.log(error))
-    //     } catch {
-    //         console.log('Error in getImagePresignedUrl', inImageId)
-    //     }
-    // }
 
     // Month in JavaScript is 0-indexed (January is 0, February is 1, etc), 
     // but by using 0 as the day it will give us the last day of the prior
@@ -193,70 +377,10 @@ const HomeScreen = () => {
         });
     };
 
-    const mockDataStatus = [
-        {
-            "dateStr": "3",
-            "flow": "heavy",
-            "moods": ["angry","anxious"],
-            "symptoms": ["cravings","cramps","headache"]
-        },
-        {
-            "dateStr": "4",
-            "flow": "medium",
-            "moods": ["sad","sensitive"],
-            "symptoms": ["backache","bloating","fatigue","creamy"]
-        },
-        {
-            "dateStr": "5",
-            "flow": "medium",
-            "moods": ["excited"],
-            "symptoms": ["bloating","nausea","cramps"]
-        },
-        {
-            "dateStr": "6",
-            "flow": "light",
-            "moods": ["sad","sensitive"],
-            "symptoms": ["backache","watery","tender"]
-        },
-        {
-            "dateStr": "7",
-            "flow": "light",
-            "moods": ["excited","sad","sensitive","angry"],
-            "symptoms": ["bloating","fatigue","backache","watery","tender"]
-        },
-    ];
-
     const dayStatus = (num) => {
-        const temp_flow = FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
-        let temp_mood = MOODS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
-        let temp_symptom = SYMPTOMS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
-
-        setFlowIconEnable(temp_flow);
-        setSymptomIconEnable(temp_mood);
-        setMoodIconEnable(temp_mood);
-
-        for(const data of mockDataStatus){
-            const {dateStr, flow, moods, symptoms} = data;
-
-            if(parseInt(dateStr) == num){
-                const newState = { ...temp_flow, [flow]: true };
-                setFlowIconEnable(newState);
-
-                setMoodIconEnable(() => {
-                    for(const mood of moods){
-                        temp_mood = { ...temp_mood, [mood]: true };
-                    }
-                    return temp_mood;
-                });
-
-                setSymptomIconEnable(()=>{
-                    for(const symptom of symptoms){
-                        temp_symptom = { ...temp_symptom, [symptom]: true };
-                    }
-                    return temp_symptom;
-                });
-                break;
-            }
+        // current date is latest that it can be
+        if (num <= new Date().getDate()) {
+            setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), num));
         }
     }
 
@@ -303,19 +427,23 @@ const HomeScreen = () => {
                         </View>
                     }
                 </View>
-
                 <View className="min-h-[90vw] flex-1 justify-center items-center">
-                    <View className="flex-1 items-center justify-center h-[63%] aspect-square absolute rounded-full bg-salmon border-[17px] border-offwhite/50">
+                    <View className={`flex-1 items-center justify-center h-[63%] aspect-square absolute rounded-full bg-salmon border-[17px] ${Platform.OS === "ios" ? "border-offwhite/30" : "border-[#FF7F7380]"}`}>
                         {
-                            // TODO: get actual day of period from backend
-                            // NOTE: Unsure of how to split the string onto two lines in Kannada and Hindi
-                            selectedSettingsLanguage == "en" ?
+                            currentPeriodDay !== 0 ?
                             <>
-                                <Text className="text-slate-50 text-3xl font-semibold self-center text-center">Day 1</Text>
-                                <Text className="text-slate-50 text-base font-semibold mt-1">of period</Text>
+                                {
+                                    selectedSettingsLanguage == "en" ?
+                                    <>
+                                        <Text className="text-slate-50 text-3xl font-semibold">Day {currentPeriodDay}</Text>
+                                        <Text className="text-slate-50 text-base font-semibold mt-1">of period</Text> 
+                                    </>
+                                    :
+                                    <Text className="text-slate-50 text-3xl font-semibold">{i18n.t('home.dayOfPeriod').replace("{day}", currentPeriodDay)}</Text>
+                                }
                             </>
                             :
-                            <Text className="text-slate-50 text-3xl font-semibold self-center text-center">{i18n.t('home.dayOfPeriod').replace("{day}", 1)}</Text>
+                            <Text className="text-slate-50 text-3xl font-semibold px-2 text-center">Log your data</Text>
                         }
                     </View>
                     <View className="flex items-center justify-center">
