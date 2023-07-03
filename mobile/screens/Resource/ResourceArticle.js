@@ -1,136 +1,172 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import {
     StyleSheet,
     Text,
     View,
-    FlatList,
     Pressable,
     SafeAreaView,
     StatusBar,
-    Image,
     ScrollView,
     TouchableOpacity,
-    TextInput,
-    KeyboardAvoidingView
+    Platform,
+    useWindowDimensions
 } from 'react-native';
-import RESOURCE_TEMPLATE from '../../models/ResourceModel';
-// import { AuthContext } from '../../navigation/AuthProvider'; 
-// import { MARKDOWN_S3_URL } from '@env';
-import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Showdown from 'showdown';
+import RenderHTML from 'react-native-render-html';
+import { Video, ResizeMode } from 'expo-av';
+
+
+import DynamicNote from '../../components/DynamicNote';
+import { SettingsContext } from '../../navigation/SettingsProvider';
+import i18n from '../../translations/i18n';
+import { AuthContext } from '../../navigation/AuthProvider';
 
 import BackIcon from '../../assets/icons/back.svg';
-import TranslateIcon from '../../assets/icons/translate.svg';
-import SpeakerIcon from '../../assets/icons/speaker.svg';
 import SaveInitialIcon from '../../assets/icons/save-initial.svg';
 import SaveAfterIcon from '../../assets/icons/save-after.svg';
 
-const mockData = [
-    {
-        title: 'Saved',
-        data: [
-            {
-                key: '1',
-                text: 'How to Soothe Cramps'
-            },
-            {
-                key: '2',
-                text: 'See All'
-            },
-        ],
-    },
-    {
-        title: 'Recently Viewed',
-        data: [
-            {
-                key: '1',
-                text: 'What to Do on Your Period'
-            },
-            {
-                key: '2',
-                text: 'The First Period'
-            }
-        ],
-    },
-    {
-        title: 'Menstruation',
-        data: [
-            {
-                key: '1',
-                text: 'Period Basics'
-            },
-            {
-                key: '2',
-                text: "How-to's"
-            },
-            {
-                key: '3',
-                text: 'Health and Hygiene'
-            },
-            {
-                key: '4',
-                text: 'Taboos and Misconceptions'
-            },
-        ],
-    }
-]
-
 const ResourceArticle = ({ route, navigation }) => {
-
     const { outerResource, resource } = route.params;
-    const [save, setSave] = useState(false);
-    const images = resource.images
+    const articleKey = resource['articleId'];
 
-    const PurpleListItem = ({ item }) => {
-        return (
-            <Pressable onPress={() => navigation.navigate('ResourceArticle', { resource: resource })}>
-                <View style={styles.purpleBox}>
-                    <Text style={styles.purpleBoxText}>{item.text}</Text>
-                </View>
-            </Pressable>
-        );
-    };
+    const video = useRef(null);
+    
+    const { width } = useWindowDimensions();
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const { userId } = useContext(AuthContext);
+
+    const [favorited, setFavorited] = useState(false);
+    const media = resource.articleMedia;
+
+    async function isFavorited() {
+        try {
+            // invariant: favoritedResources[userId] will exist by this point
+            const favoritedResources = await AsyncStorage.getItem('favoritedResources');
+            const favoritedResourcesObj = JSON.parse(favoritedResources);
+            setFavorited(favoritedResourcesObj[userId].includes(articleKey))
+        }
+        catch (error) {
+            console.log('[ResourceArticle] isFavorited failed: ', error);
+        }
+    }
+
+    async function handlePressFavorite() {
+        let negatedFavorited = !favorited;
+
+        if (negatedFavorited) { // add to favorite articles
+            try {
+                const favoritedResources = await AsyncStorage.getItem('favoritedResources');
+                const favoritedResourcesObj = JSON.parse(favoritedResources);
+                favoritedResourcesObj[userId].push(articleKey);
+                await AsyncStorage.setItem('favoritedResources', JSON.stringify(favoritedResourcesObj));
+            }
+            catch (error) {
+                console.log('[ResourceArticle] adding to favorites failed: ', error);
+            }
+        }
+        else { // remove from favorite articles
+            try {
+                const favoritedResources = await AsyncStorage.getItem('favoritedResources');
+                const favoritedResourcesObj = JSON.parse(favoritedResources);
+                const index = favoritedResourcesObj[userId].indexOf(articleKey);
+                if (index > -1) {
+                    favoritedResourcesObj[userId].splice(index, 1);
+                }
+                await AsyncStorage.setItem('favoritedResources', JSON.stringify(favoritedResourcesObj));
+            }
+            catch (error) {
+                console.log('[ResourceArticle] removing from favorites failed: ', error);
+            }
+        }
+
+        setFavorited(negatedFavorited)
+    }
+    
+    function markdownToHtml(text) {
+        const converter = new Showdown.Converter();
+        return converter.makeHtml(text);
+    }
+    
+    useEffect(() => {
+        // init favorited or not
+        isFavorited()
+    }, [])
 
     return (
-        <SafeAreaView>
-            <View style={styles.topBarInline}>
-                <TouchableOpacity onPress={() => navigation.navigate('ResourceContent', { resource: outerResource })}>
-                    <BackIcon style={styles.headerBackIcon} />
-                </TouchableOpacity>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '13%', marginRight: 35, marginTop: 10 }}>
-                    <TranslateIcon style={styles.translateIcon} />
-                    <SpeakerIcon style={styles.speakerIcon} />
-                </View>
-            </View>
-            <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.headerInline}>
-                    <Text style={styles.headerText}>{resource.text}</Text>
-                    <TouchableOpacity onPress={() => setSave(!save)}>
-                        {/* TODO: upload to user's saved articles */}
-                        {save ? <SaveAfterIcon style={styles.saveIcon} /> : <SaveInitialIcon style={styles.saveIcon} />}
+        <SafeAreaView style={styles.container}>
+            <View style={Platform.OS === "ios" ? { paddingHorizontal: 30 } : {}}>
+                <View style={styles.topBarInline}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (outerResource) {
+                                navigation.navigate('ResourceContent', { resource: outerResource })
+                            }
+                            else {
+                                navigation.navigate('ResourceHomeScreen')
+                            }
+                        }}
+                    >
+                        <BackIcon style={styles.headerBackIcon} />
                     </TouchableOpacity>
+                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '13%' }}>
+                        <TranslateIcon style={styles.translateIcon} />
+                        <SpeakerIcon style={styles.speakerIcon} />
+                    </View> */}
                 </View>
-                {/* <View style={styles.introText}>
-                    <Text style={styles.introTextContent}>{resource.introText}</Text>
-                </View>
-                <View style={styles.images}>
-                    <Image source={images[0]} style={styles.periodImage}/>
-                </View>
-                <View style={styles.introText}>
-                    <Text style={styles.introTextContent}>{resource.otherText}</Text>
-                </View> */}
-                <View style={styles.container}>
-                    <TextInput
-                        multiline={true}
-                        numberOfLines={4}
-                        placeholder="Add a note..."
-                        style={styles.noteInput}
-                    />
-                </View>
-                <View style={{ marginTop: 20, marginBottom: 10 }}>
-                    {/* TODO: link to next article */}
-                    <Text style={styles.scrollText}>tap to see next article</Text>
-                </View>
-            </ScrollView>
+                <ScrollView showsVerticalScrollIndicator={true}>
+                    <View style={styles.headerInline}>
+                        <Text style={styles.headerText}>{resource.articleTitle}</Text>
+                    </View>
+
+                    <View style={styles.divider} />
+
+                    {
+                        media.map((url, index) => {
+                            console.log(`[ResourceArticle] url: ${url}`)
+                            return (
+                                url.endsWith('.mp4')
+                                ? 
+                                <Video
+                                    ref={video}
+                                    source={{uri: url}}
+                                    style={{ width: '100%', aspectRatio: 16/9 }}
+                                    useNativeControls
+                                    resizeMode={ResizeMode.CONTAIN}
+                                    isLooping
+                                    key={`media-${resource.articleTitle}-${index}`}
+                                />
+                                :
+                                <Image
+                                    source={{uri: url}}
+                                    style={{ width: '100%', aspectRatio: 16/9 }}
+                                />
+                            )
+                        })
+                    }
+
+                    <TouchableOpacity style={{marginTop: 20}} onPress={() => {handlePressFavorite()}}>
+                        <View style={{marginLeft: 10}}>
+                            {favorited ? <SaveAfterIcon /> : <SaveInitialIcon />}
+                        </View>
+                        <Text style={styles.labelText}>{i18n.t('education.favorite')}</Text>
+                    </TouchableOpacity>
+                    <View style={styles.introText}>
+                        {/* <Text style={styles.introTextContent}> */}
+                        <RenderHTML
+                            contentWidth={width * 0.8}
+                            tagsStyles={{
+                                p: {...styles.introTextContent, marginHorizontal: resource.articleMedia.length > 0 ? 20 : 0,}
+                            }}
+                            source={{html: markdownToHtml(resource.articleText)}}
+                        />
+                        {/* </Text> */}
+                    </View>
+                    <View style={styles.noteContainer}>
+                        <DynamicNote mode="articles" noteKey={articleKey} />
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
@@ -138,22 +174,26 @@ const ResourceArticle = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        padding: 20,
+        paddingVertical: StatusBar.currentHeight,
+        paddingHorizontal: 30,
         justifyContent: 'center',
+        backgroundColor: '#FEFFF4'
     },
     headerText: {
-        fontSize: 35,
+        fontSize: 28,
         fontWeight: "600",
         color: "black",
-        textAlign: "center",
-        marginTop: 10
-    },
-    headerBackIcon: {
-        width: 11,
-        height: 21,
+        textAlign: "left",
         marginTop: 10,
-        marginRight: 40,
-        marginLeft: 35
+        color: "#5B9F8F",
+    },
+    divider: {
+        backgroundColor: '#EDEEE0',
+        height: 4,
+        width: '100%',
+        marginTop: 10,
+        borderRadius: 20,
+        alignSelf: 'center',
     },
     headerSearchIcon: {
         width: 30,
@@ -173,9 +213,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '80%',
-        marginLeft: '8%',
-        marginTop: 25,
     },
     introTextContent: {
         fontSize: 15.8,
@@ -246,20 +283,13 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         marginBottom: 60,
     },
-    translateIcon: {
-        width: 21,
-        height: 17,
-    },
-    speakerIcon: {
-        width: 20,
-        height: 19,
-    },
     topBarInline: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
+        marginTop: StatusBar.currentHeight + 10
     },
     headerInline: {
         display: 'flex',
@@ -267,14 +297,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         width: '100%',
-        marginTop: 15,
-        marginLeft: 5,
-    },
-    saveIcon: {
-        width: 20,
-        height: 26,
-        marginTop: 12,
-        marginLeft: -10,
+        marginTop: 15
     },
     periodImage: {
         width: 200,
@@ -282,19 +305,17 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginLeft: 30,
     },
-    noteInput: {
-        width: 320,
-        height: 150,
-        backgroundColor: '#F2F2F2',
-        borderWidth: 1,
-        borderRadius: 15,
-        borderColor: '#005C6A',
+    noteContainer: {
+        flex: 1,
+        width: '100%',
         marginTop: 40,
-        padding: 20,
-        paddingTop: 20,
-        fontSize: 15,
-        color: '#005C6A'
+        marginBottom: 100
     },
+    labelText: {
+        fontSize: 12,
+        fontWeight: "400",
+        color: "black",
+    }
 })
 
 export default ResourceArticle;

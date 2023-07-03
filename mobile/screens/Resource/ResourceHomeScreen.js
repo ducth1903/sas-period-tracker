@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,15 +8,16 @@ import {
     SafeAreaView,
     StatusBar,
     ScrollView,
-    TouchableOpacity,
-    ImageBackground
+    RefreshControl,
+    ImageBackground,
+    useWindowDimensions
 } from 'react-native';
-// import RESOURCE_TEMPLATE from '../../models/ResourceModel';
-// import { AuthContext } from '../../navigation/AuthProvider'; 
-// import { MARKDOWN_S3_URL } from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../../navigation/AuthProvider'; 
+import { Skeleton } from '@rneui/themed';
 import { SettingsContext } from '../../navigation/SettingsProvider';
 import { useNavigation } from '@react-navigation/native';
-import { mockData } from './mockData';
+// import { topicsToTitles, sectionsToTitles, topicsToImages } from './resourceMaps'; // ! don't use these, use the ones in sas-metadata in S3
 import SearchIcon from '../../assets/icons/search.svg'
 import i18n from '../../translations/i18n';
 
@@ -25,24 +26,172 @@ import getEnvVars from '../../environment';
 const { API_URL } = getEnvVars();
 
 const ResourceHomeScreen = ({ navigation, props }) => {
-    // const resource_template = new RESOURCE_TEMPLATE();
+    const { width, height } = useWindowDimensions();
+    const { userId } = useContext(AuthContext);
     const { selectedSettingsLanguage } = useContext(SettingsContext);
-    const [resourcesMap, setResourcesMap] = useState(null);
+    const [resourcesMap, setResourcesMap] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-    // const { userId } = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(true);
+    
+    function findFavorites(resourceMap, lang, favorites) {
+        return resourceMap.map((topicObject) => {
+            return topicObject[lang]["sections"].map((sectionObject) => {
+                return sectionObject["articles"].map((articleObject) => {
+                    if (favorites.includes(articleObject["articleId"])) {
+                        return articleObject;
+                    }
+                })
+            })
+        }).flat(2).filter((article) => article) // filter out null values
+    }
+    
+    async function initFavoritedResources(resourceMap) {
+        try {
+            let favoritedResourcesResp = await AsyncStorage.getItem('favoritedResources');
+            if (!favoritedResourcesResp) {
+                const userKeyedFavoritedResources = {};
+                await AsyncStorage.setItem('favoritedResources', JSON.stringify(userKeyedFavoritedResources)); // init empty saved resources
+                favoritedResourcesResp = await AsyncStorage.getItem('favoritedResources');
+            }
+    
+            let parsedResp = JSON.parse(favoritedResourcesResp);
+            if (!parsedResp[userId]) {
+                parsedResp[userId] = [];
+                await AsyncStorage.setItem('favoritedResources', JSON.stringify(parsedResp));
+                parsedResp = JSON.parse(await AsyncStorage.getItem('favoritedResources'));
+            }
+            
+            const deviceFavoritedResources = JSON.parse(favoritedResourcesResp)
+            // list of id's for favorited articles
+            const userFavoritedResources = deviceFavoritedResources[userId];
+    
+            resourceMap.unshift({
+                en: {
+                    topicTitle: "Favorites",
+                    articles: findFavorites(resourceMap, "en", userFavoritedResources)
+                },
+                kn: {
+                    topicTitle: "ಮೆಚ್ಚಿದ ಲೇಖನಗಳು",
+                    articles: findFavorites(resourceMap, "kn", userFavoritedResources)
+                },
+                hi: {
+                    topicTitle: "पसंदीदा आलेख",
+                    articles: findFavorites(resourceMap, "hi", userFavoritedResources)
+                }
+            })
+        }
+        catch (error) {
+            console.log(`[ResourceHomeScreen] error initializing saved resources: ${error}`)
+        }
+    }
+    
+    async function fetchAllResources(attempts = 1) {
+        try {
+            setIsLoading(true);
+            console.log(`[ResourceHomeScreen] fetching all resources attempt ${attempts}`)
+            const contentResp = await fetch(`${API_URL}/resources/content`, { method: "GET" });
+            const content = await contentResp.json();
 
-    async function fetchAllResources() {
-        // `${API_URL}/resources`
-        const resp = await fetch(`http://127.0.0.1:5000/resources`, { method: "GET" });
-        const data = await resp.json();
+            const metadataResp = await fetch(`${API_URL}/resources/metadata`, { method: "GET" });
+            const metadata = await metadataResp.json();
+            const { topics_to_titles, sections_to_titles, topics_to_images, articles_to_titles, articles_to_media } = metadata;
+    
+            // fetch text for each resource
+            await Promise.all(content.map(async (item, index, arr) => {
+                const resourceText = await fetchSingleResource(item["resource_url"]);
+                const resourceId = item["resource_filename"].slice(3, -3); // remove .md and language from filename
+                const resourceLang = item["resource_language"];
 
-        let promises = data.map(async (item, index, arr) => {
-            const resource_data = await fetchSingleResource(item["resource_url"]);
-            console.log('here...', item.resource_url, resource_data)
-            arr[index] = { ...item, "resource_data": resource_data }
-        });
-        await Promise.all(promises);
-        setResourcesMap(data);
+                const resourceTitle = articles_to_titles[resourceLang][resourceId];
+                const resourceMedia = articles_to_media[resourceId];
+
+                arr[index] = {
+                    ...item,
+                    "resource_text": resourceText,
+                    "resource_title": resourceTitle,
+                    "resource_media": resourceMedia,
+                    "resource_id": resourceId,
+                };
+            }));
+
+            // find unique topics
+            let topics = content.map((item) => item["resource_topic"]);
+            topics = [...new Set(topics)];
+
+            let resourceMap = [];
+            topics.forEach((topic) => {
+                resourceMap.push({
+                    image: topics_to_images[topic],
+                    en: {
+                        topicTitle: topics_to_titles["en"][topic],
+                        introText: "",
+                        sections: []
+                    },
+                    kn: {
+                        topicTitle: topics_to_titles["kn"][topic],
+                        introText: "",
+                        sections: []
+                    },
+                    hi: {
+                        topicTitle: topics_to_titles["hi"][topic],
+                        introText: "",
+                        sections: []
+                    }
+                });
+            })
+
+            content.forEach((item) => {
+                const itemTopic = item["resource_topic"];
+                const itemSection = item["resource_section"];
+                const itemLanguage = item["resource_filename"].split("_")[0];
+                const itemTitle = item["resource_title"];
+                const itemText = item["resource_text"];
+                const itemId = item["resource_id"];
+
+                // this search might be too slow, but we'll see
+                const topicObject = resourceMap.find((obj) => obj[itemLanguage]["topicTitle"] === topics_to_titles[itemLanguage][itemTopic]);
+
+                if (!itemSection) { // is intro file, intro files don't have sections
+                    topicObject[itemLanguage]["introText"] = itemText;
+                    return;
+                }
+                
+                // create new section object if it doesn't exist
+                let sectionObject = topicObject[itemLanguage]["sections"].find((section) => section["sectionTitle"] === sections_to_titles[itemLanguage][itemSection]);
+                if (!sectionObject) {
+                    sectionObject = {
+                        parentTopicObject: topicObject, // need copy in each section for FLatList renderItem
+                        sectionTitle: sections_to_titles[itemLanguage][itemSection],
+                        articles: []
+                    }
+                    topicObject[itemLanguage]["sections"].push(sectionObject);
+                }
+
+                sectionObject.articles.push({
+                    articleTitle: itemTitle,
+                    articleText: itemText,
+                    articleId: itemId,
+                    articleMedia: articles_to_media[itemId]
+                });
+            });
+
+            console.log(`[ResourceHomeScreen] fetch attempt ${attempts} successful`)
+
+            // init saved resources and unshift them to the beginning of resourceMap
+            await initFavoritedResources(resourceMap);
+
+            setIsLoading(false);
+            setResourcesMap(resourceMap);
+        }
+        catch (error) {
+            // TODO: find a more robust solution to why this sometimes fails, but for now this is okay because it seems to help (I think it was just an android emulator error actually)
+            if (attempts >= 6) {
+                console.log(`[ResourceHomeScreen] resources still could not be fetched after ${attempts} attempts: ${error}`)
+                return;
+            }
+            console.log(`[ResourceHomeScreen] Error fetching resources on attempt ${attempts}: ${error}`);
+            fetchAllResources(attempts + 1)
+        }
     }
 
     async function fetchSingleResource(resource_url) {
@@ -52,7 +201,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     }
 
     useEffect(() => {
-        // fetchAllResources();
+        fetchAllResources();
     }, []);
 
     const images = {
@@ -66,83 +215,115 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         sexual_health: require('../../assets/resources_images/sexual_health_banner.png'),
     }
 
-    const PurpleListItem = ({ item }) => {
-        const image = images[item.image];
+    function SectionItem({ item }) {
+        const paramResource = {
+            introText: item.parentTopicObject[selectedSettingsLanguage].introText,
+            sectionTitle: item.sectionTitle,
+            articles: item.articles
+        };
         return (
-            <Pressable onPress={() => navigation.navigate('ResourceContent', { resource: item })}>
-                <ImageBackground source={image} style={styles.purpleBox} imageStyle={{ borderRadius: 15 }}>
+            <Pressable onPress={() => navigation.navigate('ResourceContent', { resource: paramResource } )}>
+                <ImageBackground source={{uri: item["parentTopicObject"]["image"]}} style={styles.sectionBox} imageStyle={{ borderRadius: 15 }}>
                     <View style={styles.darkness} />
-                    <Text style={styles.purpleBoxText}>{item.text}</Text>
+                    <Text style={styles.sectionBoxText}>{item["sectionTitle"]}</Text>
                 </ImageBackground>
             </Pressable>
         );
     };
 
-    const RedListItem = ({ item }) => {
-        const image = images[item.image];
+    function ArticleItem({ item }) {
         return (
-            <>
-                {item.text == 'See All' ? (
-                    <Pressable onPress={() => navigation.navigate('ResourceSaved')}>
-                        <View style={styles.redBox}>
-                            <Text style={styles.redBoxText}>{item.text}</Text>
-                        </View>
-                    </Pressable>
-                ) : (
-                    <ImageBackground source={image} style={styles.redBox} imageStyle={{ borderRadius: 15 }}>
-                        <View style={styles.darkness} />
-                        <Text style={styles.redBoxText}>{item.text}</Text>
-                    </ImageBackground>
-                )}
-            </>
+            <Pressable onPress={() => navigation.navigate('ResourceArticle', { resource: item })}>
+                <View style={styles.articleBox} imageStyle={{ borderRadius: 15 }}>
+                    <View style={styles.darkness} />
+                    <Text style={styles.articleBoxText}>{item["articleTitle"]}</Text>
+                </View>
+            </Pressable>
         );
     };
 
     // Pull down to refresh
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = useCallback(() => {
         setRefreshing(true);
-        fetchResoucesJson();
+        setIsLoading(true)
+        fetchAllResources();
         setRefreshing(false);
     }, []);
 
+    if (isLoading) {
+        return (
+            <SafeAreaView className="bg-offwhite flex-1">
+                <ScrollView
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                >
+                    <View className="min-h-[40vw] flex-1 justify-center items-center">
+                        <Skeleton animation="pulse" width={width * 0.6} height={height * 0.05} />
+                    </View>
+
+                    <View className="pl-7 pr-7 items-center">
+                        <Skeleton animation="pulse" width={width * 0.9} height={30} />
+                        <View className="pt-7" />
+                        <Skeleton animation="pulse" width={width * 0.9} height={200} />
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}            
+            >
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>{ i18n.t('navigation.education') }</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                    {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
                         <SearchIcon style={styles.headerSearchIcon} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
-                {resourcesMap && resourcesMap.map(r => <Markdown key={r.resource_url}>{r.resource_data}</Markdown>)}
+
                 {
-                    mockData.map((ele, index) => {
-                        if (index > 1) {
+                    resourcesMap.map((ele, index) => {
+                        // console.log(`this is ele: ${JSON.stringify(ele, null, 2)}`)
+                        if (index >= 1) {
+                            if (ele[selectedSettingsLanguage]["sections"].length > 0) {
+                                return (
+                                    <View key={`${ele["en"]["topicTitle"]}-${index}`}>
+                                        <Text style={styles.subHeaderText}>{ele[selectedSettingsLanguage]["topicTitle"]}</Text>
+                                        <FlatList
+                                            horizontal
+                                            data={ele[selectedSettingsLanguage]["sections"]}
+                                            renderItem={({ item }) => <SectionItem item={item} key={`${item["sectionTitle"]}`} />}
+                                            showsHorizontalScrollIndicator={false}
+                                            style={{ marginBottom: -15 }}
+                                            keyExtractor={(item, index) => `${item["sectionTitle"]}`}
+                                        />
+                                    </View>
+                                )
+                            }
+                            else return null;
+                        }
+                        else {
                             return (
-                                <View key={index}>
-                                    <Text style={styles.subHeaderText}>{ele.title}</Text>
-                                    <FlatList
-                                        horizontal
-                                        data={ele.data}
-                                        renderItem={({ item }) => <PurpleListItem item={item} key={item.key} />}
-                                        showsHorizontalScrollIndicator={false}
-                                        style={{ marginBottom: -15 }}
-                                        keyExtractor={(item, index) => item.key}
-                                    />
-                                </View>
-                            )
-                        } else {
-                            return (
-                                <View key={index}>
-                                    <Text style={styles.subHeaderText}>{ele.title}</Text>
-                                    <FlatList
-                                        horizontal
-                                        data={ele.data}
-                                        renderItem={({ item }) => <RedListItem item={item} key={item.key} />}
-                                        showsHorizontalScrollIndicator={false}
-                                        style={{ marginBottom: -15 }}
-                                        keyExtractor={(item, index) => item.key}
-                                    />
+                                <View key={`${ele["en"]["topicTitle"]}-${index}`}>
+                                    <Text style={styles.subHeaderText}>{ele[selectedSettingsLanguage]["topicTitle"]}</Text>
+                                    {
+                                        ele[selectedSettingsLanguage]["articles"].length > 0 ?
+                                        <FlatList
+                                            horizontal
+                                            data={ele[selectedSettingsLanguage]["articles"]}
+                                            renderItem={({ item }) => <ArticleItem item={item} key={item.articleTitle} />}
+                                            showsHorizontalScrollIndicator={false}
+                                            style={{ marginBottom: -15 }}
+                                            keyExtractor={(item, index) => item.articleTitle}
+                                        />
+                                        :
+                                        <View style={styles.articleBox}>
+                                            <View style={styles.darkness} />
+                                            <Text style={styles.articleBoxText}>{i18n.t('education.noArticlesFavorited')}</Text>
+                                        </View>
+                                    }
+                                    
                                 </View>
                             )
                         }
@@ -160,7 +341,7 @@ const styles = StyleSheet.create({
         color: "black",
         textAlign: "center",
         marginTop: 10,
-        marginLeft: 70,
+        // marginLeft: 70,
     },
     headerSearchIcon: {
         width: 30,
@@ -175,7 +356,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
     },
-    redBox: {
+    articleBox: {
         margin: 20,
         width: 250,
         height: 170,
@@ -189,14 +370,14 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginRight: 5,
     },
-    redBoxText: {
+    articleBoxText: {
         color: 'white',
         fontSize: 24,
         fontWeight: '600',
         textAlign: 'center',
         width: '80%',
     },
-    purpleBox: {
+    sectionBox: {
         margin: 20,
         width: 180,
         height: 180,
@@ -210,7 +391,7 @@ const styles = StyleSheet.create({
         elevation: 5,
         marginRight: 5,
     },
-    purpleBoxText: {
+    sectionBoxText: {
         color: 'white',
         fontSize: 22,
         fontWeight: '600',
@@ -241,6 +422,7 @@ const styles = StyleSheet.create({
         // alignContent: 'center',
         backgroundColor: '#FEFFF4',
         paddingTop: StatusBar.currentHeight,
+        paddingBottom: 40
     },
     menurow: {
         flex: 1,

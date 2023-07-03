@@ -1,83 +1,31 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import {
     StyleSheet,
     Text,
     View,
-    FlatList,
     Pressable,
     SafeAreaView,
     StatusBar,
-    Image,
     ScrollView,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from 'react-native';
-import RESOURCE_TEMPLATE from '../../models/ResourceModel';
-// import { AuthContext } from '../../navigation/AuthProvider'; 
-// import { MARKDOWN_S3_URL } from '@env';
-import { useNavigation } from '@react-navigation/native';
+
+import { SettingsContext } from '../../navigation/SettingsProvider';
+import i18n from '../../translations/i18n';
 
 import BackIcon from '../../assets/icons/back.svg';
 import ScrollIcon from '../../assets/icons/scroll.svg';
 
-const mockData = [
-    {
-        title: 'Saved',
-        data: [
-            {
-                key: '1',
-                text: 'How to Soothe Cramps'
-            },
-            {
-                key: '2',
-                text: 'See All'
-            },
-        ],
-    },
-    {
-        title: 'Recently Viewed',
-        data: [
-            {
-                key: '1',
-                text: 'What to Do on Your Period'
-            },
-            {
-                key: '2',
-                text: 'The First Period'
-            }
-        ],
-    },
-    {
-        title: 'Menstruation',
-        data: [
-            {
-                key: '1',
-                text: 'Period Basics'
-            },
-            {
-                key: '2',
-                text: "How-to's"
-            },
-            {
-                key: '3',
-                text: 'Health and Hygiene'
-            },
-            {
-                key: '4',
-                text: 'Taboos and Misconceptions'
-            },
-        ],
-    }
-]
-
 const ResourceContent = ({ route, navigation }) => {
-
     const { resource } = route.params;
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
 
-    const PurpleListItem = ({ item }) => {
+    const ArticleItem = ({ item }) => {
         return (
             <Pressable onPress={() => navigation.navigate('ResourceArticle', { outerResource: resource, resource: item })}>
-                <View style={styles.purpleBox}>
-                    <Text style={styles.purpleBoxText}>{item.text}</Text>
+                <View style={styles.articleBox}>
+                    <Text style={styles.articleBoxText}>{item.articleTitle}</Text>
                 </View>
             </Pressable>
         );
@@ -85,64 +33,90 @@ const ResourceContent = ({ route, navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.inline}>
-                <TouchableOpacity onPress={() => navigation.navigate('ResourceHomeScreen')}>
-                    <BackIcon style={styles.headerBackIcon} />
+            <View>
+                <TouchableOpacity
+                    style={{alignSelf: 'flex-start', marginTop: 10, marginLeft: Platform.OS === "ios" ? 20 : 0}}
+                    onPress={() => navigation.navigate('ResourceHomeScreen')}
+                >
+                    <BackIcon />
                 </TouchableOpacity>
-                <Text style={styles.headerText}>{resource.text}</Text>
-                {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <Image source={require('../../assets/icons/search.svg')} style={styles.headerSearchIcon}/>
-                    </TouchableOpacity> */}
-            </View>
-            <ScrollView>
-                <View style={styles.introText}>
-                    <Text style={styles.introTextContent}>{resource.introText}</Text>
-                </View>
-                <View style={{ marginTop: 20, marginBottom: 10 }}>
-                    <Text style={styles.scrollText}>scroll to see topics</Text>
-                    <ScrollIcon style={styles.scrollIcon} />
+
+                <View style={styles.inline}>
+                    <Text style={styles.headerText}>{resource.sectionTitle}</Text>
+                    {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                            <Image source={require('../../assets/icons/search.svg')} style={styles.headerSearchIcon}/>
+                        </TouchableOpacity> */}
+                    {/* <View className="h-[4px] w-full rounded-md bg-[#EDEEE0]"></View> */}
                 </View>
 
-                <View style={styles.topicsList}>
-                    {
-                        // group into pairs of two
-                        resource.topics.reduce((groupedArr, topic, index) => {
-                            if (index % 2 == 0) {
-                                groupedArr.push([topic]);
-                            } else {
-                                groupedArr[groupedArr.length - 1].push(topic);
-                            }
-                            return groupedArr;
-                        }, []).map((pair, index) => {
-                            return (
-                                <View style={{ marginLeft: 'auto', marginRight: 'auto' }} key={index}>
-                                    <PurpleListItem item={pair[0]} />
-                                    {pair.length > 1 ? <PurpleListItem item={pair[1]} /> : null}
-                                </View>
-                            )
-                        })
-                    }
-                </View>
-            </ScrollView>
+                <View style={styles.divider} />
+                
+                <ScrollView persistentScrollbar={true}>
+                    <View style={{marginHorizontal: Platform.OS === "ios" ? 25 : 0}}>
+                        <View style={styles.introText}>
+                            <Text style={styles.introTextContent}>{resource.introText}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.backIcon}>
+                        <Text style={styles.scrollText}>{i18n.t('education.scrolltoSeeTopics')}</Text>
+                        <ScrollIcon style={styles.scrollIcon} />
+                    </View>
+
+                    <View style={styles.topicsList}>
+                        {
+                            // group into pairs of two
+                            resource.articles.reduce((groupedArr, topic, index) => {
+                                if (index % 2 == 0) {
+                                    groupedArr.push([topic]);
+                                } else {
+                                    groupedArr[groupedArr.length - 1].push(topic);
+                                }
+                                return groupedArr;
+                            }, []).map((pair, index) => {
+                                return (
+                                    <View style={{ justifyContent: 'space-between', flexDirection: 'row' }} key={index}>
+                                        <ArticleItem item={pair[0]} />
+                                        {pair.length > 1 ? <ArticleItem item={pair[1]} /> : <View style={styles.placeHolder} />}
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+                </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        // alignContent: 'center',
+        backgroundColor: '#FEFFF4',
+        paddingTop: StatusBar.currentHeight,
+        paddingHorizontal: 20,
+    },
+    backIcon: {
+        marginTop: 20,
+        marginBottom: 10
+    },
     headerText: {
-        fontSize: 35,
+        fontSize: 32,
+        flexGrow: 1,
         fontWeight: "600",
         color: "black",
         textAlign: "center",
         marginTop: 10,
-        width: 230,
+        color: "#5B9F8F",
     },
-    headerBackIcon: {
-        width: 11,
-        height: 21,
+    divider: {
+        backgroundColor: '#EDEEE0',
+        height: 4,
+        width: '90%',
         marginTop: 10,
-        marginRight: 40,
-        marginLeft: 35
+        borderRadius: 20,
+        alignSelf: 'center',
     },
     headerSearchIcon: {
         width: 30,
@@ -153,17 +127,15 @@ const styles = StyleSheet.create({
     inline: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'left',
         alignItems: 'center',
         width: '100%',
+        flexDirection: 'column'
     },
     introText: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: '80%',
-        marginLeft: '8%',
         marginTop: 25,
     },
     introTextContent: {
@@ -206,11 +178,11 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     // not the same style as purpleBox in ResourceHomeScreen.js; this style has no built-in margins to be more flexible
-    purpleBox: {
+    articleBox: {
         marginBottom: 30,
-        width: 150,
-        height: 150,
-        backgroundColor: '#D9D1F7',
+        width: 155,
+        height: 155,
+        backgroundColor: "#8FD3C3",
         borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
@@ -218,22 +190,32 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 3,
         elevation: 5,
+        paddingVertical: 2,
+        paddingHorizontal: 4
     },
-    purpleBoxText: {
+    articleBoxText: {
         color: 'black',
-        fontSize: 15,
-        fontWeight: '600',
+        fontSize: 14,
+        fontWeight: '400',
         textAlign: 'center',
         width: '100%',
+        lineHeight: 20
+    },
+    placeHolder: {
+        marginBottom: 30,
+        width: 155,
+        height: 155,
+        backgroundColor: "#FEFFF4",
+        borderRadius: 15,
     },
     topicsList: {
         flex: 1,
-        flexDirection: 'row',
+        flexDirection: 'column',
         flexWrap: 'wrap',
-        justifyContent: 'center',
         alignSelf: 'center',
-        marginBottom: 60,
-        width: '90%'
+        marginBottom: 150,
+        paddingHorizontal: Platform.OS === "ios" ? 20 : 0,
+        width: '100%',
     }
 })
 

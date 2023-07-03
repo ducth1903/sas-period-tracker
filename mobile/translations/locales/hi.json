@@ -267,7 +267,10 @@
         "scrolltoSeeTopics": "विषयों को देखने के लिए स्क्रोल करें",
         "back": "पीछे",
         "next": "अगला",
-        "saved": "बचा लिया"
+        "saved": "बचा लिया",
+        "favorite": "पसंद करना",
+        "favorites": "पसंदीदा आलेख",
+        "noArticlesFavorited": "कोई लेखन चयनित नहीं है"
     },
     "settings": {
         "accountInfo": {

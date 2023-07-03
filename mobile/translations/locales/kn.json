@@ -267,7 +267,10 @@
         "scrolltoSeeTopics": "ವಿಷಯಗಳನ್ನು ನೋಡಲು ಸ್ಕ್ರಾಲ್ ಮಾಡಿ",
         "back": "ಹಿಂದೆ",
         "next": "ಮುಂದೆ",
-        "saved": "ಸೇವ್ ಆಗಿದೆ"
+        "saved": "ಸೇವ್ ಆಗಿದೆ",
+        "favorite": "ಪ್ರೀತಿಸು",
+        "favorites": "ಮೆಚ್ಚಿದ ಲೇಖನಗಳು",
+        "noArticlesFavorited": "ಯಾವುದೇ ಲೇಖನಗಳು ಮೆಚ್ಚಿದ್ದಿಲ್ಲ"
     },
     "settings": {
         "accountInfo": {
