@@ -128,7 +128,10 @@
         "welcomeBack": "Welcome Back!",
         "signIn": "Sign In",
         "login": "Login",
-        "signUp": "Sign Up"
+        "signUp": "Sign Up",
+        "invalidEmail": "Invalid Email",
+        "invalidPassword": "Invalid Password",
+        "unrecognizedError": "Error logging in. Please try again."
     },
     "survey": {
         "all": {

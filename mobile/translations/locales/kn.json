@@ -128,7 +128,10 @@
         "welcomeBack": "ಸ್ವಾಗತ!",
         "signIn": "ಸೈನ್ ಇನ್ ಮಾಡಿ",
         "login": "ಲಾಗಿನ್",
-        "signUp": "ಸೈನ್ ಅಪ್ ಮಾಡಿಕೊಳ್ಳಿ"
+        "signUp": "ಸೈನ್ ಅಪ್ ಮಾಡಿಕೊಳ್ಳಿ",
+        "invalidEmail": "ಅಮಾನ್ಯ ಇಮೇಲ್",
+        "invalidPassword": "ಅಮಾನ್ಯ ಪಾಸ್ವರ್ಡ್",
+        "unrecognizedError": "ಲಾಗಿನ್ ಮಾಡುವಾಗ ತಪ್ಪಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
     },
     "survey": {
         "all": {

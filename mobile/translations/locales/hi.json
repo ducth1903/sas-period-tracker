@@ -128,8 +128,10 @@
         "welcomeBack": "स्वागत है!",
         "signIn": "दाख़िल करें",
         "login": "लॉगिन",
-        "signUp": "साइन अप करें"
-
+        "signUp": "साइन अप करें",
+        "invalidEmail": "अवैध ईमेल",
+        "invalidPassword": "अवैध पासवर्ड",
+        "unrecognizedError": "लॉगिन करते समय त्रुटि हुई। कृपया पुनः प्रयास करें।"
     },
     "survey": {
         "all": {
