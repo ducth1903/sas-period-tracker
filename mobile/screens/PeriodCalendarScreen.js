@@ -237,7 +237,7 @@ const PeriodCalendarScreen = ({ props }) => {
 
                 {
                     getWeekDates(currDateObject).map((date) => 
-                        <StaticNote date={date} key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}/>
+                        <StaticNote mode="dates" noteKey={date} key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}/>
                     )
                 }
 
@@ -258,7 +258,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 <Text className="text-[20px] font-bold mt-10 mb-2">
                     { i18n.t('analysis.week.notes') }
                 </Text>
-                <StaticNote date={currDateObject}></StaticNote>
+                <StaticNote mode="dates" noteKey={currDateObject}></StaticNote>
             </View>
         );
     }
