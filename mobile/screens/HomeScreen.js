@@ -17,7 +17,6 @@ import {
 // import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { Skeleton } from '@rneui/themed';
-import { TextInput } from 'react-native-gesture-handler';
 
 import { AuthContext } from '../navigation/AuthProvider';
 import { SettingsContext } from '../navigation/SettingsProvider';
@@ -27,6 +26,7 @@ import TextCard from '../components/TextCard';
 // import ProgressiveImage from '../components/ProgressiveImage';
 import i18n from '../translations/i18n';
 import * as SVG from '../assets/svg';
+import DynamicNote from '../components/DynamicNote';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -498,13 +498,11 @@ const HomeScreen = () => {
                     </ScrollView>
                 </View>
 
-                <View className="px-7 w-screen">
-                    <View className="w-full h-28 border-2 border-turquoise rounded-xl p-3">
-                        <TextInput className="text-teal font-light" placeholder={i18n.t('home.addYourNotesHere')} />
-                        <View className="bg-turquoise p-2 rounded-md absolute right-2 bottom-2"><Text className="self-center text-slate-50">{i18n.t('home.save')}</Text></View>
-                    </View>
+                <View className="mt-3">
+                    <DynamicNote mode="dates" noteKey={selectedDate}/>
                 </View>
 
+                {/* TODO: Remove */}
                 <View className="p-7">
                     <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.forYou')}</Text>
                     <ScrollView horizontal={true} className="flex flex-row gap-6 mb-3.5">
