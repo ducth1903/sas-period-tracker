@@ -21,11 +21,20 @@ const ForgotPasswordScreen = ({navigation}) => {
         setAuthError('');
     }, []);
 
+    const errorToString = (error) => {
+        if (error.includes("user-not-found")) {
+            return i18n.t('authentication.userNotFound');
+        }
+        else {
+            return i18n.t('authentication.unrecognizedError')
+        }
+    };
+
     return (
         <View style={styles.container}>
             <FormInput
                 labelValue="Email"
-                placeholderText={i18n.t('authentication.email')}
+                placeholderText={i18n.t('authentication.emailAddress')}
                 iconType="user"
                 color="black"
                 keyboardType="email-address"
@@ -36,7 +45,7 @@ const ForgotPasswordScreen = ({navigation}) => {
                 isHighlight={true}
                 onPress={ () => resetPassword(email) } />
             { authError ?
-            <Text style={[styles.centerItems, styles.errTextStyle]}>{authError}</Text> :
+            <Text style={[styles.centerItems, styles.errTextStyle]}>{errorToString(authError)}</Text> :
             <Text style={[styles.centerItems, styles.statusTextStyle]}>{authStatus}</Text> }
         </View>
     )

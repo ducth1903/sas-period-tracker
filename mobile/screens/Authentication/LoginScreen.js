@@ -131,7 +131,7 @@ const LoginScreen = ({ navigation }) => {
             }}
             style={styles.centerItems}
           >
-            <Text style={[styles.textStyle, styles.bottomItems]}>
+            <Text style={[styles.signUpStyle, styles.bottomItems]}>
               {i18n.t("authentication.forgotPassword")}
             </Text>
           </TouchableOpacity>

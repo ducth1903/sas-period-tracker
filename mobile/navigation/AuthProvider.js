@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
 import {
@@ -11,6 +11,8 @@ import {
     signInWithCredential,
 } from 'firebase/auth';
 import { MODAL_TEMPLATE } from '../models/PeriodDate';
+import { SettingsContext } from './SettingsProvider';
+import i18n from '../translations/i18n';
 
 // Loading env variables
 import {
@@ -51,6 +53,7 @@ const firebaseAuth = getAuth(firebaseApp);
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [userId, setUserId] = useState(null);
     const [authError, setAuthError] = useState("");         // https://firebase.google.com/docs/auth/admin/errors
     const [authStatus, setAuthStatus] = useState("");
@@ -195,7 +198,7 @@ export const AuthProvider = ({ children }) => {
                     try {
                         await sendPasswordResetEmail(firebaseAuth, inEmail)
                             .then(() => {
-                                setAuthStatus("Please check your email for reset password instructions")
+                                setAuthStatus(i18n.t('authentication.pleaseCheckYourEmail'))
                             })
                     } catch (e) {
                         setAuthError(String(e));

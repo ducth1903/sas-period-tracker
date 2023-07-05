@@ -131,7 +131,9 @@
         "signUp": "Sign Up",
         "invalidEmail": "Invalid Email",
         "invalidPassword": "Invalid Password",
-        "unrecognizedError": "Error logging in. Please try again."
+        "unrecognizedError": "Error logging in. Please try again.",
+        "userNotFound": "User not found",
+        "pleaseCheckYourEmail": "Please check your email for reset password instructions"
     },
     "survey": {
         "all": {
