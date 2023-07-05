@@ -26,6 +26,29 @@ import i18n from '../translations/i18n';
  */
 const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
     const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const [mergedYearData, setMergedYearData] = useState((() => {
+        // look near the end of each month to see if the details of the next month should be appended to the current month
+        let yearDataCopy = [...(yearData.map((obj) => JSON.parse(JSON.stringify(obj))))]; // make a copy of the yearData array to avoid mutating the original objects
+
+        yearDataCopy.forEach((period, index) => {
+            if (period.details.some((periodDay) => periodDay.dateStr.split('-')[2] >= 26)) {
+                if (yearDataCopy[index - 1]) {
+                    let overlapDays = yearDataCopy[index - 1].details.filter((periodDay) => periodDay.dateStr.split('-')[2] <= 10);
+                    if (overlapDays.length > 0) {
+                        yearDataCopy[index].details = [...yearDataCopy[index - 1].details, ...yearDataCopy[index].details];
+                        yearDataCopy[index - 1].details = yearDataCopy[index - 1].details.filter((periodDay) => periodDay.dateStr.split('-')[2] > 10);
+                        if (yearDataCopy[index - 1].details.length === 0) {
+                            yearDataCopy.splice(index - 1, 1);
+                        }
+                    }
+                }
+            }
+        })
+
+        return yearDataCopy;
+    })());
+
+    // detect if a single period started in one month and ended in another and merge the yearData accordingly
 
     const dateDiff = (earlierDate, laterDate) => {
         // returns number of days between two dates
@@ -72,7 +95,7 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
     const getCycleLength = (period, index) => {
         let nextPeriod = undefined;
         if (index > 0) {
-            nextPeriod = yearData[index - 1];
+            nextPeriod = mergedYearData[index - 1];
         }
         else if (firstPeriodOfNextYear) {
             nextPeriod = firstPeriodOfNextYear;
@@ -87,7 +110,7 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
         const firstDateOfCurrentPeriod = getFirstDateOfPeriod(period);
         const firstDateOfNextPeriod = getFirstDateOfPeriod(nextPeriod);
 
-        return dateDiff(firstDateOfCurrentPeriod, firstDateOfNextPeriod);
+        return i18n.t('analysis.trends.cycleLength').replace('{days}', dateDiff(firstDateOfCurrentPeriod, firstDateOfNextPeriod));
     }
 
     const getCycleDateRangeString = (period, index) => {
@@ -97,7 +120,7 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
             return i18n.t('analysis.trends.cycleStartedOn').replace('{date}', dateRangeString);
         }
         
-        const firstDateOfNextPeriod = getFirstDateOfPeriod(yearData[index - 1]);
+        const firstDateOfNextPeriod = getFirstDateOfPeriod(mergedYearData[index - 1]);
         dateRangeString = getDateRangeString(firstDateOfCurrentPeriod, firstDateOfNextPeriod);
         
         return dateRangeString;
@@ -109,11 +132,11 @@ const TrendYearBlock = ({ year, firstPeriodOfNextYear=null, yearData }) => {
                 {year}
             </Text>
             {
-                yearData.map((period, index) => {
+                mergedYearData.map((period, index) => {
                     return (
                         <View className="pt-4" key={`monthblock-${index}`}>
                             <Text className="text-greydark text-[16px]">
-                                {i18n.t('analysis.trends.cycleLength').replace('{days}', getCycleLength(period, index))}
+                                {getCycleLength(period, index)}
                             </Text>
                             <Text className="text-greydark text-[14px]">
                                 {getCycleDateRangeString(period, index)}

@@ -170,7 +170,7 @@ const HomeScreen = () => {
         if (!periodObj) return null;
 
         // flows above none
-        const positiveFlows = ['light', 'medium', 'heavy'];
+        const positiveFlows = ['light', 'medium', 'heavy', 'notSure'];
 
         // selectedDate can only be in current month, so new Date is fine to avoid situations where selectedDate is null
         const currentDate = new Date();
@@ -443,7 +443,7 @@ const HomeScreen = () => {
                                 }
                             </>
                             :
-                            <Text className="text-slate-50 text-3xl font-semibold px-2 text-center">Log your data</Text>
+                            <Text className="text-slate-50 text-3xl font-semibold px-2 text-center">{i18n.t('home.logYourData')}</Text>
                         }
                     </View>
                     <View className="flex items-center justify-center">
