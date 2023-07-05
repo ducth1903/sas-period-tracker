@@ -44,9 +44,6 @@ const StaticNote = ({ mode, noteKey }) => {
             
             notes[mode][stringifiedKey] = noteText;
             await AsyncStorage.setItem('notes', JSON.stringify(notes));
-
-            //! delete later, just for debugging
-            console.log(`current notes object: `, notes);
         }
         catch (error) {
             console.log(`[DynamicNote] noteText update for key ${noteKey instanceof Date ? getDateStr(noteKey) : noteKey} failed: `, error);
@@ -65,22 +62,16 @@ const StaticNote = ({ mode, noteKey }) => {
 
     return (
         <View className="px-7 w-screen">
-            <View className="flex flex-col w-full min-h-[15vh] border-2 border-turquoise rounded-xl p-3">
+            <View className="flex flex-col w-full min-h-[15vh] border-2 border-turquoise rounded-xl p-3 mt-2">
                 <View className="flex-row flex-grow">
                     <TextInput
-                        className="w-[80%] text-teal font-light flex-grow flex-wrap"
+                        className="w-full text-teal font-light flex-grow flex-wrap"
                         placeholder={i18n.t('home.addYourNotesHere')}
                         placeholderTextColor={'#00394E80'}
                         value={noteText ? noteText : ''}
                         onChangeText={setNoteText}
                         multiline={true}
                     />
-
-                    <View className="justify-end flex-grow">
-                        <TouchableHighlight className="bg-turquoise p-2 rounded-md self-end">
-                            <Text className="self-center text-slate-50">{i18n.t('home.save')}</Text>
-                        </TouchableHighlight>
-                    </View>
                 </View>
             </View>
         </View>
