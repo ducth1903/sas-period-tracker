@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import * as SVG from '../assets/svg.js';
 import i18n from '../translations/i18n.js';
 import { SettingsContext } from '../navigation/SettingsProvider.js';
-import { Hyphenate } from 'react-native-hyphenate';
 
 // There are 15 icons in each column
 const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
