@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { AuthContext } from '../navigation/AuthProvider';
 import { SettingsContext } from '../navigation/SettingsProvider';
 import i18n from '../translations/i18n';
 
@@ -18,24 +19,15 @@ const getDateStr = (date) => {
 const StaticNote = ({ mode, noteKey }) => {
     const weekDays = [i18n.t('days.long.sunday'), i18n.t('days.long.monday'), i18n.t('days.long.tuesday'), i18n.t('days.long.wednesday'), i18n.t('days.long.thursday'), i18n.t('days.long.friday'), i18n.t('days.long.saturday')];
     const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const { userId } = useContext(AuthContext);
     const [noteText, setNoteText] = useState(null);
-
-    //! DELETE
-    async function debugAS() {
-        try {
-            let value = await AsyncStorage.getItem(key);
-            console.log(`[StaticNote] ${key}: ${value}`);
-        }
-        catch (error) {
-            console.log(`[StaticNote] debugAS() failed: ${error}`);
-        }
-    }
 
     async function initNoteStorage() {
         try {
             let notes = await AsyncStorage.getItem('notes');
-            if (!notes) { /// this block will typically be run once per device
-                notes = {
+            if (!notes) { // this block will typically be run once per device
+                notes = {}
+                notes[userId] = {
                     "dates": {
 
                     },
@@ -47,7 +39,7 @@ const StaticNote = ({ mode, noteKey }) => {
             }
         }
         catch (error) {
-            console.log('[StaticNote] init note storage failed: ', error);
+            console.log('[DynamicNote] init note storage failed: ', error);
         }
     }
 
@@ -58,7 +50,7 @@ const StaticNote = ({ mode, noteKey }) => {
             let notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
             
-            const noteText = notes[mode][stringifiedKey];
+            const noteText = notes[userId][mode][stringifiedKey];
             if (noteText) {
                 setNoteText(noteText);
             }
@@ -74,8 +66,6 @@ const StaticNote = ({ mode, noteKey }) => {
 
         // init noteText
         initNoteText();
-
-        // debugAS();
     }, [])
 
     return (
