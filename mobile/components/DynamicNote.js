@@ -4,6 +4,7 @@ import { View, Text, TouchableHighlight, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 
+import { AuthContext } from '../navigation/AuthProvider';
 import { SettingsContext } from '../navigation/SettingsProvider';
 import i18n from '../translations/i18n';
 
@@ -17,6 +18,28 @@ const getDateStr = (date) => {
 const StaticNote = ({ mode, noteKey }) => {
     const [noteText, setNoteText] = useState(null);
     const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const { userId } = useContext(AuthContext);
+
+    async function initNoteStorage() {
+        try {
+            let notes = await AsyncStorage.getItem('notes');
+            if (!notes) { // this block will typically be run once per device
+                notes = {}
+                notes[userId] = {
+                    "dates": {
+
+                    },
+                    "articles": {
+
+                    }
+                };
+                await AsyncStorage.setItem('notes', JSON.stringify(notes));
+            }
+        }
+        catch (error) {
+            console.log('[DynamicNote] init note storage failed: ', error);
+        }
+    }
 
     async function initNoteText() {
         try {
@@ -24,8 +47,9 @@ const StaticNote = ({ mode, noteKey }) => {
 
             let notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
+            console.log(`[DynamicNote] notes: ${JSON.stringify(notes)}`)
             
-            const noteText = notes[mode][stringifiedKey];
+            const noteText = notes[userId][mode][stringifiedKey];
             if (noteText) {
                 setNoteText(noteText);
             }
@@ -42,7 +66,7 @@ const StaticNote = ({ mode, noteKey }) => {
             let notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
             
-            notes[mode][stringifiedKey] = noteText;
+            notes[userId][mode][stringifiedKey] = noteText;
             await AsyncStorage.setItem('notes', JSON.stringify(notes));
         }
         catch (error) {
@@ -51,6 +75,9 @@ const StaticNote = ({ mode, noteKey }) => {
     }
     
     useEffect(() => {
+        // init note storage if it doesn't exist
+        initNoteStorage();
+        
         // init noteText if it exists
         initNoteText();
     }, [])
