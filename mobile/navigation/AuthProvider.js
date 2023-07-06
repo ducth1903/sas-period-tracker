@@ -172,11 +172,11 @@ export const AuthProvider = ({ children }) => {
                         setUserId(resp); // response is just a string
                     } catch (e) {
                         console.log(`[AuthProvider] signup() error: ${e}`);
-                        if (e.includes("already-in-use")) {
+                        if (JSON.stringify(e).includes("already-in-use")) {
                             setAuthError(i18n.t('authentication.emailAlreadyInUse'));
                             return;
                         }
-                        if (e.includes("weak-password")) {
+                        if (JSON.stringify(e).includes("weak-password")) {
                             setAuthError(i18n.t('authentication.weakPassword'));
                             return;
                         }
