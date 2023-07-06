@@ -295,22 +295,25 @@ const PeriodCalendarScreen = ({ props }) => {
     }
 
     const handleViewableItemsChangedStartMonth = useCallback(({viewableItems, changed}) => {
+        if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
         setExportStartMonth(centerViewable);
     }, []);
 
     const handleViewableItemsChangedStartYear = useCallback(({viewableItems, changed}) => {
+        if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
         setExportStartYear(centerViewable);
     }, []);
 
     const handleViewableItemsChangedEndMonth = useCallback(({viewableItems, changed}) => {
-        if (viewableItems.length < 2) return; // for the first moments of rendering, it might error without this check
+        if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
         setExportEndMonth(centerViewable);
     }, []);
 
     const handleViewableItemsChangedEndYear = useCallback(({viewableItems, changed}) => {
+        if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id; // for the first moments of rendering, it might error without this check
         setExportEndYear(centerViewable);
     }, []);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, Text } from 'react-native';
 import FormButton from '../../components/FormButton';
 import i18n from '../../translations/i18n';
 
@@ -8,6 +8,9 @@ const LandingScreen = ({ navigation }) => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <Image source={require('../../assets/revised-logo.png')} style={styles.logo} />
+                <Text className="text-greydark text-[32px] font-bold mt-2">
+                    {i18n.t('appName')}
+                </Text>
             </View>
             <View style={styles.footer}>
                 <View className="w-1/2">
@@ -33,8 +36,8 @@ const { height } = Dimensions.get("screen");
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#6d5b57',
         justifyContent: 'center',
+        backgroundColor: '#FEFFF4'
     },
     header: {
         flex: 7,
@@ -43,11 +46,11 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 1,
-        backgroundColor: '#FFFBEE',
+        backgroundColor: '#EDEEE0',
         alignItems: 'center',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        paddingVertical: 50,
+        paddingVertical: 30,
         paddingHorizontal: 30,
         flexDirection: 'row',
         flexWrap: 'wrap',

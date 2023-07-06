@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
 import {
@@ -11,6 +11,8 @@ import {
     signInWithCredential,
 } from 'firebase/auth';
 import { MODAL_TEMPLATE } from '../models/PeriodDate';
+import { SettingsContext } from './SettingsProvider';
+import i18n from '../translations/i18n';
 
 // Loading env variables
 import {
@@ -51,6 +53,7 @@ const firebaseAuth = getAuth(firebaseApp);
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [userId, setUserId] = useState(null);
     const [authError, setAuthError] = useState("");         // https://firebase.google.com/docs/auth/admin/errors
     const [authStatus, setAuthStatus] = useState("");
@@ -151,29 +154,32 @@ export const AuthProvider = ({ children }) => {
                 signup: async (inEmail, inPassword, inFirstName, inLastName, inDob, inAvgDaysPerPeriod) => {
                     console.log("[AuthProvider] signup()")
                     try {
-                        await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
-                            .then((userCredential) => {
-                                fetch(`${API_URL}/api/user/${userCredential.user.uid}`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        "userId": userCredential.user.uid,
-                                        "email": userCredential.user.email,
-                                        "firstName": inFirstName,
-                                        "lastName": inLastName,
-                                        "dob": inDob,
-                                        "avgDaysPerPeriod": inAvgDaysPerPeriod,
-                                        "profileImageId": "default_profile_women_1.jpg",
-                                        "symptomsTrack": new MODAL_TEMPLATE().getKeys()
-                                    })
-                                })
-                                    .then(resp => resp.json())
-                                    .then(userData => {
-                                        setUserId(userData);
-                                    })
-                            });
+                        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
+                        const resp = await fetch(`${API_URL}/users/${userCredential.user.uid}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                "userId": userCredential.user.uid,
+                                "email": userCredential.user.email,
+                                "firstName": inFirstName,
+                                "lastName": inLastName,
+                                "dob": inDob,
+                                "avgDaysPerPeriod": inAvgDaysPerPeriod,
+                                "profileImageId": "default_profile_women_1.jpg",
+                                "symptomsTrack": new MODAL_TEMPLATE().getKeys()
+                            })
+                        });
+                        setUserId(resp); // response is just a string
                     } catch (e) {
-                        console.log(e);
+                        console.log(`[AuthProvider] signup() error: ${e}`);
+                        if (JSON.stringify(e).includes("already-in-use")) {
+                            setAuthError(i18n.t('authentication.emailAlreadyInUse'));
+                            return;
+                        }
+                        if (JSON.stringify(e).includes("weak-password")) {
+                            setAuthError(i18n.t('authentication.weakPassword'));
+                            return;
+                        }
                         setAuthError(e);
                     }
                 },  // ending signup
@@ -195,7 +201,7 @@ export const AuthProvider = ({ children }) => {
                     try {
                         await sendPasswordResetEmail(firebaseAuth, inEmail)
                             .then(() => {
-                                setAuthStatus("Please check your email for reset password instructions")
+                                setAuthStatus(i18n.t('authentication.pleaseCheckYourEmail'))
                             })
                     } catch (e) {
                         setAuthError(String(e));

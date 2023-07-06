@@ -95,11 +95,9 @@ const AuthStack = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    // alignItems: 'center',
+    backgroundColor: '#FEFFF4',
     justifyContent: 'center',
   },
-
   textStyle: {
     fontSize: 25,
     color: "red"
