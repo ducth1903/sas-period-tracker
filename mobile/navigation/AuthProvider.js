@@ -154,29 +154,32 @@ export const AuthProvider = ({ children }) => {
                 signup: async (inEmail, inPassword, inFirstName, inLastName, inDob, inAvgDaysPerPeriod) => {
                     console.log("[AuthProvider] signup()")
                     try {
-                        await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
-                            .then((userCredential) => {
-                                fetch(`${API_URL}/api/user/${userCredential.user.uid}`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        "userId": userCredential.user.uid,
-                                        "email": userCredential.user.email,
-                                        "firstName": inFirstName,
-                                        "lastName": inLastName,
-                                        "dob": inDob,
-                                        "avgDaysPerPeriod": inAvgDaysPerPeriod,
-                                        "profileImageId": "default_profile_women_1.jpg",
-                                        "symptomsTrack": new MODAL_TEMPLATE().getKeys()
-                                    })
-                                })
-                                    .then(resp => resp.json())
-                                    .then(userData => {
-                                        setUserId(userData);
-                                    })
-                            });
+                        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, inEmail, inPassword)
+                        const resp = await fetch(`${API_URL}/users/${userCredential.user.uid}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                "userId": userCredential.user.uid,
+                                "email": userCredential.user.email,
+                                "firstName": inFirstName,
+                                "lastName": inLastName,
+                                "dob": inDob,
+                                "avgDaysPerPeriod": inAvgDaysPerPeriod,
+                                "profileImageId": "default_profile_women_1.jpg",
+                                "symptomsTrack": new MODAL_TEMPLATE().getKeys()
+                            })
+                        });
+                        setUserId(resp); // response is just a string
                     } catch (e) {
-                        console.log(e);
+                        console.log(`[AuthProvider] signup() error: ${e}`);
+                        if (e.includes("already-in-use")) {
+                            setAuthError(i18n.t('authentication.emailAlreadyInUse'));
+                            return;
+                        }
+                        if (e.includes("weak-password")) {
+                            setAuthError(i18n.t('authentication.weakPassword'));
+                            return;
+                        }
                         setAuthError(e);
                     }
                 },  // ending signup

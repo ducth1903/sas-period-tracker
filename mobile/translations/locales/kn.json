@@ -122,8 +122,8 @@
         "resetPassword": "ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸು",
         "createAnAcount": "ಖಾತೆಯನ್ನು ತೆರೆಯಿರಿ",
         "noAccount": "ಖಾತೆ ಇಲ್ಲವೆ?",
-        "alreadyHaveAnAccountSignIn": "ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರ? ಸೈನ್ ಇನ್ ಮಾಡಿ",
-        "dontHaveAnAccountSignUp": "ಖಾತೆ ಇಲ್ಲವೇ? ಸೈನ್ ಅಪ್ ಮಾಡಿ",
+        "alreadyHaveAnAccountSignIn": "ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರ?",
+        "dontHaveAnAccountSignUp": "ಖಾತೆ ಇಲ್ಲವೇ?",
         "welcome": "ಸ್ವಾಗತ!",
         "welcomeBack": "ಸ್ವಾಗತ!",
         "signIn": "ಸೈನ್ ಇನ್ ಮಾಡಿ",
@@ -133,7 +133,15 @@
         "invalidPassword": "ಅಮಾನ್ಯ ಪಾಸ್ವರ್ಡ್",
         "unrecognizedError": "ಲಾಗಿನ್ ಮಾಡುವಾಗ ತಪ್ಪಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
         "userNotFound": "ಬಳಕೆದಾರ ಕಂಡುಬರಲಿಲ್ಲ",
-        "pleaseCheckYourEmail": "ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ಚೆಕ್ ಮಾಡಿ"
+        "pleaseCheckYourEmail": "ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇಮೇಲ್ ಚೆಕ್ ಮಾಡಿ",
+        "emailCannotBeEmpty": "ಇಮೇಲ್ ಖಾಲಿ ಇರಬಾರದು",
+        "passwordCannotBeEmpty": "ಪಾಸ್ವರ್ಡ್ ಖಾಲಿ ಇರಬಾರದು",
+        "passwordsDoNotMatch": "ಪಾಸ್ವರ್ಡುಗಳು ಹೊಂದಾಣಿಕೆ ಹೊಂದುವುದಿಲ್ಲ",
+        "weakPassword": "ಕೆಡುಮೊತ್ತ",
+        "firstNameCannotBeEmpty": "ಮೊದಲ ಹೆಸರು ಖಾಲಿ ಇರಬಾರದು",
+        "lastNameCannotBeEmpty": "ಕೊನೆಯ ಹೆಸರು ಖಾಲಿ ಇರಬಾರದು",
+        "dobCannotBeEmpty": "ಹುಟ್ಟಿದ ದಿನಾಂಕ ಖಾಲಿ ಇರಬಾರದು",
+        "emailAlreadyInUse": "ಈ ಇಮೇಲ್ ಈಗಾಗಲೇ ಬಳಕೆದಾರರಲ್ಲಿ ಇದೆ"
     },
     "survey": {
         "all": {

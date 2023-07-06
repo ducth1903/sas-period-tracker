@@ -24,16 +24,18 @@ def users_get(userid):
         return response.error_json_response(userid)
 
 @users_api.post('/users/<userid>')
-def users_post():
+def users_post(userid):
     # cipher = AES.new('secret key 123', AES.MODE_EAX, nonce=nonce)
     # plaintext = cipher.decrypt(ciphertext)
     # print(f.decrypt(received_json_data['encryptedPassword']))
 
     data = request.data.decode("utf-8")
     user_obj = json.loads(data)
+    print(f"user_obj is {user_obj}")
     current_app.logger.info("[POST] received data: ", user_obj)
     try:
         sas_aws.userTable.put_item(Item=user_obj)
+        print(f"returning {user_obj['userId']}")
         return user_obj["userId"]
     except Exception as e:
         return response.error_json_response(e)

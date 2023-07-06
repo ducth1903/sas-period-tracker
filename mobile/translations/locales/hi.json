@@ -122,8 +122,8 @@
         "resetPassword": "पासवर्ड रीसेट करें",
         "createAnAcount": "खाता बनाएँ",
         "noAccount": "खाता नहीं है?",
-        "alreadyHaveAnAccountSignIn": "क्या आपके पास पहले से खाता मौजूद है? दाख़िल करें",
-        "dontHaveAnAccountSignUp": "खाता नहीं है? नया खाता बनाएँ",
+        "alreadyHaveAnAccountSignIn": "क्या आपके पास पहले से खाता मौजूद है?",
+        "dontHaveAnAccountSignUp": "खाता नहीं है?",
         "welcome": "स्वागत!",
         "welcomeBack": "स्वागत है!",
         "signIn": "दाख़िल करें",
@@ -133,7 +133,15 @@
         "invalidPassword": "अवैध पासवर्ड",
         "unrecognizedError": "लॉगिन करते समय त्रुटि हुई। कृपया पुनः प्रयास करें।",
         "userNotFound": "उपयोगकर्ता नहीं मिला",
-        "pleaseCheckYourEmail": "कृपया पासवर्ड रीसेट निर्देशों के लिए अपना ईमेल जांचें"
+        "pleaseCheckYourEmail": "कृपया पासवर्ड रीसेट निर्देशों के लिए अपना ईमेल जांचें",
+        "emailCannotBeEmpty": "ईमेल खाली नहीं हो सकता",
+        "passwordCannotBeEmpty": "पासवर्ड खाली नहीं हो सकता",
+        "passwordsDoNotMatch": "पासवर्ड मेल नहीं खाते",
+        "weakPassword": "कमजोर पासवर्ड",
+        "firstNameCannotBeEmpty": "पहला नाम खाली नहीं हो सकता",
+        "lastNameCannotBeEmpty": "अंतिम नाम खाली नहीं हो सकता",
+        "dobCannotBeEmpty": "जन्मतिथि खाली नहीं हो सकती",
+        "emailAlreadyInUse": "ईमेल पहले से ही उपयोग में है"
     },
     "survey": {
         "all": {
