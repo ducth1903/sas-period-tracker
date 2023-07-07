@@ -2,6 +2,9 @@
 # will overwrite with their own local IP address
 mobile/Dockerfile
 
+# ignore eas.json due to sensitive info
+mobile/eas.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
