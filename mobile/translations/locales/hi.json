@@ -268,6 +268,7 @@
             "editSurveyResponses": "सर्व के जवाबों को सम्पादित करें",
             "saveChanges": "बदलाव को सम्भालें",
             "changesSavedSuccessfully": "परिवर्तनों को सफलता पूर्वक सहेजा",
+            "errorSavingChanges": "परिवर्तन सहेजने में त्रुटि हुई है",
             "accountDeletedSuccessfully": "खाता सफलतापूर्वक हटा दिया गया",
             "dataRemovedSuccessfully": "डेटा सफलतापूर्वक हटा दिया गया",
             "deleteAccount": "क्या आप वाक़ई अपना खाता मिटाना चाहते हैं?",

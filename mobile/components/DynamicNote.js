@@ -15,7 +15,7 @@ const getDateStr = (date) => {
     return `${year}-${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}`;
 }
 
-const StaticNote = ({ mode, noteKey }) => {
+const DynamicNote = ({ mode, noteKey }) => {
     const [noteText, setNoteText] = useState(null);
     const { selectedSettingsLanguage } = useContext(SettingsContext);
     const { userId } = useContext(AuthContext);
@@ -47,8 +47,19 @@ const StaticNote = ({ mode, noteKey }) => {
 
             let notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
-            console.log(`[DynamicNote] notes: ${JSON.stringify(notes)}`)
             
+            if (!notes[userId]) {
+                notes[userId] = {
+                    "dates": {
+
+                    },
+                    "articles": {
+
+                    }
+                };
+                await AsyncStorage.setItem('notes', JSON.stringify(notes));
+            }
+
             const noteText = notes[userId][mode][stringifiedKey];
             if (noteText) {
                 setNoteText(noteText);
@@ -80,7 +91,7 @@ const StaticNote = ({ mode, noteKey }) => {
         
         // init noteText if it exists
         initNoteText();
-    }, [])
+    }, [noteKey])
 
     useEffect(() => {
         if (!noteText) return;
@@ -105,4 +116,4 @@ const StaticNote = ({ mode, noteKey }) => {
     )
 }
 
-export default StaticNote;
+export default DynamicNote;

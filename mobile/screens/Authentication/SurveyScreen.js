@@ -265,7 +265,14 @@ const SurveyScreen = () => {
                         {i18n.t('survey.whenStartFirstPeriod.whenDidYouStartYourFirstPeriod')}
                     </Text>
                     <View className={`absolute bottom-1 right-0 ${firstPeriodModalVisible?"bg-gray p-1 rounded-full":""}`} >
-                        <EditIcon onPress={()=>setFirstPeriodModalVisible(!firstPeriodModalVisible)}/>
+                        <Pressable
+                            onPress={() => {
+                                setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                            }}
+                            hitSlop={25}
+                        >
+                            <EditIcon/>
+                        </Pressable>
                     </View>
                 </View>
                 <FormInput
@@ -337,7 +344,14 @@ const SurveyScreen = () => {
                         {i18n.t('survey.whenMostRecentPeriod.whenWasYourMostRecentPeriod')}
                     </Text>
                     <View className={`absolute bottom-1 right-0 ${recentPeriodModalVisible?"bg-gray p-1 rounded-full":""}`} >
-                        <EditIcon onPress={()=>setRecentPeriodModalVisible(!recentPeriodModalVisible)}/>
+                        <Pressable
+                            onPress={() => {
+                                setRecentPeriodModalVisible(!recentPeriodModalVisible);
+                            }}
+                            hitSlop={25}
+                        >
+                            <EditIcon/>
+                        </Pressable>
                     </View>
                 </View>
                 <Text className="text-greydark text-[18px] font-bold my-2">

@@ -58,8 +58,8 @@ export default SettingsHome = ({navigation}) => {
                 <Text className="py-5 text-xl font-semibold">{userObj.firstName}</Text>
                 <TouchableOpacity onPress={()=>navigation.navigate("Account")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.accountInfo.title')}</Text></TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Language")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.languageAudio.title')}</Text></TouchableOpacity>
-                <TouchableOpacity onPress={()=>navigation.navigate("Notification")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.notificationPreferences.title')}</Text></TouchableOpacity>
-                <TouchableOpacity onPress={()=>navigation.navigate("SecurityPage")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.security.title')}</Text></TouchableOpacity>
+                {/* <TouchableOpacity onPress={()=>navigation.navigate("Notification")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.notificationPreferences.title')}</Text></TouchableOpacity> */}
+                {/* <TouchableOpacity onPress={()=>navigation.navigate("SecurityPage")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.security.title')}</Text></TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Survey")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.accountInfo.survey.title')}</Text></TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Contributors")} className="rounded-full bg-dullwhite w-11/12 p-6 my-2"><Text className="text-center">{i18n.t('settings.contributors.title')}</Text></TouchableOpacity>
                 <TouchableOpacity className="rounded-full border-2 border-salmon w-11/12 p-6 my-2 " 

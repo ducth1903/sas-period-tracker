@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  Pressable,
 } from "react-native";
 import Modal from 'react-native-modal';
 
@@ -188,7 +189,14 @@ const SignupScreen = ({ navigation }) => {
                 {i18n.t('survey.dateOfBirth.whatIsYourDateOfBirth')}
               </Text>
               <View className={`absolute bottom-1 right-0 ${dobModalVisible?"bg-gray p-1 rounded-full":""}`} >
-                <EditIcon onPress={()=>setDobModalVisible(!dobModalVisible)}/>
+                <Pressable
+                  onPress={() => {
+                    setDobModalVisible(!dobModalVisible);
+                  }}
+                  hitSlop={25}
+                >
+                  <EditIcon/>
+                </Pressable>
               </View>
             </View>
 

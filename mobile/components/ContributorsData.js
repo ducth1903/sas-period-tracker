@@ -90,6 +90,10 @@ export const contributors = [
             name:"Ashwini Shetty",
             role:"Translator",
         },
+        {
+            name:"Aryan Nair",
+            role:"Translator"
+        }
         ]
     },
     {

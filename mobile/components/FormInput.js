@@ -4,7 +4,7 @@ import { TextInputMask } from 'react-native-masked-text';
 import { Feather } from '@expo/vector-icons';
 
 // https://icons.expo.fyi/
-const FormInput = ({ labelValue, placeholderText, iconType, color, editable=true, isRequired=false, isPassword=false, isDate=false, ...restProps }) => {
+const FormInput = ({ labelValue, placeholderText, iconType, color, secureTextEntry=false, editable=true, isRequired=false, isPassword=false, isDate=false, ...restProps }) => {
     return (
         <View>
             {/* <Text style={styles.textStyle}>{labelValue}</Text> */}
@@ -15,6 +15,7 @@ const FormInput = ({ labelValue, placeholderText, iconType, color, editable=true
                     type={'datetime'}
                     options={ {format: 'YYYY/MM/DD'} }
                     placeholder={isRequired ? placeholderText+"*" : placeholderText}
+                    secureTextEntry={true}
                     {...restProps} />
                 :
                 <TextInput 
@@ -23,6 +24,7 @@ const FormInput = ({ labelValue, placeholderText, iconType, color, editable=true
                     value={labelValue} 
                     placeholder={isRequired ? placeholderText : placeholderText} 
                     placeholderTextColor="#272727CC"
+                    secureTextEntry={secureTextEntry}
                     {...restProps} />
                 }
                 { isPassword ? 
