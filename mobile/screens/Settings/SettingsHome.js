@@ -28,7 +28,7 @@ export default SettingsHome = ({navigation}) => {
             console.log("[HomeScreen] fetchUserData() error:", error);
             Toast.show({
                 type: 'error',
-                text1: 'Failed to fetch from server',
+                text1: 'Failed to retrieve user data',
                 text2: error
             });
         }

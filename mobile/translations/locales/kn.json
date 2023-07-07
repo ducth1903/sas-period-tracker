@@ -105,6 +105,13 @@
         "clumpy": "ವಿಸರ್ಜನೆಯು ಗುಂಪ ಗುಂಪಾಗಿರುತ್ತದೆ",
         "sticky": "ವಿಸರ್ಜನೆಯು ಅಂಟಂಟಾಗಿರುತ್ತದೆ"
     },
+    "errors": {
+        "failedToRetrieveUserData": "ಬಳಕೆದಾರ ಡೇಟಾವನ್ನು ಪಡೆಯಲು ವಿಫಲವಾಯಿತು",
+        "failedToUploadUserData": "ಬಳಕೆದಾರ ಡೇಟಾವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಯಿತು",
+        "emailFailedToSend": "ಇಮೇಲ್ ಕಳುಹಿಸಲು ವಿಫಲವಾಯಿತು",
+        "loadedMoreMonths": "ಇನ್ನೂ ಹೆಚ್ಚು ತಿಂಗಳುಗಳನ್ನು ಲೋಡ್ ಮಾಡಿದೆ!",
+        "refreshing": "ರೀಫ್ರೆಶ್ ಆಗುತ್ತಿದೆ..."
+    },
     "onboarding": {
         "stayHealthyWithYourCycle": "ನಿಮ್ಮ ಮಾಸಿಕ ವೃತ್ತಿಯೊಂದಿಗೆ ಆರೋಗ್ಯವಾಗಿರಿ",
         "reminderOfUpcomingPeriod": "ಮುಂದಿನ ಮಾಸಿಕ ಕಾಲದ ನೆನಪು",

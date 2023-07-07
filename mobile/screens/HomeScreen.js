@@ -58,7 +58,7 @@ const HomeScreen = () => {
         { label: i18n.t('moods.sad'), DefaultIcon: SVG.MoodSadDefault, SelectedIcon: SVG.MoodSadSelected, key: 'sad', },
         { label: i18n.t('moods.anxious'), DefaultIcon: SVG.MoodAnxiousDefault, SelectedIcon: SVG.MoodAnxiousSelected, key: 'anxious', },
         { label: i18n.t('moods.angry'), DefaultIcon: SVG.MoodAngryDefault, SelectedIcon: SVG.MoodAngrySelected, key: 'angry', },
-        { label: i18n.t('moods.customize'), DefaultIcon: SVG.MoodCustomizeDefault, SelectedIcon: SVG.MoodCustomizeSelected, key: 'customize', },
+        // { label: i18n.t('moods.customize'), DefaultIcon: SVG.MoodCustomizeDefault, SelectedIcon: SVG.MoodCustomizeSelected, key: 'customize', },
     ];
     
     const SYMPTOMS = [
@@ -120,7 +120,7 @@ const HomeScreen = () => {
         catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to fetch from server',
+                text1: i18n.t('errors.failedToRetrieveUserData'),
                 text2: error
             });
         }
@@ -145,7 +145,7 @@ const HomeScreen = () => {
         catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to upload data to server',
+                text1: i18n.t('errors.failedToUploadUserData'),
                 text2: error
             });
         }
@@ -453,7 +453,7 @@ const HomeScreen = () => {
 
                 <View className="pl-7">
                     <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.bloodFlow')}</Text>
-                    <ScrollView horizontal className="flex flex-row gap-4 mb-3.5">
+                    <ScrollView horizontal className="flex flex-row gap-4 mb-3.5 pb-3">
                         {FLOWS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
                             <View key={key} className="justify-center items-center">
                                 {flowIconEnable[key] ? (
@@ -468,7 +468,7 @@ const HomeScreen = () => {
                     </ScrollView>
 
                     <Text className="font-semibold text-lg my-1.5">{i18n.t('home.yourMood')}</Text>
-                    <ScrollView horizontal className="flex flex-row gap-4 mb-3.5">
+                    <ScrollView horizontal className="flex flex-row gap-4 mb-3.5 pb-3">
                         {MOODS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
                             <View key={key} className="justify-center items-center">
                                 {moodIconEnable[key] ? (
@@ -483,7 +483,7 @@ const HomeScreen = () => {
                     </ScrollView>
 
                     <Text className="font-semibold text-lg my-1.5">{i18n.t('home.yourSymptoms')}</Text>
-                    <ScrollView horizontal={true} className="flex flex-row gap-4 mb-3.5">
+                    <ScrollView horizontal={true} className="flex flex-row gap-4 mb-3.5 pb-3">
                         {SYMPTOMS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
                             <View key={key} className="justify-center items-center">
                                 {symptomIconEnable[key] ? (
@@ -498,38 +498,12 @@ const HomeScreen = () => {
                     </ScrollView>
                 </View>
 
-                <View className="mt-3">
+                <View className="mt-3 mb-6">
                     <DynamicNote mode="dates" noteKey={selectedDate}/>
-                </View>
-
-                {/* TODO: Remove */}
-                <View className="p-7">
-                    <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.forYou')}</Text>
-                    <ScrollView horizontal={true} className="flex flex-row gap-6 mb-3.5">
-                        <Image className="object-cover w-52 h-32 bg-teal rounded-xl" source={require("../assets/the_first_period.png")} />
-                    </ScrollView>
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 };
-
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    scrollViewStyle: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    fab: {
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0
-    },
-});
 
 export default HomeScreen;
