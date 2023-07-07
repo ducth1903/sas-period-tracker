@@ -35,8 +35,8 @@ def users_post(userid):
     current_app.logger.info("[POST] received data: ", user_obj)
     try:
         sas_aws.userTable.put_item(Item=user_obj)
-        print(f"returning {user_obj['userId']}")
-        return user_obj["userId"]
+        print(f"put object {user_obj} into userTable")
+        return user_obj
     except Exception as e:
         return response.error_json_response(e)
 
@@ -44,15 +44,17 @@ def users_post(userid):
 def users_put(userid):
     data = request.data.decode("utf-8")
     received_json_data = json.loads(data)
-    current_app.logger.info("[PUT] received data: ", received_json_data)
+    print(f"received_json_data: {received_json_data}")
 
     data2update = dict()
     for k, v in received_json_data.items():
+        if (k == "userId"): continue
         data2update[k] = {"Value": v}
     try:
         sas_aws.userTable.update_item(Key={"userId": userid}, AttributeUpdates=data2update)
         return response.ok_json_response()
     except Exception as e:
+        print(f"error! {e}")
         return response.error_json_response(e)
 
 @users_api.delete('/users/<userid>')

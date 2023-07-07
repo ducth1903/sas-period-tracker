@@ -57,6 +57,9 @@ export const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const [authError, setAuthError] = useState("");         // https://firebase.google.com/docs/auth/admin/errors
     const [authStatus, setAuthStatus] = useState("");
+    const [hasDoneSurvey, setHasDoneSurvey] = useState(true);
+    const [userData, setUserData] = useState({});
+    const [firstName, setFirstName] = useState("");
 
     const setToken = async (user) => {
         try {
@@ -91,6 +94,8 @@ export const AuthProvider = ({ children }) => {
                 userId, setUserId,                  // to be able to set this user from any other file
                 authError, setAuthError,
                 authStatus, setAuthStatus,
+                hasDoneSurvey, setHasDoneSurvey,
+                firstName, setFirstName,
                 getToken,
                 login: async (inEmail, inPassword) => {
                     console.log("[AuthProvider] login()")
@@ -166,10 +171,14 @@ export const AuthProvider = ({ children }) => {
                                 "dob": inDob,
                                 "avgDaysPerPeriod": inAvgDaysPerPeriod,
                                 "profileImageId": "default_profile_women_1.jpg",
-                                "symptomsTrack": new MODAL_TEMPLATE().getKeys()
+                                "symptomsTrack": new MODAL_TEMPLATE().getKeys(),
+                                "hasDoneSurvey": false,
+                                "surveyAnswers": {}
                             })
                         });
-                        setUserId(resp); // response is just a string
+                        setFirstName(inFirstName);
+                        const obj = await resp.json();
+                        setUserId(obj.userId);
                     } catch (e) {
                         console.log(`[AuthProvider] signup() error: ${e}`);
                         if (JSON.stringify(e).includes("already-in-use")) {
