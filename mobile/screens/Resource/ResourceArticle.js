@@ -130,7 +130,7 @@ const ResourceArticle = ({ route, navigation }) => {
                                 <Video
                                     ref={video}
                                     source={{uri: url}}
-                                    style={{ width: '100%', aspectRatio: 16/9 }}
+                                    style={{ width: '100%', aspectRatio: 16/9, marginVertical: 20 }}
                                     useNativeControls
                                     resizeMode={ResizeMode.CONTAIN}
                                     isLooping

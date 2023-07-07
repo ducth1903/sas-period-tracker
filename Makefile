@@ -32,6 +32,12 @@ deploy_dev_mobile_android:
 deploy_dev_mobile_ios:
 	cd mobile && eas build --platform ios --profile preview
 
+deploy_release_mobile_android:
+	cd mobile && eas build --platform android --profile release
+
+deploy_release_mobile_ios:
+	cd mobile && eas build --platform ios --profile release
+
 deploy_server_docker:
 	cd server && docker build --platform=linux/amd64 -t sas-server .
 
