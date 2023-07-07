@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StyleSheet, View, Image, Dimensions, Text } from 'react-native';
+
+import { AuthContext } from '../../navigation/AuthProvider';
+import { SettingsContext } from '../../navigation/SettingsProvider';
 import FormButton from '../../components/FormButton';
 import i18n from '../../translations/i18n';
 
+import getEnvVars from '../../environment';
+const { API_URL } = getEnvVars();
+
 const LandingScreen = ({ navigation }) => {
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const { userId, setHasDoneSurvey } = useContext(AuthContext);
+    
+    async function checkHasDoneSurvey() {
+        try {
+            let response = await fetch(`${API_URL}/users/${userId}`);
+            let json = await response.json();
+            console.log(`[LandingScreen] checkHasDoneSurvey: ${JSON.stringify(json)}`);
+            setHasDoneSurvey(json.hasDoneSurvey);
+        }
+        catch (error) {
+            setHasDoneSurvey(false);
+            console.log(`[LandingScreen] checkHasDoneSurvey error: ${error}`);
+        }
+    }
+    
+    useEffect(() => {
+        checkHasDoneSurvey();
+    }, []);
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>

@@ -11,7 +11,6 @@ import {
     TouchableOpacity,
     ImageBackground
 } from 'react-native';
-import Markdown from 'react-native-simple-markdown';
 // import RESOURCE_TEMPLATE from '../../models/ResourceModel';
 // import { AuthContext } from '../../navigation/AuthProvider'; 
 // import { MARKDOWN_S3_URL } from '@env';

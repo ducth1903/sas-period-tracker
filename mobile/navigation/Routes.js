@@ -6,12 +6,30 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { AuthContext } from './AuthProvider';
 import AuthStack from './AuthStack';
 import AppStack from './AppStack';
+import SurveyStack from './SurveyStack';
+
+// Loading env variables
+import getEnvVars from '../environment';
+const { API_URL } = getEnvVars();
 
 const Routes = () => {
     const auth = getAuth();
-    const { userId, setUserId } = useContext(AuthContext);
+    const { userId, setUserId, hasDoneSurvey, setHasDoneSurvey } = useContext(AuthContext);
     const [initializing, setInitializing] = useState(true);
 
+    async function checkHasDoneSurvey() {
+        try {
+            let response = await fetch(`${API_URL}/users/${userId}`);
+            let json = await response.json();
+            console.log(`[Routes] checkHasDoneSurvey: ${JSON.stringify(json)}`);
+            setHasDoneSurvey(json.hasDoneSurvey);
+        }
+        catch (error) {
+            setHasDoneSurvey(false);
+            console.log(`[Routes] checkHasDoneSurvey error: ${error}`);
+        }
+    }
+    
     // Authentication State Observer
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -19,6 +37,7 @@ const Routes = () => {
                 // User is signed in, see docs for a list of available properties
                 // https://firebase.google.com/docs/reference/js/firebase.User
                 setUserId(user.uid);
+                checkHasDoneSurvey();
                 setInitializing(false);
             } else {
                 // No user is signed in.
@@ -38,7 +57,7 @@ const Routes = () => {
                 {/* Must explicitly handle isMounted in AuthStack.useEffect()
                 Initially, userId is null and AuthStack useEffect is activated
                 but components did not mount */}
-                {userId ? <AppStack /> : <AuthStack />}
+                {userId ? (hasDoneSurvey ? <AppStack /> : <SurveyStack/>) : <AuthStack />}
             </NavigationContainer>
         )
     }

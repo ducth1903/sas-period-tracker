@@ -17,8 +17,11 @@ import LanguagePicker from "../../components/LanguagePicker";
 import ScrollPicker from "../../components/ScrollPicker";
 import i18n from "../../translations/i18n";
 
+import getEnvVars from "../../environment";
+const { API_URL } = getEnvVars();
+
 const SignupScreen = ({ navigation }) => {
-  const { signup, authError, setAuthError } = useContext(AuthContext);
+  const { userId, signup, authError, setAuthError, setFirstName, setHasDoneSurvey } = useContext(AuthContext);
   const { selectedSettingsLanguage } = useContext(SettingsContext);
 
   const [birthYear, setBirthYear] = useState(new Date().getFullYear());
@@ -100,6 +103,8 @@ const SignupScreen = ({ navigation }) => {
       return;
     }
 
+    setFirstName(inUserData.firstName);
+    setHasDoneSurvey(false);
     signup(
       inUserData.email,
       inUserData.password,
@@ -110,7 +115,21 @@ const SignupScreen = ({ navigation }) => {
     ).catch(error => {console.log(`[SignupScreen] signup error: ${error}`)});
   };
 
+  async function checkHasDoneSurvey() {
+    try {
+        let response = await fetch(`${API_URL}/users/${userId}`);
+        let json = await response.json();
+        console.log(`[LoginScreen] checkHasDoneSurvey: ${JSON.stringify(json)}`);
+        setHasDoneSurvey(json.hasDoneSurvey);
+    }
+    catch (error) {
+        setHasDoneSurvey(false);
+        console.log(`[LoginScreen] checkHasDoneSurvey error: ${error}`);
+    }
+}
+
   useEffect(() => {
+    checkHasDoneSurvey();
     setAuthError("");
   }, []);
 
