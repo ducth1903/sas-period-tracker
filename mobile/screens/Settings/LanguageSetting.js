@@ -15,7 +15,7 @@ export default LanguageSetting = () => {
                     <Text className="font-semibold text-xl mb-4">{i18n.t('settings.languageAudio.language')}</Text>
                     <LanguagePicker className="z-50"/>
                 </View>
-                <View className="flex my-4 pt-1 z-0">
+                {/* <View className="flex my-4 pt-1 z-0">
                     <Text className="font-semibold text-xl mb-4">{i18n.t('settings.languageAudio.audio')}</Text>
                     <View className="w-full">
                         <View className={`rounded-full absolute p-4 flex w-7/12 left-0 ${isAudioOn?"bg-teal z-10":"bg-dullwhite z-0"}`}>
@@ -29,7 +29,7 @@ export default LanguageSetting = () => {
                                 onPress={()=>setIsAudioOn(!isAudioOn)}>{i18n.t('settings.languageAudio.on')}</Text>
                         </View>
                     </View>
-                </View>
+                </View> */}
             </View>
         </SafeAreaView>);
 }
