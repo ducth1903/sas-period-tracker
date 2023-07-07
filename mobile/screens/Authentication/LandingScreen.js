@@ -17,7 +17,6 @@ const LandingScreen = ({ navigation }) => {
         try {
             let response = await fetch(`${API_URL}/users/${userId}`);
             let json = await response.json();
-            console.log(`[LandingScreen] checkHasDoneSurvey: ${JSON.stringify(json)}`);
             setHasDoneSurvey(json.hasDoneSurvey);
         }
         catch (error) {

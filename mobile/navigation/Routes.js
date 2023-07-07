@@ -21,7 +21,6 @@ const Routes = () => {
         try {
             let response = await fetch(`${API_URL}/users/${userId}`);
             let json = await response.json();
-            console.log(`[Routes] checkHasDoneSurvey: ${JSON.stringify(json)}`);
             setHasDoneSurvey(json.hasDoneSurvey);
         }
         catch (error) {
