@@ -323,6 +323,7 @@ const HomeScreen = () => {
     }, [flowIconEnable, moodIconEnable, symptomIconEnable]);
     
     useEffect(() => {
+        console.log('date changed')
         onRefresh();
     }, [selectedDate])
 
