@@ -105,6 +105,13 @@
         "clumpy": "टुकडेदार स्त्राव",
         "sticky": "चिपचिपा स्त्राव"
     },
+    "errors": {
+        "failedToRetrieveUserData": "उपयोगकर्ता डेटा प्राप्त करने में विफल",
+        "failedToUploadUserData": "उपयोगकर्ता डेटा अपलोड करने में विफल",
+        "emailFailedToSend": "ईमेल भेजने में विफल",
+        "loadedMoreMonths": "और महीनों को लोड किया गया!",
+        "refreshing": "ताजगी कर रहा है..."
+    },
     "onboarding": {
         "stayHealthyWithYourCycle": "अपने मासिक धर्म के साथ स्वस्थ रहें",
         "reminderOfUpcomingPeriod": "आगामी मासिक धर्म की अग्रिम अवगति",

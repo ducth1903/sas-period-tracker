@@ -172,6 +172,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 data={calendarMonths}
+                className="mb-28"
                 renderItem={({item}) => {
                     // item.date: Date object
                     // item.key: string
@@ -192,7 +193,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 onEndReached={() => {
                     Toast.show({
                         type: 'success',
-                        text1: 'Loaded more months!'
+                        text1: i18n.t('errors.loadedMoreMonths')
                     })
                     setCalendarMonths([...calendarMonths, ...getCalendarMonthsForYear(latestCalendarDataYear - 1)])
                     setLatestCalendarDataYear(latestCalendarDataYear - 1);
@@ -213,7 +214,7 @@ const PeriodCalendarScreen = ({ props }) => {
         })
             
         return (
-            <View className="flex flex-col">
+            <View className="flex flex-col mb-28">
                 <View className="flex-row justify-center">
                     {
                         weekDaysEnglish.map((day) => 
@@ -249,7 +250,7 @@ const PeriodCalendarScreen = ({ props }) => {
         const data = getDayData(date);
         
         return (
-            <View className="flex-col">
+            <View className="flex-col mb-28">
                 <View>
                     <DailyGrid
                         data={data}
@@ -409,7 +410,7 @@ const PeriodCalendarScreen = ({ props }) => {
         catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Failed to fetch from server',
+                text1: i18n.t('errors.failedToRetrieveUserData'),
                 text2: error
             });
             console.log(`[PeriodCalendarScreen] fetchUserData() error:`, error);
@@ -426,7 +427,7 @@ const PeriodCalendarScreen = ({ props }) => {
         setRefreshing(true);
         Toast.show({
             type: 'info',
-            text1: 'Refreshing...',
+            text1: i18n.t('errors.refreshing'),
         });
         fetchUserData();
         setRefreshing(false);
@@ -938,7 +939,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                                             Toast.show({
                                                                 type: "error",
                                                                 position: "top",
-                                                                text1: "Email failed to send",
+                                                                text1: i18n.t('errors.emailFailedToSend'),
                                                                 visibilityTime: 3000,
                                                                 autoHide: true,
                                                             });

@@ -47,7 +47,7 @@ const AccountInfo = () => {
             console.log("[AccountInfo] fetchUserData() error:", error);
             Toast.show({
                 type: 'error',
-                text1: 'Failed to fetch from server',
+                text1: i18n.t('errors.failedToRetrieveUserData'),
                 text2: error
             });
         }
@@ -73,7 +73,7 @@ const AccountInfo = () => {
             console.log("[AccountInfo] onDataChange() error:", error);
             Toast.show({
                 type: 'error',
-                text1: 'Failed to update data',
+                text1: i18n.t('errors.failedToUploadUserData'),
                 text2: error
             });
         }
@@ -225,7 +225,7 @@ const AccountInfo = () => {
                                 console.log("[AccountInfo] onDataChange() error:", error);
                                 Toast.show({
                                     type: 'error',
-                                    text1: 'Failed to save changes',
+                                    text1: i18n.t('settings.accountInfo.errorSavingChanges'),
                                     text2: error
                                 });
                             });

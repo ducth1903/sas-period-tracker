@@ -105,6 +105,12 @@
         "clumpy": "Discharge: Clumpy",
         "sticky": "Discharge: Sticky"
     },
+    "errors": {
+        "failedToRetrieveUserData": "Failed to retrieve user data",
+        "failedToUploadUserData": "Failed to upload user data",
+        "emailFailedToSend": "Email failed to send",
+        "loadedMoreMonths": "Loaded more months!"
+    },
     "onboarding": {
         "stayHealthyWithYourCycle": "Stay healthy with your cycle",
         "reminderOfUpcomingPeriod": "Reminder of upcoming period",
