@@ -4,10 +4,10 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Platform,
   Image,
   Dimensions,
 } from "react-native";
+import Modal from 'react-native-modal';
 
 import { AuthContext } from "../../navigation/AuthProvider";
 import { SettingsContext } from "../../navigation/SettingsProvider";
@@ -16,6 +16,7 @@ import FormButton from "../../components/FormButton";
 import LanguagePicker from "../../components/LanguagePicker";
 import ScrollPicker from "../../components/ScrollPicker";
 import i18n from "../../translations/i18n";
+import EditIcon from '../../assets/edit_icon.svg'
 
 import getEnvVars from "../../environment";
 const { API_URL } = getEnvVars();
@@ -25,7 +26,9 @@ const SignupScreen = ({ navigation }) => {
   const { selectedSettingsLanguage } = useContext(SettingsContext);
 
   const [birthYear, setBirthYear] = useState(new Date().getFullYear());
-  const [birthMonth, setBirthMonth] = useState(1);
+  const [birthMonth, setBirthMonth] = useState(new Date().getMonth() + 1);
+
+  const [dobModalVisible, setDobModalVisible] = useState(false);
 
   const scrollPickerItemHeight = 46;
 
@@ -59,13 +62,13 @@ const SignupScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    setInUserData({...inUserData, dob: `${birthYear}/${birthMonth}`});
+    setInUserData({...inUserData, dob: `${birthMonth < 10 ? '0' : ''}${birthMonth}/${birthYear}`});
   }, [birthYear, birthMonth]);
 
   const handleViewableItemsChangedMonth = useCallback(({viewableItems, changed}) => {
     if (!viewableItems[1]) return;
     let centerViewable = viewableItems[1].item.id;
-    setBirthMonth(centerViewable);
+    setBirthMonth(centerViewable + 1);
   }, []);
 
   const handleViewableItemsChangedYear = useCallback(({viewableItems, changed}) => {
@@ -181,21 +184,54 @@ const SignupScreen = ({ navigation }) => {
               onFocus={()=>{ setShowDateTimePicker(false) }}
             />
 
-            <Text style={styles.dobText}>
-              {i18n.t('survey.dateOfBirth.whatIsYourDateOfBirth')}
-            </Text>
-            <View className="flex flex-row px-8">
-              <ScrollPicker
-                  data={[...Array(12).keys()].map((monthIndex) => {
-                      return {title: new Date(2021, monthIndex, 1).toLocaleString(selectedSettingsLanguage, {month: 'short'}), id: monthIndex}
-                  })}
-                  initialScrollIndex={(new Date()).getMonth()}
-                  onViewableItemsChanged={handleViewableItemsChangedMonth}
-                  itemHeight={scrollPickerItemHeight}
-                  keyPrefix="month"
-                  roundLeft={true}
-              />
-              <ScrollPicker
+            <View className="flex-row">
+              <Text style={styles.dobText}>
+                {i18n.t('survey.dateOfBirth.whatIsYourDateOfBirth')}
+              </Text>
+              <View className={`absolute bottom-1 right-0 ${dobModalVisible?"bg-gray p-1 rounded-full":""}`} >
+                <EditIcon onPress={()=>setDobModalVisible(!dobModalVisible)}/>
+              </View>
+            </View>
+
+            <FormInput
+              editable={false}
+              labelValue="DOB"
+              placeholderText={`${birthMonth < 10 ? '0' : ''}${birthMonth}/${birthYear}`}
+              isRequired={true}
+              iconType="user"
+              color="black"
+              keyboardType="email-address"
+              value={inUserData.dob}
+              onChangeText={(dob) => {}} // logic handled in ScrollPickers
+              onFocus={() => {}}
+            />
+            
+            <Modal
+              animationIn={"slideInUp"}
+              animationOut={"slideOutUp"}
+              animationTiming={500}
+              backdropOpacity={0.5}
+              isVisible={dobModalVisible}
+              onBackdropPress={() => {
+                  setDobModalVisible(!dobModalVisible);
+              }}
+              onRequestClose={() => {
+                setDobModalVisible(!dobModalVisible);
+              }}
+              className="mx-2"
+            >
+              <View className="flex flex-row">
+                <ScrollPicker
+                    data={[...Array(12).keys()].map((monthIndex) => {
+                        return {title: new Date(2021, monthIndex, 1).toLocaleString(selectedSettingsLanguage, {month: 'short'}), id: monthIndex}
+                    })}
+                    initialScrollIndex={(new Date()).getMonth()}
+                    onViewableItemsChanged={handleViewableItemsChangedMonth}
+                    itemHeight={scrollPickerItemHeight}
+                    keyPrefix="month"
+                    roundLeft={true}
+                />
+                <ScrollPicker
                   data={[...Array((new Date()).getFullYear()).keys()].map((yearIndex) => {
                       return {title: yearIndex + 1, id: yearIndex}
                   })}
@@ -204,8 +240,10 @@ const SignupScreen = ({ navigation }) => {
                   itemHeight={scrollPickerItemHeight}
                   keyPrefix="year"
                   roundRight={true}
-              />
-            </View>
+                />
+              </View>
+            </Modal>
+            
 
             <FormInput
               labelValue="Email"
