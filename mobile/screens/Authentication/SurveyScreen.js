@@ -14,8 +14,10 @@ import { AuthContext } from '../../navigation/AuthProvider';
 import { SettingsContext } from '../../navigation/SettingsProvider';
 import i18n from '../../translations/i18n';
 import ScrollPicker from '../../components/ScrollPicker';
+import FormInput from '../../components/FormInput';
 
 import XIcon from '../../assets/icons/x.svg';
+import EditIcon from '../../assets/edit_icon.svg';
 
 // Loading env variables
 import getEnvVars from '../../environment';
@@ -31,7 +33,6 @@ const SurveyScreen = () => {
         try {
             let response = await fetch(`${API_URL}/users/${userId}`);
             let json = await response.json();
-            console.log(`[LandingScreen] checkHasDoneSurvey: ${JSON.stringify(json)}`);
             setHasDoneSurvey(json.hasDoneSurvey);
         }
         catch (error) {
@@ -56,22 +57,21 @@ const SurveyScreen = () => {
         { label: i18n.t('survey.all.no'), value: "no" },
         { label: i18n.t('survey.gottenFirstPeriod.imNotSure'), value: "dontrememberornotrecorded" },
     ]);
-    
-    const [firstPeriodScrollPickerVisible, setFirstPeriodScrollPickerVisible] = useState(true);
+
+    const [whatsAPeriodModalVisible, setWhatsAPeriodModalVisible] = useState(false);
+    const [firstPeriodModalVisible, setFirstPeriodModalVisible] = useState(false);
     const [firstPeriodStartYear, setFirstPeriodStartYear] = useState(new Date().getFullYear());
     const [firstPeriodStartMonth, setFirstPeriodStartMonth] = useState(new Date().getMonth() + 1);
     
-    const [firstPeriodModalVisible, setFirstPeriodModalVisible] = useState(false);
-
-    const [recentPeriodScrollPickersVisible, setRecentPeriodScrollPickersVisible] = useState(true);
+    const [recentPeriodModalVisible, setRecentPeriodModalVisible] = useState(false);
     const [recentPeriodStartDate, setRecentPeriodStartDate] = useState({
         day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
+        month: new Date().getMonth(),
         year: new Date().getFullYear(),
     });
     const [recentPeriodEndDate, setRecentPeriodEndDate] = useState({
         day: new Date().getDate(),
-        month: new Date().getMonth() + 1,
+        month: new Date().getMonth(),
         year: new Date().getFullYear(),
     });
 
@@ -88,66 +88,74 @@ const SurveyScreen = () => {
     const handleYearChangedFirstPeriod = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
-        setFirstPeriodStartYear(centerViewable);
+        console.log(`setting firstPeriodStartYear to ${centerViewable + 1}`)
+        setFirstPeriodStartYear(centerViewable + 1);
     }, []);
 
     const handleMonthChangedFirstPeriod = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
-        setFirstPeriodStartMonth(centerViewable);
+        console.log(`setting firstPeriodStartMonth to ${centerViewable + 1}`)
+        setFirstPeriodStartMonth(centerViewable + 1);
     }, []);
 
     const handleDayChangedRecentPeriodStart = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodStartDate.day to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            day: centerViewable,
+            day: centerViewable + 1,
         }));
     }, []);
 
     const handleMonthChangedRecentPeriodStart = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodStartDate.month to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            month: centerViewable,
+            month: centerViewable + 1,
         }));
     }, []);
 
     const handleYearChangedRecentPeriodStart = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodStartDate.year to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            year: centerViewable,
+            year: centerViewable + 1,
         }));
     }, []);
 
     const handleDayChangedRecentPeriodEnd = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodEndDate.day to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            day: centerViewable,
+            day: centerViewable + 1,
         }));
     }, []);
 
     const handleMonthChangedRecentPeriodEnd = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodEndDate.month to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            month: centerViewable,
+            month: centerViewable + 1,
         }));
     }, []);
 
     const handleYearChangedRecentPeriodEnd = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
+        console.log(`setting recentPeriodEndDate.year to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            year: centerViewable,
+            year: centerViewable + 1,
         }));
     }, []);
 
@@ -184,35 +192,24 @@ const SurveyScreen = () => {
     }, [firstPeriodDropdownValue])
     
     useEffect(() => {
-        if (firstPeriodScrollPickerVisible) {
-            const monthNumString = firstPeriodStartMonth + 1 < 10 ? `0${firstPeriodStartMonth + 1}` : `${firstPeriodStartMonth + 1}`;
-            const yearMonthString = `${firstPeriodStartYear}-${monthNumString}`;
-            setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: yearMonthString }));
-        }
-        else {
-            setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: "dontrememberornotrecorded" }));
-        }
+        const monthNumString = firstPeriodStartMonth < 10 ? `0${firstPeriodStartMonth}` : `${firstPeriodStartMonth}`;
+        const yearMonthString = `${firstPeriodStartYear}-${monthNumString}`;
+        setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: yearMonthString }));
     }, [firstPeriodStartMonth, firstPeriodStartYear])
 
     useEffect(() => {
         const startDay = recentPeriodStartDate.day;
-        const startMonth = recentPeriodStartDate.month + 1;
+        const startMonth = recentPeriodStartDate.month;
         const startYear = recentPeriodStartDate.year;
         const endDay = recentPeriodEndDate.day;
-        const endMonth = recentPeriodEndDate.month + 1;
+        const endMonth = recentPeriodEndDate.month;
         const endYear = recentPeriodEndDate.year;
 
-        if (recentPeriodScrollPickersVisible) {
-            if (startDay && startMonth && startYear && endDay && endMonth && endYear) {
-                const startDateString = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-${startDay < 10 ? `0${startDay}` : startDay}`;
-                const endDateString = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-${endDay < 10 ? `0${endDay}` : endDay}`;
-                setAnswers((prevState) => ({ ...prevState, recentPeriodYearMonthDayStart: startDateString, recentPeriodYearMonthDayEnd: endDateString }));
-            }
+        if (startDay && startMonth && startYear && endDay && endMonth && endYear) {
+            const startDateString = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-${startDay < 10 ? `0${startDay}` : startDay}`;
+            const endDateString = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-${endDay < 10 ? `0${endDay}` : endDay}`;
+            setAnswers((prevState) => ({ ...prevState, recentPeriodYearMonthDayStart: startDateString, recentPeriodYearMonthDayEnd: endDateString }));
         }
-        else {
-            setAnswers((prevState) => ({ ...prevState, recentPeriodYearMonthDayStart: "dontrememberornotrecorded", recentPeriodYearMonthDayEnd: "dontrememberornotrecorded" }));
-        }
-
     }, [recentPeriodStartDate, recentPeriodEndDate])
 
     useEffect(() => {
@@ -251,7 +248,7 @@ const SurveyScreen = () => {
                     <TouchableHighlight
                         className="flex rounded-[50px] items-center justify-center bg-turquoise px-3 py-1"
                         onPress={() => {
-                            setFirstPeriodModalVisible(true);
+                            whatsAPeriodModalVisible(true);
                         }}
                         underlayColor="#5B9F8F"
                     >
@@ -263,37 +260,58 @@ const SurveyScreen = () => {
                     </TouchableHighlight>
                 </View>
 
-                <Text className="text-greydark text-[18px] font-bold mt-8">
-                    {i18n.t('survey.whenStartFirstPeriod.whenDidYouStartYourFirstPeriod')}
-                </Text>
-                <Pressable
+                <View className="flex-row">
+                    <Text className="text-greydark text-[18px] font-bold mt-8">
+                        {i18n.t('survey.whenStartFirstPeriod.whenDidYouStartYourFirstPeriod')}
+                    </Text>
+                    <View className={`absolute bottom-1 right-0 ${firstPeriodModalVisible?"bg-gray p-1 rounded-full":""}`} >
+                        <EditIcon onPress={()=>setFirstPeriodModalVisible(!firstPeriodModalVisible)}/>
+                    </View>
+                </View>
+                <FormInput
+                    editable={false}
+                    labelValue="firstPeriodStart"
+                    placeholderText={answers.firstPeriodYearMonth === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.firstPeriodYearMonth}
+                    isRequired={true}
+                    iconType="user"
+                    color="black"
+                    keyboardType="email-address"
+                    value={answers.firstPeriodYearMonth === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.firstPeriodYearMonth}
+                    onChangeText={(val) => {}} // logic handled in ScrollPickers
+                    onFocus={() => {}}
+                />
+                <TouchableHighlight
                     className="flex rounded-[50px] items-center justify-center px-3 py-1 my-3"
-                    style = {{ backgroundColor: firstPeriodScrollPickerVisible ? '#005C6A' : '#5B9F8F'}}
-                    onPress={() => {
-                        let negatedFirstPeriodScrollPickerVisible = !firstPeriodScrollPickerVisible;
-                        setFirstPeriodScrollPickerVisible(negatedFirstPeriodScrollPickerVisible);
-                        if (negatedFirstPeriodScrollPickerVisible) {
-                            setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: "dontrememberornotrecorded" }))
-                        }
-                        else {
-                            setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: `${(new Date()).getFullYear()}-${(new Date()).getMonth() + 1}` }))
-                        }
-                    }}
+                    style = {{ backgroundColor: '#005C6A'}}
+                    underlayColor="#5B9F8F"
+                    onPress={() => { setAnswers((prevState) => ({ ...prevState, firstPeriodYearMonth: "dontrememberornotrecorded" }))}}
                 >
                     <View className="flex-row items-center">
                         <Text className="text-offwhite text-[14px] font-bold py-1">
                             {i18n.t('survey.whenStartFirstPeriod.iDontRemember')}
                         </Text>
                     </View>
-                </Pressable>
-                {
-                    firstPeriodScrollPickerVisible &&
+                </TouchableHighlight>
+                <Modal
+                    animationIn={"slideInUp"}
+                    animationOut={"slideOutUp"}
+                    animationTiming={500}
+                    backdropOpacity={0.5}
+                    isVisible={firstPeriodModalVisible}
+                    onBackdropPress={() => {
+                        setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                    }}
+                    onRequestClose={() => {
+                        setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                    }}
+                    className="mx-2"
+                >
                     <View className="flex flex-row px-8">
                         <ScrollPicker
                             data={[...Array(12).keys()].map((monthIndex) => {
                                 return {title: new Date(2021, monthIndex, 1).toLocaleString(selectedSettingsLanguage, {month: 'short'}), id: monthIndex}
                             })}
-                            initialScrollIndex={(new Date()).getMonth()}
+                            initialScrollIndex={firstPeriodStartMonth - 1}
                             onViewableItemsChanged={handleMonthChangedFirstPeriod}
                             itemHeight={scrollPickerItemHeight}
                             keyPrefix="month"
@@ -303,54 +321,93 @@ const SurveyScreen = () => {
                             data={[...Array((new Date()).getFullYear()).keys()].map((yearIndex) => {
                                 return {title: yearIndex + 1, id: yearIndex}
                             })}
-                            initialScrollIndex={(new Date()).getFullYear() - 1}
+                            initialScrollIndex={firstPeriodStartYear - 1}
                             onViewableItemsChanged={handleYearChangedFirstPeriod}
                             itemHeight={scrollPickerItemHeight}
                             keyPrefix="year"
                             roundRight={true}
                         />
                     </View>
-                }
+                </Modal>
+                    
                 
                 {/* Two more sets of D/M/Y ScrollPickers, one for recentPeriodStartDate, one for recentPeriodEndDate */}
-                <Text className="text-greydark text-[18px] font-bold mt-8">
-                    {i18n.t('survey.whenMostRecentPeriod.whenWasYourMostRecentPeriod')}
+                <View className="flex-row">
+                    <Text className="text-greydark text-[18px] font-bold mt-8">
+                        {i18n.t('survey.whenMostRecentPeriod.whenWasYourMostRecentPeriod')}
+                    </Text>
+                    <View className={`absolute bottom-1 right-0 ${recentPeriodModalVisible?"bg-gray p-1 rounded-full":""}`} >
+                        <EditIcon onPress={()=>setRecentPeriodModalVisible(!recentPeriodModalVisible)}/>
+                    </View>
+                </View>
+                <Text className="text-greydark text-[18px] font-bold my-2">
+                    {i18n.t('analysis.trends.export.start')}
                 </Text>
-                <Pressable
+                <FormInput
+                    editable={false}
+                    labelValue="recentPeriodStart"
+                    placeholderText={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart}
+                    isRequired={true}
+                    iconType="user"
+                    color="black"
+                    keyboardType="email-address"
+                    value={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart}
+                    onChangeText={(val) => {}} // logic handled in ScrollPickers
+                    onFocus={() => {}}
+                />
+                <Text className="text-greydark text-[18px] font-bold my-2">
+                    {i18n.t('analysis.trends.export.end')}
+                </Text>
+                <FormInput
+                    editable={false}
+                    labelValue="recentPeriodEnd"
+                    placeholderText={answers.recentPeriodYearMonthDayEnd === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayEnd}
+                    isRequired={true}
+                    iconType="user"
+                    color="black"
+                    keyboardType="email-address"
+                    value={answers.recentPeriodYearMonthDayEnd === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayEnd}
+                    onChangeText={(val) => {}} // logic handled in ScrollPickers
+                    onFocus={() => {}}
+                />
+                <TouchableHighlight
                     className="flex rounded-[50px] items-center justify-center px-3 py-1 my-3"
-                    style = {{ backgroundColor: recentPeriodScrollPickersVisible ? '#005C6A' : '#5B9F8F'}}
-                    onPress={() => {
-                        let negatedRecentPeriodScrollPickersVisible = !recentPeriodScrollPickersVisible;
-                        setRecentPeriodScrollPickersVisible(negatedRecentPeriodScrollPickersVisible);
-                        if (negatedRecentPeriodScrollPickersVisible) {
-                            setAnswers((prevAnswers) => ({...prevAnswers, recentPeriodYearMonthDayStart: "dontrememberornotrecorded", recentPeriodYearMonthDayEnd: "dontrememberornotrecorded"}))
-                        }
-                        else {
-                            setAnswers((prevAnswers) => ({...prevAnswers, recentPeriodYearMonthDayStart: `${(new Date()).getFullYear()}-${(new Date()).getMonth() + 1}-${(new Date()).getDate()}`, recentPeriodYearMonthDayEnd: `${(new Date()).getFullYear()}-${(new Date()).getMonth() + 1}-${(new Date()).getDate()}`}))
-                        }
-                    }}
+                    style = {{ backgroundColor: '#005C6A' }}
+                    underlayColor="#5B9F8F"
+                    onPress={() => { setAnswers((prevAnswers) => ({...prevAnswers, recentPeriodYearMonthDayStart: "dontrememberornotrecorded", recentPeriodYearMonthDayEnd: "dontrememberornotrecorded"})) }}
                 >
                     <View className="flex-row items-center">
                         <Text className="text-offwhite text-[14px] font-bold py-1">
                             {i18n.t('survey.whenStartFirstPeriod.iDontRemember')}
                         </Text>
                     </View>
-                </Pressable>
+                </TouchableHighlight>
 
-                {/* recent period start date scroll pickers */}
-                {
-                    recentPeriodScrollPickersVisible &&
-                    <>
+                <Modal
+                    animationIn={"slideInUp"}
+                    animationOut={"slideOutUp"}
+                    animationTiming={500}
+                    backdropOpacity={0.5}
+                    isVisible={recentPeriodModalVisible}
+                    onBackdropPress={() => {
+                        setRecentPeriodModalVisible(!recentPeriodModalVisible);
+                    }}
+                    onRequestClose={() => {
+                        setRecentPeriodModalVisible(!recentPeriodModalVisible);
+                    }}
+                    className="mx-2"
+                >
+                    <View className="bg-offwhite rounded-[20px] border-[3px] border-seafoam mx-6 py-4 px-6">
+                        {/* recent period start date scroll pickers */}
                         <Text className="text-greydark text-[18px] font-bold my-2">
                             {i18n.t('analysis.trends.export.start')}
                         </Text>
-
                         <View className="flex flex-row px-8">
                             <ScrollPicker
                                 data={[...Array(31).keys()].map((dayIndex) => {
                                     return { title: dayIndex + 1, id: dayIndex };
                                 })}
-                                initialScrollIndex={(new Date).getDate() - 1}
+                                initialScrollIndex={recentPeriodStartDate.day - 1}
                                 onViewableItemsChanged={handleDayChangedRecentPeriodStart}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="dayStart"
@@ -366,7 +423,7 @@ const SurveyScreen = () => {
                                     id: monthIndex,
                                 };
                                 })}
-                                initialScrollIndex={(new Date()).getMonth()}
+                                initialScrollIndex={recentPeriodStartDate.month - 1}
                                 onViewableItemsChanged={handleMonthChangedRecentPeriodStart}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="monthStart"
@@ -375,7 +432,7 @@ const SurveyScreen = () => {
                                 data={[...Array((new Date()).getFullYear()).keys()].map((yearIndex) => {
                                     return { title: yearIndex + 1, id: yearIndex };
                                 })}
-                                initialScrollIndex={(new Date()).getFullYear() - 1}
+                                initialScrollIndex={recentPeriodStartDate.year - 1}
                                 onViewableItemsChanged={handleYearChangedRecentPeriodStart}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="yearStart"
@@ -383,13 +440,7 @@ const SurveyScreen = () => {
                             />
                         </View>
 
-                    </>
-                }
-
-                {/* recent period end date scroll pickers */}
-                {
-                    recentPeriodScrollPickersVisible &&
-                    <>
+                        {/* recent period end date scroll pickers */}
                         <Text className="text-greydark text-[18px] font-bold my-2">
                             {i18n.t('analysis.trends.export.end')}
                         </Text>
@@ -398,7 +449,7 @@ const SurveyScreen = () => {
                                 data={[...Array(31).keys()].map((dayIndex) => {
                                     return { title: dayIndex + 1, id: dayIndex };
                                 })}
-                                initialScrollIndex={(new Date).getDate() - 1}
+                                initialScrollIndex={recentPeriodEndDate.day - 1}
                                 onViewableItemsChanged={handleDayChangedRecentPeriodEnd}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="dayEnd"
@@ -414,7 +465,7 @@ const SurveyScreen = () => {
                                         id: monthIndex,
                                     };
                                 })}
-                                initialScrollIndex={(new Date()).getMonth()}
+                                initialScrollIndex={recentPeriodEndDate.month - 1}
                                 onViewableItemsChanged={handleMonthChangedRecentPeriodEnd}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="monthEnd"
@@ -423,16 +474,16 @@ const SurveyScreen = () => {
                                 data={[...Array((new Date()).getFullYear()).keys()].map((yearIndex) => {
                                     return { title: yearIndex + 1, id: yearIndex };
                                 })}
-                                initialScrollIndex={(new Date()).getFullYear() - 1}
+                                initialScrollIndex={recentPeriodEndDate.year - 1}
                                 onViewableItemsChanged={handleYearChangedRecentPeriodEnd}
                                 itemHeight={scrollPickerItemHeight}
                                 keyPrefix="yearEnd"
                                 roundRight={true}
                             />
                         </View>
-                    </>
-                }
-                    
+                    </View>
+                </Modal>
+
                 {/* Finish button */}
                 <TouchableHighlight
                     className="flex rounded-[50px] items-center justify-center bg-turquoise px-3 py-3 mt-4"
@@ -454,12 +505,12 @@ const SurveyScreen = () => {
                     animationOut={"slideOutUp"}
                     animationTiming={500}
                     backdropOpacity={0.5}
-                    isVisible={firstPeriodModalVisible}
+                    isVisible={whatsAPeriodModalVisible}
                     onBackdropPress={() => {
-                        setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                        whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                     }}
                     onRequestClose={() => {
-                        setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                        whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                     }}
                     className="mx-2"
                 >
@@ -471,7 +522,7 @@ const SurveyScreen = () => {
                             <TouchableOpacity 
                                 className="self-end"
                                 onPress={() => {
-                                    setFirstPeriodModalVisible(!firstPeriodModalVisible);
+                                    whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                                 }}
                             >
                                 <XIcon width={30} height={30} />
