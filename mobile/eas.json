@@ -21,8 +21,8 @@
     "production": {
       "node": "16.18.1",
       "env": {
-        "LOCAL_DEV_IP": "http://3.94.185.1:5000",
-        "STAGING_IP": "http://3.94.185.1:5000",
+        "ENV_API_URL": "http://192.168.0.135:5000",
+        "STAGING_IP": "http://192.168.0.135:5000",
         "REACT_APP_FIREBASE_API_KEY": "AIzaSyAzCQkl3WGUvD1WDAzSXQBtmsyEy2Ze_Z8",
         "REACT_APP_FIREBASE_AUTH_DOMAIN": "sasperiodtracker.firebaseapp.com",
         "REACT_APP_FIREBASE_PROJECT_ID": "sasperiodtracker",
@@ -30,6 +30,10 @@
         "REACT_APP_FIREBASE_MESSAGING_SENDER_ID": "189992039358",
         "REACT_APP_FIREBASE_APP_ID": "1:189992039358:web:7315502ab10bde60707fef",
         "REACT_APP_FIREBASE_MEASUREMENT_ID": "01JJLCSJ3Z",
+        "GOOGLE_CLOUD_WEB_ID": "1024525971308-b0q0djk63j1lnhqsscijifchjugtkq09.apps.googleusercontent.com",
+        "GOOGLE_CLOUD_ANDROID_ID": "1024525971308-59gsg2g80div7g81s4cd0hloij9582b7.apps.googleusercontent.com",
+        "GOOGLE_CLOUD_IOS_ID": "1024525971308-t7fv82cjjvmnon41hkbi5b7rsr7o8i5s.apps.googleusercontent.com",
+
         "MARKDOWN_S3_URL": "https://s3-sas-period-tracker.s3.amazonaws.com/resources/allMarkdowns.json"
       }
     }

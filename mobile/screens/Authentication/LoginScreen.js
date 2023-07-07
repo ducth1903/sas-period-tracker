@@ -84,7 +84,7 @@ const LoginScreen = ({ navigation }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={{ backgroundColor: '#FEFFF4', paddingTop: 20 }}>
+    <ScrollView contentContainerStyle={{ backgroundColor: '#FEFFF4', paddingVertical: 40, flexGrow: 1 }}>
       <View style={{ flex: 1 }}>
         <View style={styles.header}>
           <Image
@@ -167,9 +167,9 @@ const LoginScreen = ({ navigation }) => {
             </Text>
           </View>
 
-          <View style={styles.formInputContainer}>
+          {/* <View style={styles.formInputContainer}>
             <SignInWithGoogle successFn={loginWithGoogle} />
-          </View>
+          </View> */}
         </View>
       </View>
     </ScrollView>

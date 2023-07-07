@@ -248,7 +248,7 @@ const SurveyScreen = () => {
                     <TouchableHighlight
                         className="flex rounded-[50px] items-center justify-center bg-turquoise px-3 py-1"
                         onPress={() => {
-                            whatsAPeriodModalVisible(true);
+                            setWhatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                         }}
                         underlayColor="#5B9F8F"
                     >
@@ -521,10 +521,10 @@ const SurveyScreen = () => {
                     backdropOpacity={0.5}
                     isVisible={whatsAPeriodModalVisible}
                     onBackdropPress={() => {
-                        whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
+                        setWhatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                     }}
                     onRequestClose={() => {
-                        whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
+                        setWhatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                     }}
                     className="mx-2"
                 >
@@ -536,7 +536,7 @@ const SurveyScreen = () => {
                             <TouchableOpacity 
                                 className="self-end"
                                 onPress={() => {
-                                    whatsAPeriodModalVisible(!whatsAPeriodModalVisible);
+                                    setWhatsAPeriodModalVisible(!whatsAPeriodModalVisible);
                                 }}
                             >
                                 <XIcon width={30} height={30} />

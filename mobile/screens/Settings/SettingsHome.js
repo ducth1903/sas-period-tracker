@@ -5,6 +5,8 @@ import { SettingsContext } from '../../navigation/SettingsProvider';
 import { useState, useEffect, useContext } from 'react';
 import i18n from '../../translations/i18n'
 
+import Toast from 'react-native-toast-message';
+
 // Loading env variables
 import getEnvVars from '../../environment';
 const { API_URL } = getEnvVars();

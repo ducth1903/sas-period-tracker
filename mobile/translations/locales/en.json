@@ -109,7 +109,8 @@
         "failedToRetrieveUserData": "Failed to retrieve user data",
         "failedToUploadUserData": "Failed to upload user data",
         "emailFailedToSend": "Email failed to send",
-        "loadedMoreMonths": "Loaded more months!"
+        "loadedMoreMonths": "Loaded more months!",
+        "refreshing": "Refreshing..."
     },
     "onboarding": {
         "stayHealthyWithYourCycle": "Stay healthy with your cycle",
