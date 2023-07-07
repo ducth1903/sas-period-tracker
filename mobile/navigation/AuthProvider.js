@@ -9,6 +9,9 @@ import {
     signOut,
     GoogleAuthProvider,
     signInWithCredential,
+    updatePassword,
+    EmailAuthProvider,
+    reauthenticateWithCredential
 } from 'firebase/auth';
 import { MODAL_TEMPLATE } from '../models/PeriodDate';
 import { SettingsContext } from './SettingsProvider';
@@ -216,6 +219,33 @@ export const AuthProvider = ({ children }) => {
                         setAuthError(String(e));
                     }
                 },  // ending resetPassword
+
+                // changePassword: async (currentPassword, newPassword) => { // for user updating password from settings
+                //     // Get the current user
+                //     const user = firebaseAuth.currentUser;
+
+                //     // Re-authenticate the user by prompting them to enter their current password
+                //     const credential = EmailAuthProvider.credential(user.email, currentPassword);
+
+                //     // Re-authenticate the user with the provided credentials
+                //     reauthenticateWithCredential(credential)
+                //     .then(() => {
+                //         // User has been successfully re-authenticated, proceed to update the password
+                //         updatePassword(user, newPassword)
+                //         .then(() => {
+                //             // Password has been successfully updated
+                //             console.log('Password updated successfully');
+                //         })
+                //         .catch((error) => {
+                //             // Handle error while updating the password
+                //             console.error('Error updating password:', error);
+                //         });
+                //     })
+                //     .catch((error) => {
+                //         // Handle error while re-authenticating the user
+                //         console.error('Error re-authenticating user:', error);
+                //     });
+                // },  // ending changePassword
             }}>
             {children}
         </AuthContext.Provider>

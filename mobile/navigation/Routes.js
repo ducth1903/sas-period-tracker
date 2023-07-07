@@ -33,6 +33,7 @@ const Routes = () => {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (userId) {
+                console.log(`[Routes] user is signed in`)
                 // User is signed in, see docs for a list of available properties
                 // https://firebase.google.com/docs/reference/js/firebase.User
                 setUserId(user.uid);

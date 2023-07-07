@@ -47,7 +47,6 @@ const DynamicNote = ({ mode, noteKey }) => {
 
             let notes = await AsyncStorage.getItem('notes');
             notes = JSON.parse(notes);
-            console.log(`[DynamicNote] notes: ${JSON.stringify(notes)}`)
             
             if (!notes[userId]) {
                 notes[userId] = {
@@ -87,7 +86,6 @@ const DynamicNote = ({ mode, noteKey }) => {
     }
     
     useEffect(() => {
-        console.log('key changed')
         // init note storage if it doesn't exist
         initNoteStorage();
         
@@ -96,7 +94,6 @@ const DynamicNote = ({ mode, noteKey }) => {
     }, [noteKey])
 
     useEffect(() => {
-        console.log('noteText changed')
         if (!noteText) return;
         updateNoteText();
     }, [noteText])
