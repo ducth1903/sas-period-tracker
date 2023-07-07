@@ -498,7 +498,7 @@ const HomeScreen = () => {
                     </ScrollView>
                 </View>
 
-                <View className="mt-3 mb-6">
+                <View className="mt-3 px-6 mb-6">
                     <DynamicNote mode="dates" noteKey={selectedDate}/>
                 </View>
             </ScrollView>

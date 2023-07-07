@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { View, Text, TouchableHighlight, TextInput } from 'react-native';
+import { View, KeyboardAvoidingView, TextInput } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
@@ -99,7 +99,10 @@ const DynamicNote = ({ mode, noteKey }) => {
     }, [noteText])
 
     return (
-        <View className="px-7 w-screen">
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={{ flex: 1 }}
+        >
             <View className="flex flex-col w-full min-h-[15vh] border-2 border-turquoise rounded-xl p-3 mt-2">
                 <View className="flex-row flex-grow">
                     <TextInput
@@ -112,7 +115,7 @@ const DynamicNote = ({ mode, noteKey }) => {
                     />
                 </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     )
 }
 

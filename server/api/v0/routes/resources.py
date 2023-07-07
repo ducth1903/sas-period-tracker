@@ -3,6 +3,7 @@ from flask import Blueprint, request, current_app, jsonify, json
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import UUID
+import yaml
 import uuid
 from datetime import datetime
 from enum import Enum
@@ -14,6 +15,7 @@ from ..utils import conversion
 resource_api = Blueprint('resource_api', __name__)
 sas_aws = SasAws()
 RESOURCE_BUCKET = "sas-public"
+METADATA_BUCKET = "sas-metadata"
 
 # Create a base class for declarative ORM models
 Base = declarative_base()
@@ -30,18 +32,43 @@ class Category(Enum):
     MENTAL_HEALTH = "mental health"
 
 # GET
-@resource_api.route('/resources')
+@resource_api.route('/resources/metadata')
+def resources_get_metadata():
+    try:
+        resp = sas_aws.s3.get_object(Bucket=METADATA_BUCKET, Key="resourceMaps.json")
+        json_raw = resp["Body"].read().decode("utf-8")
+        json_data = json.loads(json_raw)
+        return jsonify(json_data)
+    except Exception as e:
+        print(e)
+        return response.error_json_response(e)
+
+# GET
+@resource_api.route('/resources/content')
 def resources_get_by_id():
     try:
-        result = []
-        resp = sas_aws.s3.list_objects_v2(Bucket=RESOURCE_BUCKET, StartAfter="resources/markdowns")
+        result: dict[str, str | None] = []
+        resp = sas_aws.s3.list_objects_v2(Bucket=RESOURCE_BUCKET, Prefix="resources/markdowns_current")
         for obj in resp["Contents"]:
             object_key, object_size, object_last_modified = obj["Key"], obj["Size"], obj["LastModified"]
-            if object_size > 0:
-                result.append({
-                    "resource_url": sas_aws.S3_BUCKET + object_key,
-                    "resource_last_modified": object_last_modified,
-                })
+            path_parts: list[str] = object_key.split("/")
+
+            # account for structure of intro files at top of each topic (similar logic can be applied to any file at the topic level)
+            # example of non-intro path: resources/markdowns_current/menstruation/menstrual_health_hygiene/en_frequency_of_changing_your_period_product.md
+            # example of intro path: resources/markdowns_current/menstruation/en_intro.md
+            file_name: str = path_parts[-1]
+            is_intro_file: bool = "en_intro" in file_name or "kn_intro" in file_name or "hi_intro" in file_name
+            section_name: str | None = path_parts[-2] if not is_intro_file else None
+            topic_name: str = path_parts[-3 if not is_intro_file else -2]
+            
+            result.append({
+                "resource_url": sas_aws.S3_BUCKET + object_key,
+                "resource_last_modified": object_last_modified,
+                "resource_topic": topic_name,
+                "resource_section": section_name,
+                "resource_filename": file_name,
+                "resource_language": file_name.split("_")[0]
+            })
         return jsonify(result)
     except Exception as e:
         return response.error_json_response(e)

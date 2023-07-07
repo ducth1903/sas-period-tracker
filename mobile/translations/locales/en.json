@@ -266,7 +266,10 @@
         "scrolltoSeeTopics": "Scroll to see topics",
         "back": "Back",
         "next": "Next",
-        "saved": "Saved"
+        "saved": "Saved",
+        "favorite": "Favorite",
+        "favorites": "Favorites",
+        "noArticlesFavorited": "No articles favorited"
     },
     "settings": {
         "accountInfo": {
