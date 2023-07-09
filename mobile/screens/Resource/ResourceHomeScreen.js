@@ -285,7 +285,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                 {
                     resourcesMap.map((ele, index) => {
                         // console.log(`this is ele: ${JSON.stringify(ele, null, 2)}`)
-                        if (index >= 1 && ele[selectedSettingsLanguage]) {
+                        if (index >= 1 && ele[selectedSettingsLanguage] && ele[selectedSettingsLanguage]["sections"]) {
                             if (ele[selectedSettingsLanguage]["sections"].length > 0) {
                                 return (
                                     <View key={`${ele["en"]["topicTitle"]}-${index}`}>
@@ -303,7 +303,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                             }
                             else return null;
                         }
-                        else if (ele[selectedSettingsLanguage]) {
+                        else if (ele[selectedSettingsLanguage] && ele[selectedSettingsLanguage]["articles"]) {
                             return (
                                 <View key={`${ele["en"]["topicTitle"]}-${index}`}>
                                     <Text style={styles.subHeaderText}>{ele[selectedSettingsLanguage]["topicTitle"]}</Text>
