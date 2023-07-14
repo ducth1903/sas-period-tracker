@@ -391,6 +391,7 @@ const HomeScreen = () => {
                 <ScrollView
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
+                    <Text className="text-[15px] font-semibold text-greydark text-center">{i18n.t('errors.pullDownToRefresh')}</Text>
                     <View className="min-h-[90vw] flex-1 justify-center items-center">
                         <Skeleton circle width={height * 0.1} height={height * 0.1} />
                     </View>
