@@ -37,7 +37,7 @@ const ResourceArticle = ({ route, navigation }) => {
     const { userId } = useContext(AuthContext);
 
     const [favorited, setFavorited] = useState(false);
-    const media = resource.articleMedia;
+    const media = resource[selectedSettingsLanguage].articleMedia;
 
     async function isFavorited() {
         try {
@@ -88,6 +88,8 @@ const ResourceArticle = ({ route, navigation }) => {
         return converter.makeHtml(text);
     }
     
+    useEffect(() => {}, [selectedSettingsLanguage])
+
     useEffect(() => {
         // init favorited or not
         isFavorited()
@@ -116,7 +118,7 @@ const ResourceArticle = ({ route, navigation }) => {
                 </View>
                 <ScrollView showsVerticalScrollIndicator={true}>
                     <View style={styles.headerInline}>
-                        <Text style={styles.headerText}>{resource.articleTitle}</Text>
+                        <Text style={styles.headerText}>{resource[selectedSettingsLanguage].articleTitle}</Text>
                     </View>
 
                     <View style={styles.divider} />
@@ -134,7 +136,7 @@ const ResourceArticle = ({ route, navigation }) => {
                                     useNativeControls
                                     resizeMode={ResizeMode.CONTAIN}
                                     isLooping
-                                    key={`media-${resource.articleTitle}-${index}`}
+                                    key={`media-${resource[selectedSettingsLanguage].articleTitle}-${index}`}
                                 />
                                 :
                                 <Image
@@ -156,9 +158,9 @@ const ResourceArticle = ({ route, navigation }) => {
                         <RenderHTML
                             contentWidth={width * 0.8}
                             tagsStyles={{
-                                p: {...styles.introTextContent, marginHorizontal: resource.articleMedia.length > 0 ? 20 : 0,}
+                                p: {...styles.introTextContent, marginHorizontal: resource[selectedSettingsLanguage].articleMedia.length > 0 ? 20 : 0,}
                             }}
-                            source={{html: markdownToHtml(resource.articleText)}}
+                            source={{html: markdownToHtml(resource[selectedSettingsLanguage].articleText)}}
                         />
                         {/* </Text> */}
                     </View>

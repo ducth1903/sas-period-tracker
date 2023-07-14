@@ -161,6 +161,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                 if (!sectionObject) {
                     sectionObject = {
                         parentTopicObject: topicObject, // need copy in each section for FLatList renderItem
+                        sectionId: itemSection,
                         sectionTitle: sections_to_titles[itemLanguage][itemSection],
                         articles: []
                     }
@@ -204,6 +205,10 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         fetchAllResources();
     }, []);
 
+    useEffect(() => {
+        fetchAllResources();
+    }, [selectedSettingsLanguage])
+
     const images = {
         exercise: require('../../assets/resources_images/exercise_banner.png'),
         growing_up: require('../../assets/resources_images/growing_up_banner.png'),
@@ -216,11 +221,28 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     }
 
     function SectionItem({ item }) {
-        const paramResource = {
+        let paramResource = {};
+        paramResource[selectedSettingsLanguage] = {
             introText: item.parentTopicObject[selectedSettingsLanguage].introText,
             sectionTitle: item.sectionTitle,
             articles: item.articles
-        };
+        }
+
+        // get array of other languages not currently selected
+        let otherLanguages = Object.keys(i18n.translations).filter((lang) => lang !== selectedSettingsLanguage);
+
+        // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
+        for (const lang in otherLanguages) {
+            const otherLang = otherLanguages[lang];
+            
+            const introText = item.parentTopicObject[otherLang].introText;
+            const matchingSection = item.parentTopicObject[otherLang].sections.find((section) => section.sectionId === item.sectionId);
+            const sectionTitle = matchingSection.sectionTitle;
+            const articles = matchingSection.articles;
+            
+            paramResource[otherLang] = { introText, sectionTitle, articles }
+        }
+
         return (
             <Pressable onPress={() => navigation.navigate('ResourceContent', { resource: paramResource } )}>
                 <ImageBackground source={{uri: item["parentTopicObject"]["image"]}} style={styles.sectionBox} imageStyle={{ borderRadius: 15 }}>
