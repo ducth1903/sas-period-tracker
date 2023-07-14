@@ -110,7 +110,8 @@
         "failedToUploadUserData": "Failed to upload user data",
         "emailFailedToSend": "Email failed to send",
         "loadedMoreMonths": "Loaded more months!",
-        "refreshing": "Refreshing..."
+        "refreshing": "Refreshing...",
+        "pullDownToRefresh": "Pull down to refresh if page doesn't load"
     },
     "onboarding": {
         "stayHealthyWithYourCycle": "Stay healthy with your cycle",

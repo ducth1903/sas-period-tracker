@@ -439,6 +439,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 <ScrollView
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 >
+                    <Text className="text-[15px] font-semibold text-greydark text-center">{i18n.t('errors.pullDownToRefresh')}</Text>
                     <View className="min-h-[40vw] flex-1 justify-center items-center">
                         <Skeleton animation="pulse" width={width * 0.6} height={height * 0.05} />
                     </View>

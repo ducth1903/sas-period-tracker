@@ -110,7 +110,8 @@
         "failedToUploadUserData": "ಬಳಕೆದಾರ ಡೇಟಾವನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಲು ವಿಫಲವಾಯಿತು",
         "emailFailedToSend": "ಇಮೇಲ್ ಕಳುಹಿಸಲು ವಿಫಲವಾಯಿತು",
         "loadedMoreMonths": "ಇನ್ನೂ ಹೆಚ್ಚು ತಿಂಗಳುಗಳನ್ನು ಲೋಡ್ ಮಾಡಿದೆ!",
-        "refreshing": "ರೀಫ್ರೆಶ್ ಆಗುತ್ತಿದೆ..."
+        "refreshing": "ರೀಫ್ರೆಶ್ ಆಗುತ್ತಿದೆ...",
+        "pullDownToRefresh": "ಪುಟ ಲೋಡ್ ಆಗದಿದ್ದರೆ ರಿಫ್ರೆಶ್ ಮಾಡಲು ಕೆಳಗೆ ಎಳೆಯಿರಿ"
     },
     "onboarding": {
         "stayHealthyWithYourCycle": "ನಿಮ್ಮ ಮಾಸಿಕ ವೃತ್ತಿಯೊಂದಿಗೆ ಆರೋಗ್ಯವಾಗಿರಿ",

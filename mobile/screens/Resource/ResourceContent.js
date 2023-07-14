@@ -25,7 +25,7 @@ const ResourceContent = ({ route, navigation }) => {
         return (
             <Pressable onPress={() => navigation.navigate('ResourceArticle', { outerResource: resource, resource: item })}>
                 <View style={styles.articleBox}>
-                    <Text style={styles.articleBoxText}>{item.articleTitle}</Text>
+                    <Text style={styles.articleBoxText}>{item[selectedSettingsLanguage].articleTitle}</Text>
                 </View>
             </Pressable>
         );
@@ -42,7 +42,7 @@ const ResourceContent = ({ route, navigation }) => {
                 </TouchableOpacity>
 
                 <View style={styles.inline}>
-                    <Text style={styles.headerText}>{resource.sectionTitle}</Text>
+                    <Text style={styles.headerText}>{resource[selectedSettingsLanguage].sectionTitle}</Text>
                     {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
                             <Image source={require('../../assets/icons/search.svg')} style={styles.headerSearchIcon}/>
                         </TouchableOpacity> */}
@@ -54,7 +54,7 @@ const ResourceContent = ({ route, navigation }) => {
                 <ScrollView persistentScrollbar={true}>
                     <View style={{marginHorizontal: Platform.OS === "ios" ? 25 : 0}}>
                         <View style={styles.introText}>
-                            <Text style={styles.introTextContent}>{resource.introText}</Text>
+                            <Text style={styles.introTextContent}>{resource[selectedSettingsLanguage].introText}</Text>
                         </View>
                     </View>
                     <View style={styles.backIcon}>
@@ -65,11 +65,34 @@ const ResourceContent = ({ route, navigation }) => {
                     <View style={styles.topicsList}>
                         {
                             // group into pairs of two
-                            resource.articles.reduce((groupedArr, topic, index) => {
+                            resource[selectedSettingsLanguage].articles.reduce((groupedArr, article, index) => {
+                                // inefficiency here, but it works to get the other languages to auto-switch
+                                let articleObj = {
+                                    [selectedSettingsLanguage]: {
+                                        articleTitle: article.articleTitle,
+                                        articleText: article.articleText,
+                                        articleId: article.articleId,
+                                        articleMedia: article.articleMedia,
+                                    }
+                                };
+
+                                const otherLanguages = Object.keys(i18n.translations).filter((lang) => lang !== selectedSettingsLanguage);
+                                for (const lang in otherLanguages) {
+                                    const otherLang = otherLanguages[lang];
+                                    const matchingArticle = resource[otherLang].articles.find((otherArticle) => otherArticle.articleId === article.articleId);
+
+                                    articleObj[otherLang] = {
+                                        articleTitle: matchingArticle.articleTitle,
+                                        articleText: matchingArticle.articleText,
+                                        articleId: matchingArticle.articleId,
+                                        articleMedia: matchingArticle.articleMedia,
+                                    }
+                                }
+                                
                                 if (index % 2 == 0) {
-                                    groupedArr.push([topic]);
+                                    groupedArr.push([articleObj]);
                                 } else {
-                                    groupedArr[groupedArr.length - 1].push(topic);
+                                    groupedArr[groupedArr.length - 1].push(articleObj);
                                 }
                                 return groupedArr;
                             }, []).map((pair, index) => {

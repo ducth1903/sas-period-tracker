@@ -110,7 +110,8 @@
         "failedToUploadUserData": "उपयोगकर्ता डेटा अपलोड करने में विफल",
         "emailFailedToSend": "ईमेल भेजने में विफल",
         "loadedMoreMonths": "और महीनों को लोड किया गया!",
-        "refreshing": "ताजगी कर रहा है..."
+        "refreshing": "ताजगी कर रहा है...",
+        "pullDownToRefresh": "यदि पेज लोड नहीं होता है, तो रिफ्रेश करने के लिए नीचे स्क्रॉल करें।"
     },
     "onboarding": {
         "stayHealthyWithYourCycle": "अपने मासिक धर्म के साथ स्वस्थ रहें",
