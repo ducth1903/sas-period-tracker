@@ -178,7 +178,8 @@ const ResourceArticle = ({ route, navigation }) => {
                         <RenderHTML
                             contentWidth={width * 0.8}
                             tagsStyles={{
-                                p: {...styles.introTextContent, marginHorizontal: resource[selectedSettingsLanguage].articleMedia.length > 0 ? 20 : 0,}
+                                // TODO: Should not use html img tag and instead use media list, but this fix should work for now
+                                p: {...styles.introTextContent, marginHorizontal: resource[selectedSettingsLanguage].articleMedia.length > 0 || resource[selectedSettingsLanguage].articleText.includes("img") ? 20 : 0,}
                             }}
                             source={{html: markdownToHtml(resource[selectedSettingsLanguage].articleText)}}
                         />
