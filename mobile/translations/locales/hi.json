@@ -271,7 +271,8 @@
         "saved": "बचा लिया",
         "favorite": "पसंद करना",
         "favorites": "पसंदीदा आलेख",
-        "noArticlesFavorited": "कोई लेखन चयनित नहीं है"
+        "noArticlesFavorited": "कोई लेखन चयनित नहीं है",
+        "speak": "बोलिए"
     },
     "settings": {
         "accountInfo": {

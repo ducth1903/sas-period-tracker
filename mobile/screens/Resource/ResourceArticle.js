@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Showdown from 'showdown';
 import RenderHTML from 'react-native-render-html';
 import { Video, ResizeMode } from 'expo-av';
-
+import * as Speech from 'expo-speech';
 
 import DynamicNote from '../../components/DynamicNote';
 import { SettingsContext } from '../../navigation/SettingsProvider';
@@ -25,6 +25,7 @@ import { AuthContext } from '../../navigation/AuthProvider';
 import BackIcon from '../../assets/icons/back.svg';
 import SaveInitialIcon from '../../assets/icons/save-initial.svg';
 import SaveAfterIcon from '../../assets/icons/save-after.svg';
+import SpeakerIcon from '../../assets/icons/speaker.svg';
 
 const ResourceArticle = ({ route, navigation }) => {
     const { outerResource, resource } = route.params;
@@ -38,6 +39,8 @@ const ResourceArticle = ({ route, navigation }) => {
 
     const [favorited, setFavorited] = useState(false);
     const media = resource[selectedSettingsLanguage].articleMedia;
+
+    const [playingAudio, setPlayingAudio] = useState(false);
 
     async function isFavorited() {
         try {
@@ -88,6 +91,18 @@ const ResourceArticle = ({ route, navigation }) => {
         return converter.makeHtml(text);
     }
     
+    function speakOrPause() {
+        if (playingAudio) {
+            Speech.stop()
+            setPlayingAudio(false)
+        }
+        else {
+            setPlayingAudio(true)
+            Speech.speak(resource[selectedSettingsLanguage].articleTitle, { language: selectedSettingsLanguage })
+            Speech.speak(resource[selectedSettingsLanguage].articleText, { language: selectedSettingsLanguage })
+        }
+    }
+
     useEffect(() => {}, [selectedSettingsLanguage])
 
     useEffect(() => {
@@ -111,10 +126,6 @@ const ResourceArticle = ({ route, navigation }) => {
                     >
                         <BackIcon style={styles.headerBackIcon} />
                     </TouchableOpacity>
-                    {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '13%' }}>
-                        <TranslateIcon style={styles.translateIcon} />
-                        <SpeakerIcon style={styles.speakerIcon} />
-                    </View> */}
                 </View>
                 <ScrollView showsVerticalScrollIndicator={true}>
                     <View style={styles.headerInline}>
@@ -147,12 +158,21 @@ const ResourceArticle = ({ route, navigation }) => {
                         })
                     }
 
-                    <TouchableOpacity style={{marginTop: 20}} onPress={() => {handlePressFavorite()}}>
-                        <View style={{marginLeft: 10}}>
-                            {favorited ? <SaveAfterIcon /> : <SaveInitialIcon />}
-                        </View>
-                        <Text style={styles.labelText}>{i18n.t('education.favorite')}</Text>
-                    </TouchableOpacity>
+                    <View style={{marginTop: 20, flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <TouchableOpacity onPress={() => {handlePressFavorite()}}>
+                            <View style={{alignItems: 'center'}}>
+                                {favorited ? <SaveAfterIcon /> : <SaveInitialIcon />}
+                                <Text style={styles.labelText}>{i18n.t('education.favorite')}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: 'center' }}
+                            onPress={speakOrPause}
+                        >
+                            <SpeakerIcon style={styles.speakerIcon} />
+                            <Text style={styles.labelText}>{i18n.t('education.speak')}</Text>
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.introText}>
                         {/* <Text style={styles.introTextContent}> */}
                         <RenderHTML

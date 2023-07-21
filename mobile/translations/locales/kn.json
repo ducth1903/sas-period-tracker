@@ -271,7 +271,8 @@
         "saved": "ಸೇವ್ ಆಗಿದೆ",
         "favorite": "ಪ್ರೀತಿಸು",
         "favorites": "ಮೆಚ್ಚಿದ ಲೇಖನಗಳು",
-        "noArticlesFavorited": "ಯಾವುದೇ ಲೇಖನಗಳು ಮೆಚ್ಚಿದ್ದಿಲ್ಲ"
+        "noArticlesFavorited": "ಯಾವುದೇ ಲೇಖನಗಳು ಮೆಚ್ಚಿದ್ದಿಲ್ಲ",
+        "speak": "ಮಾತನಾಡಿ"
     },
     "settings": {
         "accountInfo": {
