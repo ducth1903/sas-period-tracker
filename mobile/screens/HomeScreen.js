@@ -141,6 +141,10 @@ const HomeScreen = () => {
             });
 
             const resp = await response.json();
+            Toast.show({
+                type: 'success',
+                text1: i18n.t('settings.accountInfo.changesSavedSuccessfully')
+            })
         }
         catch (error) {
             Toast.show({

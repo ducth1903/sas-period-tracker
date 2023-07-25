@@ -206,8 +206,8 @@ export default Survey = () => {
         const endYear = recentPeriodEndDate.year;
 
         if (startDay && startMonth && startYear && endDay && endMonth && endYear) {
-            const startDateString = `${startYear}-${startMonth < 10 ? `0${startMonth}` : startMonth}-${startDay < 10 ? `0${startDay}` : startDay}`;
-            const endDateString = `${endYear}-${endMonth < 10 ? `0${endMonth}` : endMonth}-${endDay < 10 ? `0${endDay}` : endDay}`;
+            const startDateString = `${startYear}-${startMonth}-${startDay < 10 ? `0${startDay}` : startDay}`;
+            const endDateString = `${endYear}-${endMonth}-${endDay < 10 ? `0${endDay}` : endDay}`;
             setAnswers((prevState) => ({ ...prevState, recentPeriodYearMonthDayStart: startDateString, recentPeriodYearMonthDayEnd: endDateString }));
         }
     }, [recentPeriodStartDate, recentPeriodEndDate])
@@ -315,12 +315,12 @@ export default Survey = () => {
                 <FormInput
                     editable={false}
                     labelValue="recentPeriodStart"
-                    placeholderText={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart.replaceAll("00", "0")}
+                    placeholderText={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart}
                     isRequired={true}
                     iconType="user"
                     color="black"
                     keyboardType="email-address"
-                    value={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart.replaceAll("00", "0")}
+                    value={answers.recentPeriodYearMonthDayStart === "dontrememberornotrecorded" ? i18n.t('survey.whenStartFirstPeriod.iDontRemember') : answers.recentPeriodYearMonthDayStart}
                     onChangeText={(val) => {}} // logic handled in ScrollPickers
                     onFocus={() => {}}
                 />

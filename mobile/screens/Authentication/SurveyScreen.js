@@ -89,14 +89,14 @@ const SurveyScreen = () => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
         console.log(`setting firstPeriodStartYear to ${centerViewable + 1}`)
-        setFirstPeriodStartYear(centerViewable + 1);
+        setFirstPeriodStartYear(centerViewable);
     }, []);
 
     const handleMonthChangedFirstPeriod = useCallback(({ viewableItems }) => {
         if (!viewableItems[1]) return;
         let centerViewable = viewableItems[1].item.id;
         console.log(`setting firstPeriodStartMonth to ${centerViewable + 1}`)
-        setFirstPeriodStartMonth(centerViewable + 1);
+        setFirstPeriodStartMonth(centerViewable);
     }, []);
 
     const handleDayChangedRecentPeriodStart = useCallback(({ viewableItems }) => {
@@ -105,7 +105,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodStartDate.day to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            day: centerViewable + 1,
+            day: centerViewable,
         }));
     }, []);
 
@@ -115,7 +115,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodStartDate.month to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            month: centerViewable + 1,
+            month: centerViewable,
         }));
     }, []);
 
@@ -125,7 +125,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodStartDate.year to ${centerViewable + 1}`)
         setRecentPeriodStartDate((prevState) => ({
             ...prevState,
-            year: centerViewable + 1,
+            year: centerViewable,
         }));
     }, []);
 
@@ -135,7 +135,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodEndDate.day to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            day: centerViewable + 1,
+            day: centerViewable,
         }));
     }, []);
 
@@ -145,7 +145,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodEndDate.month to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            month: centerViewable + 1,
+            month: centerViewable,
         }));
     }, []);
 
@@ -155,7 +155,7 @@ const SurveyScreen = () => {
         console.log(`setting recentPeriodEndDate.year to ${centerViewable + 1}`)
         setRecentPeriodEndDate((prevState) => ({
             ...prevState,
-            year: centerViewable + 1,
+            year: centerViewable,
         }));
     }, []);
 
