@@ -69,7 +69,7 @@ const SignupScreen = ({ navigation }) => {
   const handleViewableItemsChangedMonth = useCallback(({viewableItems, changed}) => {
     if (!viewableItems[1]) return;
     let centerViewable = viewableItems[1].item.id;
-    setBirthMonth(centerViewable + 1);
+    setBirthMonth(centerViewable);
   }, []);
 
   const handleViewableItemsChangedYear = useCallback(({viewableItems, changed}) => {
