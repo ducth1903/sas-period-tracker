@@ -1,5 +1,14 @@
 # SAS Period Tracker (Small Acts for Sustainability)
 
+Images:
+
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/463e9f3a-ad5f-45bd-8251-eb8b7c5bef3a" alt="Home page" width="200"/>
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/fed1de0f-4893-4a46-8e24-f1953c23d8a0" alt="Monthly calendar view" width="200"/>
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/46405bf5-d4bb-48f0-8355-449b79b08851" alt="Weekly calendar view" width="200"/>
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/8bc2471b-7148-4ba3-8798-88fda500fc9e" alt="Daily calendar view" width="200"/>
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/5cf9cb25-5c3b-47d5-b280-2165ef36d1e5" alt="Educational resources page" width="200"/>
+<img src="https://github.com/ducth1903/sas-period-tracker/assets/59056905/fbf301ff-e384-4300-ba53-76773087c201" alt="Settings page" width="200"/>
+
 ## TODO:
 - [ ] CICD: [Code Pipeline](https://aws.amazon.com/getting-started/hands-on/continuous-deployment-pipeline/)
 - [ ] [React] bottom sheet transition smoother
