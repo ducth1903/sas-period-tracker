@@ -172,7 +172,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 data={calendarMonths}
-                className="mb-28"
+                className="mb-12"
                 renderItem={({item}) => {
                     // item.date: Date object
                     // item.key: string
