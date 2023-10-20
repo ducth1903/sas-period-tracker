@@ -16,10 +16,10 @@ run_mobile_local_clear_cache:
 	cd mobile && rm -rf .expo/web/cache && rm -rf node_modules/.cache/babel-loader/* && npm start
 
 build_server_local:
-	cd server && python -m venv ./venv && source ./venv/bin/activate && pip install -r requirements.txt
+	cd server && python3 -m venv ./venv && source ./venv/bin/activate && pip install -r requirements.txt
 
 run_server_local:
-	cd server && source ./venv/bin/activate && python app.py
+	cd server && source ./venv/bin/activate && python3 app.py
 
 clean:
 	cd mobile && npm prune && rm -rf node_modules package-lock.json

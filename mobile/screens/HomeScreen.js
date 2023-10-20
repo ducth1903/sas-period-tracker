@@ -97,6 +97,7 @@ const HomeScreen = () => {
     }
 
     async function fetchUserPeriodData() {
+        console.log(API_URL);
         try {
             const resp = await fetch(`${API_URL}/periods/${userId}`, { method: "GET" });
             return resp.json();
