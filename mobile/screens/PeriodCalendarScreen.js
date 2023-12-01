@@ -167,7 +167,7 @@ const PeriodCalendarScreen = ({ props }) => {
     }
 
     function bottomPad() {
-        rawValue = Math.floor((height/65))
+        rawValue = Math.floor((height/75))
         //console.log(rawValue)
         padding = "mb-" + rawValue.toString()
         return padding
