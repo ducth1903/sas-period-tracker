@@ -20,6 +20,8 @@ import { useNavigation } from '@react-navigation/native';
 // import { topicsToTitles, sectionsToTitles, topicsToImages } from './resourceMaps'; // ! don't use these, use the ones in sas-metadata in S3
 import SearchIcon from '../../assets/icons/search.svg'
 import i18n from '../../translations/i18n';
+import SectionItem from './SectionItem';
+import ArticleItem from './ArticleItem';
 
 // Loading env variables
 import getEnvVars from '../../environment';
@@ -220,50 +222,6 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         sexual_health: require('../../assets/resources_images/sexual_health_banner.png'),
     }
 
-    function SectionItem({ item }) {
-        let paramResource = {};
-        paramResource[selectedSettingsLanguage] = {
-            introText: item.parentTopicObject[selectedSettingsLanguage].introText,
-            sectionTitle: item.sectionTitle,
-            articles: item.articles
-        }
-
-        // get array of other languages not currently selected
-        let otherLanguages = Object.keys(i18n.translations).filter((lang) => lang !== selectedSettingsLanguage);
-
-        // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
-        for (const lang in otherLanguages) {
-            const otherLang = otherLanguages[lang];
-            
-            const introText = item.parentTopicObject[otherLang].introText;
-            const matchingSection = item.parentTopicObject[otherLang].sections.find((section) => section.sectionId === item.sectionId);
-            const sectionTitle = matchingSection.sectionTitle;
-            const articles = matchingSection.articles;
-            
-            paramResource[otherLang] = { introText, sectionTitle, articles }
-        }
-
-        return (
-            <Pressable onPress={() => navigation.navigate('ResourceContent', { resource: paramResource } )}>
-                <ImageBackground source={{uri: item["parentTopicObject"]["image"]}} style={styles.sectionBox} imageStyle={{ borderRadius: 15 }}>
-                    <View style={styles.darkness} />
-                    <Text style={styles.sectionBoxText}>{item["sectionTitle"]}</Text>
-                </ImageBackground>
-            </Pressable>
-        );
-    };
-
-    function ArticleItem({ item }) {
-        return (
-            <Pressable onPress={() => navigation.navigate('ResourceArticle', { resource: item })}>
-                <View style={styles.articleBox} imageStyle={{ borderRadius: 15 }}>
-                    <View style={styles.darkness} />
-                    <Text style={styles.articleBoxText}>{item["articleTitle"]}</Text>
-                </View>
-            </Pressable>
-        );
-    };
-
     // Pull down to refresh
     const onRefresh = useCallback(() => {
         setRefreshing(true);
@@ -316,7 +274,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                                         <FlatList
                                             horizontal
                                             data={ele[selectedSettingsLanguage]["sections"]}
-                                            renderItem={({ item }) => <SectionItem item={item} key={`${item["sectionTitle"]}`} />}
+                                            renderItem={({ item }) => <SectionItem item={item} key={`${item["sectionTitle"]}`} selectedSettingsLanguage={selectedSettingsLanguage} navigation={navigation}/>}
                                             showsHorizontalScrollIndicator={false}
                                             style={{ marginBottom: -15 }}
                                             keyExtractor={(item, index) => `${item["sectionTitle"]}`}
@@ -335,7 +293,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
                                         <FlatList
                                             horizontal
                                             data={ele[selectedSettingsLanguage]["articles"]}
-                                            renderItem={({ item }) => <ArticleItem item={item} key={item.articleTitle} />}
+                                            renderItem={({ item }) => <ArticleItem item={item} key={item.articleTitle} navigation={navigation} />}
                                             showsHorizontalScrollIndicator={false}
                                             style={{ marginBottom: -15 }}
                                             keyExtractor={(item, index) => item.articleTitle}
