@@ -3,3 +3,5 @@
 - Paul Davis ([21pdavis](https://github.com/21pdavis))
 - Anshul Saha ([sheldor1510](https://github.com/sheldor1510))
 - Vi Doan ([vitdoan](https://github.com/vitdoan))
+- Siddhartha Jaiswal ([siddharthajz](https://github.com/siddharthajz))
+- Abby Tran ([nhan0504](https://github.com/nhan0504))
