@@ -5,3 +5,4 @@
 - Vi Doan ([vitdoan](https://github.com/vitdoan))
 - Siddhartha Jaiswal ([siddharthajz](https://github.com/siddharthajz))
 - Abby Tran ([nhan0504](https://github.com/nhan0504))
+- Adam Smith ([Adamsmith1234](https://github.com/Adamsmith1234))

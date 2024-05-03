@@ -166,6 +166,13 @@ const PeriodCalendarScreen = ({ props }) => {
 
         return `${first.monthString} ${first.day} - ${first.monthNum !== last.monthNum ? last.monthString + ' ' : ''}${last.day}, ${first.year}${first.year === last.year ? '' : ' - ' + last.year}`;
     }
+
+    function bottomPad() {
+        rawValue = Math.floor((height/75))
+        //console.log(rawValue)
+        padding = "mb-" + rawValue.toString()
+        return padding
+    }
     
     const renderCalendar = () => {
         return (
@@ -173,7 +180,7 @@ const PeriodCalendarScreen = ({ props }) => {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 data={calendarMonths}
-                className="mb-28"
+                className={bottomPad()} ///WHERE WE ARE CURRENTLY PADDING
                 renderItem={({item}) => {
                     // item.date: Date object
                     // item.key: string
