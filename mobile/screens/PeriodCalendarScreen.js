@@ -18,6 +18,7 @@ import Toast from 'react-native-toast-message';
 import { Skeleton } from '@rneui/themed';
 import * as MailComposer from 'expo-mail-composer';
 import * as Print from 'expo-print';
+import { useNavigation } from '@react-navigation/native';
 
 import { AuthContext } from '../navigation/AuthProvider'; 
 import { SettingsContext } from '../navigation/SettingsProvider';
@@ -439,6 +440,15 @@ const PeriodCalendarScreen = ({ props }) => {
         fetchUserData();
         setRefreshing(false);
     }, []);
+
+    const navigation = useNavigation();
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchUserData();
+        });
+    
+        return unsubscribe;
+      }, [navigation]);    
 
     if (isLoading) {
         return (
