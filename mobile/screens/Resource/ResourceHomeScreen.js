@@ -208,7 +208,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
 
     async function fetchSingleResource(resource_url) {
         try {
-            const resp = await fetch("https://" + resource_url, { method: "GET" });
+            const resp = await fetch(resource_url, { method: "GET" });
             
             if (resp.ok) {
                 const data = await resp.text();

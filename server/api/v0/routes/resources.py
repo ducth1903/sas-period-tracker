@@ -16,6 +16,8 @@ resource_api = Blueprint('resource_api', __name__)
 sas_aws = SasAws()
 RESOURCE_BUCKET = "sas-public"
 METADATA_BUCKET = "sas-metadata"
+S3_REGION = "us-east-2"
+BASE_RESOURCE_URL = f"https://{RESOURCE_BUCKET}.s3.{S3_REGION}.amazonaws.com"
 
 # Create a base class for declarative ORM models
 Base = declarative_base()
@@ -62,7 +64,8 @@ def resources_get_by_id():
             topic_name: str = path_parts[-3 if not is_intro_file else -2]
             
             result.append({
-                "resource_url": sas_aws.S3_BUCKET + object_key,
+                "resource_url": RESOURCE_BUCKET + ".s3." + S3_REGION + ".amazonaws.com/" + object_key,
+                "resource_url": f"{BASE_RESOURCE_URL}/{object_key}",
                 "resource_last_modified": object_last_modified,
                 "resource_topic": topic_name,
                 "resource_section": section_name,
