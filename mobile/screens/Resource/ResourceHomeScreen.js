@@ -86,119 +86,141 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     }
     
     async function fetchAllResources(attempts = 1) {
-        try {
-            setIsLoading(true);
-            console.log(`[ResourceHomeScreen] fetching all resources attempt ${attempts}`)
-            const contentResp = await fetch(`${API_URL}/resources/content`, { method: "GET" });
-            const content = await contentResp.json();
+        setIsLoading(true);
+        console.log(`[ResourceHomeScreen] fetching all resources attempt ${attempts}`)
 
-            const metadataResp = await fetch(`${API_URL}/resources/metadata`, { method: "GET" });
-            const metadata = await metadataResp.json();
-            const { topics_to_titles, sections_to_titles, topics_to_images, articles_to_titles, articles_to_media } = metadata;
-    
-            // fetch text for each resource
-            await Promise.all(content.map(async (item, index, arr) => {
-                const resourceText = await fetchSingleResource(item["resource_url"]);
-                const resourceId = item["resource_filename"].slice(3, -3); // remove .md and language from filename
-                const resourceLang = item["resource_language"];
-
-                const resourceTitle = articles_to_titles[resourceLang][resourceId];
-                const resourceMedia = articles_to_media[resourceId];
-
-                arr[index] = {
-                    ...item,
-                    "resource_text": resourceText,
-                    "resource_title": resourceTitle,
-                    "resource_media": resourceMedia,
-                    "resource_id": resourceId,
-                };
-            }));
-
-            // find unique topics
-            let topics = content.map((item) => item["resource_topic"]);
-            topics = [...new Set(topics)];
-
-            let resourceMap = [];
-            topics.forEach((topic) => {
-                resourceMap.push({
-                    image: topics_to_images[topic],
-                    en: {
-                        topicTitle: topics_to_titles["en"][topic],
-                        introText: "",
-                        sections: []
-                    },
-                    kn: {
-                        topicTitle: topics_to_titles["kn"][topic],
-                        introText: "",
-                        sections: []
-                    },
-                    hi: {
-                        topicTitle: topics_to_titles["hi"][topic],
-                        introText: "",
-                        sections: []
-                    }
-                });
-            })
-
-            content.forEach((item) => {
-                const itemTopic = item["resource_topic"];
-                const itemSection = item["resource_section"];
-                const itemLanguage = item["resource_filename"].split("_")[0];
-                const itemTitle = item["resource_title"];
-                const itemText = item["resource_text"];
-                const itemId = item["resource_id"];
-
-                // this search might be too slow, but we'll see
-                const topicObject = resourceMap.find((obj) => obj[itemLanguage]["topicTitle"] === topics_to_titles[itemLanguage][itemTopic]);
-
-                if (!itemSection) { // is intro file, intro files don't have sections
-                    topicObject[itemLanguage]["introText"] = itemText;
-                    return;
-                }
-                
-                // create new section object if it doesn't exist
-                let sectionObject = topicObject[itemLanguage]["sections"].find((section) => section["sectionTitle"] === sections_to_titles[itemLanguage][itemSection]);
-                if (!sectionObject) {
-                    sectionObject = {
-                        parentTopicObject: topicObject, // need copy in each section for FLatList renderItem
-                        sectionId: itemSection,
-                        sectionTitle: sections_to_titles[itemLanguage][itemSection],
-                        articles: []
-                    }
-                    topicObject[itemLanguage]["sections"].push(sectionObject);
-                }
-
-                sectionObject.articles.push({
-                    articleTitle: itemTitle,
-                    articleText: itemText,
-                    articleId: itemId,
-                    articleMedia: articles_to_media[itemId]
-                });
-            });
-
-            console.log(`[ResourceHomeScreen] fetch attempt ${attempts} successful`)
-
-            // init saved resources and unshift them to the beginning of resourceMap
-            await initFavoritedResources(resourceMap);
-
-            setIsLoading(false);
-            setResourcesMap(resourceMap);
+        //Fetch content
+        let content;
+        const contentResp = await fetch(`${API_URL}/resources/content`, { method: "GET" });
+        if (contentResp.ok) {
+            content = await contentResp.json();
+            console.log(content[0]["resource_topic"]);
+        } else {
+            console.log(`[ResourceHomeScreen] fail to fetch content with status: ${contentResp.status}`);
+            return;
         }
-        catch (error) {
-            // TODO: find a more robust solution to why this sometimes fails, but for now this is okay because it seems to help (I think it was just an android emulator error actually)
-            if (attempts >= 6) {
-                console.log(`[ResourceHomeScreen] resources still could not be fetched after ${attempts} attempts: ${error}`)
+
+        //Fetch metadata
+        let metadata;
+        const metadataResp = await fetch(`${API_URL}/resources/metadata`, { method: "GET" });
+        if (metadataResp.ok) {
+            metadata = await metadataResp.json();
+            console.log(metadata["articles_to_media"]["abortions"].length);
+        } else {
+            console.log(`[ResourceHomeScreen] fail to fetch metadata with status: ${metadataResp.status}`);
+            return;
+        }
+        
+        const { topics_to_titles, sections_to_titles, topics_to_images, articles_to_titles, articles_to_media } = metadata;
+
+        // fetch text for each resource
+        await Promise.all(content.map(async (item, index, arr) => {
+            const resourceText = await fetchSingleResource(item["resource_url"]);
+            if (resourceText === null) {
+                console.log(`Skipping resource due to failed fetch for URL: ${item["resource_url"]}`);
+                return; // Skip this item and don't proceed further
+            }
+            const resourceId = item["resource_filename"].slice(3, -3); // remove .md and language from filename
+            const resourceLang = item["resource_language"];
+
+            const resourceTitle = articles_to_titles[resourceLang][resourceId];
+            const resourceMedia = articles_to_media[resourceId];
+
+            arr[index] = {
+                ...item,
+                "resource_text": resourceText,
+                "resource_title": resourceTitle,
+                "resource_media": resourceMedia,
+                "resource_id": resourceId,
+            };
+        }));
+
+        // find unique topics
+        let topics = content.map((item) => item["resource_topic"]);
+        topics = [...new Set(topics)];
+
+        let resourceMap = [];
+        topics.forEach((topic) => {
+            resourceMap.push({
+                image: topics_to_images[topic],
+                en: {
+                    topicTitle: topics_to_titles["en"][topic],
+                    introText: "",
+                    sections: []
+                },
+                kn: {
+                    topicTitle: topics_to_titles["kn"][topic],
+                    introText: "",
+                    sections: []
+                },
+                hi: {
+                    topicTitle: topics_to_titles["hi"][topic],
+                    introText: "",
+                    sections: []
+                }
+            });
+        })
+
+        content.forEach((item) => {
+            const itemTopic = item["resource_topic"];
+            const itemSection = item["resource_section"];
+            const itemLanguage = item["resource_filename"].split("_")[0];
+            const itemTitle = item["resource_title"];
+            const itemText = item["resource_text"];
+            const itemId = item["resource_id"];
+
+            // this search might be too slow, but we'll see
+            const topicObject = resourceMap.find((obj) => obj[itemLanguage]["topicTitle"] === topics_to_titles[itemLanguage][itemTopic]);
+
+            if (!itemSection) { // is intro file, intro files don't have sections
+                topicObject[itemLanguage]["introText"] = itemText;
                 return;
             }
-            console.log(`[ResourceHomeScreen] Error fetching resources on attempt ${attempts}: ${error}`);
-            fetchAllResources(attempts + 1)
-        }
+            
+            // create new section object if it doesn't exist
+            let sectionObject = topicObject[itemLanguage]["sections"].find((section) => section["sectionTitle"] === sections_to_titles[itemLanguage][itemSection]);
+            if (!sectionObject) {
+                sectionObject = {
+                    parentTopicObject: topicObject, // need copy in each section for FLatList renderItem
+                    sectionId: itemSection,
+                    sectionTitle: sections_to_titles[itemLanguage][itemSection],
+                    articles: []
+                }
+                topicObject[itemLanguage]["sections"].push(sectionObject);
+            }
+
+            sectionObject.articles.push({
+                articleTitle: itemTitle,
+                articleText: itemText,
+                articleId: itemId,
+                articleMedia: articles_to_media[itemId]
+            });
+        });
+
+        console.log(`[ResourceHomeScreen] fetch attempt ${attempts} successful`)
+
+        // init saved resources and unshift them to the beginning of resourceMap
+        await initFavoritedResources(resourceMap);
+
+        setIsLoading(false);
+        setResourcesMap(resourceMap);
     }
 
     async function fetchSingleResource(resource_url) {
-        const resp = await fetch(resource_url, { method: "GET" });
-        const data = await resp.text();
-        return data;
+        try {
+            const resp = await fetch("https://" + resource_url, { method: "GET" });
+            
+            if (resp.ok) {
+                const data = await resp.text();
+                return data;
+            } else {
+                console.error(`Fail to fetch the resource text content from the url: ${resource_url}. Status: ${resp.status}`);
+                return null;  
+            }
+        } catch (error) {
+            console.error(`Error occurred while fetching resource: ${error.message}`);
+            return null;  
+        }
     }
 
     useEffect(() => {
