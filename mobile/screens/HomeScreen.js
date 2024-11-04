@@ -27,6 +27,7 @@ import TextCard from '../components/TextCard';
 import i18n from '../translations/i18n';
 import * as SVG from '../assets/svg';
 import DynamicNote from '../components/DynamicNote';
+import FormButton from '../components/FormButton';
 
 // Loading env variables
 import getEnvVars from '../environment';
@@ -277,43 +278,14 @@ const HomeScreen = () => {
         // console.log(`periodobj = ${JSON.stringify(periodObj, null, 2)}`)
     }, [userObj, periodObj, selectedDate])
 
-    // update interface and post most up-to-date data to server (and track it locally in periodDayData)
-    useEffect(() => {
-        if (!flowIconEnable || !moodIconEnable || !symptomIconEnable) return;
+    // Update interface and post up-to-date data to server after the user presses "Save"
+    const handleSave = () => {
+        const currentFlow = Object.keys(flowIconEnable).find(key => flowIconEnable[key]) || null;
+        const currentMoods = Object.keys(moodIconEnable).filter(key => moodIconEnable[key]);
+        const currentSymptoms = Object.keys(symptomIconEnable).filter(key => symptomIconEnable[key]);
+        const currentDischarge = dischargeKeys.find(key => symptomIconEnable[key]) || null;
 
-        // get current values of flow, mood, symptom        
-        let currentFlow = null;
-        for (const [key, value] of Object.entries(flowIconEnable)) {
-            if (value) {
-                currentFlow = key;
-                break;
-            }
-        }   
-        
-        let currentMoods = [];
-        for (const [key, value] of Object.entries(moodIconEnable)) {
-            if (value) {
-                currentMoods.push(key);
-            }
-        }
-
-        let currentSymptoms = [];
-        let currentDischarge = null;
-        // console.log(`symptomIconEnable = ${JSON.stringify(symptomIconEnable, null, 2)}`)
-        for (const [key, value] of Object.entries(symptomIconEnable)) {
-            if (value) {
-                if (dischargeKeys.includes(key)) {
-                    currentDischarge = key;
-                }
-                else {
-                    currentSymptoms.push(key);
-                }
-            }
-        }
- 
-        // construct object to post for the current day
         const periodData = {
-            // TODO: add check for mood, flow, symptom being one of the possible values (i.e., "happy", "sad", "angry", etc. with enum)
             userId: userId,
             timestamp: selectedDate.toISOString(),
             date: `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1 < 10 ? "0" : ""}${selectedDate.getMonth() + 1}-${selectedDate.getDate() < 10 ? "0" : ""}${selectedDate.getDate()}`,
@@ -321,11 +293,62 @@ const HomeScreen = () => {
             moods: currentMoods,
             symptoms: currentSymptoms,
             discharge: currentDischarge
-        }
+        };
 
         setPeriodDayData(periodData);
         postDayPeriodData(periodData);
-    }, [flowIconEnable, moodIconEnable, symptomIconEnable]);
+    };
+    
+    
+    // // update interface and post most up-to-date data to server (and track it locally in periodDayData)
+    // useEffect(() => {
+    //     if (!flowIconEnable || !moodIconEnable || !symptomIconEnable) return;
+
+    //     // get current values of flow, mood, symptom        
+    //     let currentFlow = null;
+    //     for (const [key, value] of Object.entries(flowIconEnable)) {
+    //         if (value) {
+    //             currentFlow = key;
+    //             break;
+    //         }
+    //     }   
+        
+    //     let currentMoods = [];
+    //     for (const [key, value] of Object.entries(moodIconEnable)) {
+    //         if (value) {
+    //             currentMoods.push(key);
+    //         }
+    //     }
+
+    //     let currentSymptoms = [];
+    //     let currentDischarge = null;
+    //     // console.log(`symptomIconEnable = ${JSON.stringify(symptomIconEnable, null, 2)}`)
+    //     for (const [key, value] of Object.entries(symptomIconEnable)) {
+    //         if (value) {
+    //             if (dischargeKeys.includes(key)) {
+    //                 currentDischarge = key;
+    //             }
+    //             else {
+    //                 currentSymptoms.push(key);
+    //             }
+    //         }
+    //     }
+ 
+    //     // construct object to post for the current day
+    //     const periodData = {
+    //         // TODO: add check for mood, flow, symptom being one of the possible values (i.e., "happy", "sad", "angry", etc. with enum)
+    //         userId: userId,
+    //         timestamp: selectedDate.toISOString(),
+    //         date: `${selectedDate.getFullYear()}-${selectedDate.getMonth() + 1 < 10 ? "0" : ""}${selectedDate.getMonth() + 1}-${selectedDate.getDate() < 10 ? "0" : ""}${selectedDate.getDate()}`,
+    //         flow: currentFlow,
+    //         moods: currentMoods,
+    //         symptoms: currentSymptoms,
+    //         discharge: currentDischarge
+    //     }
+
+    //     setPeriodDayData(periodData);
+    //     postDayPeriodData(periodData);
+    // }, [flowIconEnable, moodIconEnable, symptomIconEnable]);
     
     useEffect(() => {
         onRefresh();
@@ -507,6 +530,11 @@ const HomeScreen = () => {
                 <View className="mt-3 px-6 mb-6">
                     <DynamicNote mode="dates" noteKey={selectedDate}/>
                 </View>
+                <FormButton 
+                    btnTitle="Save" 
+                    isHighlight={true}  // Highlighted button for emphasis
+                    onPress={handleSave} 
+                />
             </ScrollView>
         </SafeAreaView>
     );
