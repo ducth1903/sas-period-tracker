@@ -215,10 +215,11 @@ const PeriodCalendarScreen = ({ props }) => {
         // TODO: manual week change
         const weekData = {};
         weekDaysEnglish.forEach((day) => {
-            weekData[day] = {
-                date: weekDates[weekDaysEnglish.indexOf(day)],
-                data: getDayData(weekDates[weekDaysEnglish.indexOf(day)])
-            }
+            weekDaysEnglish.forEach((day) => {
+                const date = weekDates[weekDaysEnglish.indexOf(day)];
+                const data = getDayData(date);
+                weekData[day] = { date, data };
+            });
         })
             
         return (
@@ -231,7 +232,7 @@ const PeriodCalendarScreen = ({ props }) => {
                                     flow={weekData[day]["data"] ? weekData[day]["data"]["flow"] : null}
                                     discharge={weekData[day]["data"] ? weekData[day]["data"]["discharge"] : null}
                                     symptoms={weekData[day]["data"] ? weekData[day]["data"]["symptoms"] : null}
-                                    moods={weekData[day]["data"] ? weekData[day]["data"]["mood"] : null}
+                                    moods={weekData[day]["data"] ? weekData[day]["data"]["moods"] : null}
                                     day={weekDays[weekDaysEnglish.indexOf(day)]}
                                     key={`weekcolumn-${day}`}
                                 />

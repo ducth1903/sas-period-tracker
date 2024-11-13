@@ -280,6 +280,7 @@ const HomeScreen = () => {
 
     // Update interface and post up-to-date data to server after the user presses "Save"
     const handleSave = () => {
+        // Get the current values for flow, mood, symptom, and discharge
         const currentFlow = Object.keys(flowIconEnable).find(key => flowIconEnable[key]) || null;
         const currentMoods = Object.keys(moodIconEnable).filter(key => moodIconEnable[key]);
         const currentSymptoms = Object.keys(symptomIconEnable).filter(key => symptomIconEnable[key]);
