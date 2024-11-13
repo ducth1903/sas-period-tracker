@@ -97,7 +97,6 @@ const HomeScreen = () => {
     }
 
     async function fetchUserPeriodData() {
-        console.log(API_URL);
         try {
             const resp = await fetch(`${API_URL}/periods/${userId}`, { method: "GET" });
             return resp.json();
@@ -142,6 +141,7 @@ const HomeScreen = () => {
             });
 
             const resp = await response.json();
+            console.log("Successfully post period data" + resp);
             Toast.show({
                 type: 'success',
                 text1: i18n.t('settings.accountInfo.changesSavedSuccessfully')
