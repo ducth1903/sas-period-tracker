@@ -28,6 +28,9 @@ import i18n from '../translations/i18n';
 import * as SVG from '../assets/svg';
 import DynamicNote from '../components/DynamicNote';
 
+//import homescreen skeleton from "../components/homescreen/ske;eton"
+import HomeScreenSkeleton from "../components/homescreen/skeleton"
+
 // Loading env variables
 import getEnvVars from '../environment';
 const { API_URL } = getEnvVars();
@@ -238,6 +241,7 @@ const HomeScreen = () => {
             let rotateDeg = Math.round(dateCircleRotateDegree * i);
             tmp.push(
                 <DateCircle
+                    sty
                     inText={i + 1}
                     outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
                     innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }}
@@ -391,28 +395,7 @@ const HomeScreen = () => {
 
     // Main View return()
     if (isLoading) {
-        return (
-            <SafeAreaView className="bg-offwhite flex-1">
-                <ScrollView
-                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                >
-                    <Text className="text-[15px] font-semibold text-greydark text-center">{i18n.t('errors.pullDownToRefresh')}</Text>
-                    <View className="min-h-[90vw] flex-1 justify-center items-center">
-                        <Skeleton circle width={height * 0.1} height={height * 0.1} />
-                    </View>
-
-                    <View className="pl-7 pr-7">
-                        <Skeleton animation="pulse" width={80} height={40} />
-                        <View className="pt-7" />
-                        <Skeleton animation="pulse" width="100%" height="20%" />
-                        <View className="pt-9" />
-                        <Skeleton animation="pulse" width={80} height={40} />
-                        <View className="pt-7" />
-                        <Skeleton animation="pulse" width="100%" height="20%" />
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        );
+        return HomeScreenSkeleton(refreshing,onRefresh)
     }
 
     return (
@@ -434,7 +417,7 @@ const HomeScreen = () => {
                     }
                 </View>
                 <View className="min-h-[90vw] flex-1 justify-center items-center">
-                    <View className={`flex-1 items-center justify-center h-[63%] aspect-square absolute rounded-full bg-salmon border-[17px] ${Platform.OS === "ios" ? "border-offwhite/30" : "border-[#FF7F7380]"}`}>
+                    <View className={`flex-1 items-center justify-center h-[50%] aspect-square absolute rounded-full bg-salmon border-[10px] ${Platform.OS === "ios" ? "border-offwhite/30" : "border-[#FF7F7380]"}`}>
                         {
                             currentPeriodDay !== 0 ?
                             <>
