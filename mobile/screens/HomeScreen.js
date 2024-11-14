@@ -237,20 +237,26 @@ const HomeScreen = () => {
         if (!userObj || !periodObj || !selectedDate) return;
         // Get number of days for this month and populate dateCircleArr
         const numDaysInMonth = daysInMonth();
-        const dateCircleRotateDegree = 360 / numDaysInMonth;
+        // const dateCircleRotateDegree = 360 / numDaysInMonth ;
+        const dateCircleRotateDegree = 360 / (numDaysInMonth - 1); // Adjust for 180-degree arc
         const periodDays = getPeriodDays();
         const currentPeriodDay = periodDays.indexOf(selectedDate.getDate()) + 1;
         setCurrentPeriodDay(currentPeriodDay);
         const tmp = [];
         for (let i = 0; i < numDaysInMonth; i++) {
-            let rotateDeg = Math.round(dateCircleRotateDegree * i);
+            // Map the second half to the same upper arc
+            let adjustedIndex = i < numDaysInMonth / 2 ? i : numDaysInMonth - i - 1;
+
+            let rotateDeg = Math.round(dateCircleRotateDegree * adjustedIndex);
             tmp.push(
                 {
                 index : i,
                 component : (<DateCircle
                     inText={i + 1}
-                    outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
-                    innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }}
+                    // outerRotate={{ transform: [{ rotate: `${rotateDeg - 45}deg` }] }}
+                    // innerRotate={{ transform: [{ rotate: `-${rotateDeg - 45}deg` }] }}
+                    outerRotate={{ transform: [{ rotate: `${rotateDeg - 45}deg` }] }} // Outer arc positioning
+                    innerRotate={{ transform: [{ rotate: `${45 - rotateDeg}deg` }] }}  // Reverse rotation correctly
                     selectedDate={selectedDate}
                     key={i + 1}
                     periodDays={periodDays}
@@ -263,14 +269,14 @@ const HomeScreen = () => {
         if (currentPeriodDay > 15){
             setCurrentDisplayDates(false)
             setDisplayDateCirleArr(
-                dateCircleArr.map((dc) => {
+                tmp.map((dc) => {
                     if(15 <= dc.index ){ return dc.component} 
                 })
             )
         }else{
             setCurrentDisplayDates(true)
             setDisplayDateCirleArr(
-                dateCircleArr.map((dc) => {
+                tmp.map((dc) => {
                     if(dc.index <= 15){ return dc.component} 
                 })
             )
@@ -412,13 +418,24 @@ const HomeScreen = () => {
         });
     };
 
-    const toggleDateCircleDisplay = (prevVal) => {
-        
+    const toggleDateCircleDisplay = () => {
+        prev = currentDisplayDates
         // flip the boolean values
         setCurrentDisplayDates(!prev)
-        start = !prev ? 15 : 0
-        end = !prev ? 30 : 15
-        setDisplayDateCirleArr(dateCircleArr.map((dateCircle) => dateCircle))
+        if(!prev) {
+            setDisplayDateCirleArr(
+                dateCircleArr.map((dc) => {
+                    if(dc.index <= 15 ){ return dc.component} 
+                })
+            )
+        }else{
+            setDisplayDateCirleArr(
+                dateCircleArr.map((dc) => {
+                    if(dc.index >= 15){ return dc.component} 
+                })
+            )
+        }
+        print("")
     }
 
     const dayStatus = (num) => {
@@ -453,7 +470,7 @@ const HomeScreen = () => {
                     }
                 </View>
                 <View className="min-h-[90vw] flex-1 justify-center items-center">
-                    <View className={`flex-1 items-center justify-center h-[50%] aspect-square absolute rounded-full bg-salmon border-[10px] ${Platform.OS === "ios" ? "border-offwhite/30" : "border-[#FF7F7380]"}`}>
+                    <View className={`flex-1 items-center justify-center h-[50%] aspect-square absolute rounded-full bg-salmon border-[15px] ${Platform.OS === "ios" ? "border-offwhite/30" : "border-[#FF7F7380]"}`}>
                         {
                             currentPeriodDay !== 0 ?
                             <>
@@ -471,13 +488,15 @@ const HomeScreen = () => {
                             <Text className="text-slate-50 text-3xl font-semibold px-2 text-center">{i18n.t('home.logYourData')}</Text>
                         }
                     </View>
-                    <View className="flex items-center justify-center">
-                        {currentDisplayDates}
+                    <View className="flex items-center justify-center ">
+                        {displayDateCircleArr}
                     </View>
                 </View>
-                <Pressable className=" align-middle justify-center bg-salmon" onPress={toggleDateCircleDisplay}>
-                        <Text className="text-slate-50 text-lg font-semibold">{"Toggle dates"}</Text>
-                </Pressable>
+                <View className="items-center justify-center ">
+                    <Pressable className=" align-middle justify-center bg-salmon w-36 rounded-md  px-2 py-2"  onPress={() => toggleDateCircleDisplay()}>
+                            <Text className="text-slate-50 text-lg font-semibold">{"Toggle dates"}</Text>
+                    </Pressable>
+                </View>
 
                 <View className="pl-7">
                     <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.bloodFlow')}</Text>

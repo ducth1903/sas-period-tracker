@@ -3,7 +3,7 @@ import i18n from "../../translations/i18n";
 import { SafeAreaView, ScrollView, Text, View ,RefreshControl, Dimensions,} from "react-native";
 import { Skeleton } from "@rneui/themed";
 const HomeScreenSkeleton = (refreshState, onRefresh) => {
-  height = Dimensions.get("screen")
+  const {height} = Dimensions.get("screen")
   return (
     <SafeAreaView className="bg-offwhite flex-1">
       <ScrollView
