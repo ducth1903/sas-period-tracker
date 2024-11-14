@@ -87,6 +87,11 @@ const HomeScreen = () => {
     const [periodDayData, setPeriodDayData] = useState(null);
     const [currentPeriodDay, setCurrentPeriodDay] = useState(1);
 
+    // has a boolean value True = 0 - 15 days | False = 15 - 30 days
+    const [currentDisplayDates, setCurrentDisplayDates] = useState(true); 
+    // use this array to handle displaying the correct arr of dates
+    const [displayDateCircleArr, setDisplayDateCirleArr] = useState(null);
+
     const dischargeKeys = SYMPTOMS.filter(({ label, key }) => label.toLowerCase().includes('discharge')).map(({ key }) => key);
 
     // Async function to fetch user data
@@ -240,8 +245,9 @@ const HomeScreen = () => {
         for (let i = 0; i < numDaysInMonth; i++) {
             let rotateDeg = Math.round(dateCircleRotateDegree * i);
             tmp.push(
-                <DateCircle
-                    sty
+                {
+                index : i,
+                component : (<DateCircle
                     inText={i + 1}
                     outerRotate={{ transform: [{ rotate: `${rotateDeg + 45}deg` }] }}
                     innerRotate={{ transform: [{ rotate: `-${rotateDeg + 45}deg` }] }}
@@ -249,10 +255,30 @@ const HomeScreen = () => {
                     key={i + 1}
                     periodDays={periodDays}
                     dayStatus={dayStatus}
-                />
+                />)
+                }
             );
         }
         setDateCirleArr(tmp);
+        if (currentPeriodDay > 15){
+            setCurrentDisplayDates(false)
+            setDisplayDateCirleArr(
+                dateCircleArr.map((dc) => {
+                    if(15 <= dc.index ){ return dc.component} 
+                })
+            )
+        }else{
+            setCurrentDisplayDates(true)
+            setDisplayDateCirleArr(
+                dateCircleArr.map((dc) => {
+                    if(dc.index <= 15){ return dc.component} 
+                })
+            )
+        }
+
+            
+            
+
 
         // TODO: undefined error here
         const periodDataForDate = getPeriodDataForDate(selectedDate);
@@ -386,12 +412,22 @@ const HomeScreen = () => {
         });
     };
 
+    const toggleDateCircleDisplay = (prevVal) => {
+        
+        // flip the boolean values
+        setCurrentDisplayDates(!prev)
+        start = !prev ? 15 : 0
+        end = !prev ? 30 : 15
+        setDisplayDateCirleArr(dateCircleArr.map((dateCircle) => dateCircle))
+    }
+
     const dayStatus = (num) => {
         // current date is latest that it can be
         if (num <= new Date().getDate()) {
             setSelectedDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), num));
         }
     }
+
 
     // Main View return()
     if (isLoading) {
@@ -436,9 +472,12 @@ const HomeScreen = () => {
                         }
                     </View>
                     <View className="flex items-center justify-center">
-                        {dateCircleArr}
+                        {currentDisplayDates}
                     </View>
                 </View>
+                <Pressable className=" align-middle justify-center bg-salmon" onPress={toggleDateCircleDisplay}>
+                        <Text className="text-slate-50 text-lg font-semibold">{"Toggle dates"}</Text>
+                </Pressable>
 
                 <View className="pl-7">
                     <Text className="font-semibold text-lg mb-1.5">{i18n.t('home.bloodFlow')}</Text>
