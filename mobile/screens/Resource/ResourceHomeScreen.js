@@ -10,10 +10,12 @@ import {
     ScrollView,
     RefreshControl,
     ImageBackground,
-    useWindowDimensions
+    useWindowDimensions,
+    TouchableOpacity
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../../navigation/AuthProvider'; 
+import { ResourceContext } from '../../navigation/ResourcesProvider';
 import { Skeleton } from '@rneui/themed';
 import { SettingsContext } from '../../navigation/SettingsProvider';
 import { useNavigation } from '@react-navigation/native';
@@ -28,6 +30,7 @@ const { API_URL } = getEnvVars();
 const ResourceHomeScreen = ({ navigation, props }) => {
     const { width, height } = useWindowDimensions();
     const { userId } = useContext(AuthContext);
+    const {globalResources, setGlobalResources} = useContext(ResourceContext)
     const { selectedSettingsLanguage } = useContext(SettingsContext);
     const [resourcesMap, setResourcesMap] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -204,6 +207,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
 
         setIsLoading(false);
         setResourcesMap(resourceMap);
+        setGlobalResources(resourceMap)
     }
 
     async function fetchSingleResource(resource_url) {
@@ -224,7 +228,11 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     }
 
     useEffect(() => {
-        fetchAllResources();
+        if(!globalResources){
+            fetchAllResources();
+        }else{
+            setResourcesMap(globalResources)
+        }
     }, []);
 
     useEffect(() => {
@@ -290,7 +298,11 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     const onRefresh = useCallback(() => {
         setRefreshing(true);
         setIsLoading(true)
-        fetchAllResources();
+        if(!globalResources){
+            fetchAllResources();
+        }else{
+            setResourcesMap(globalResources)
+        }
         setRefreshing(false);
     }, []);
 
@@ -322,10 +334,10 @@ const ResourceHomeScreen = ({ navigation, props }) => {
             >
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>{ i18n.t('navigation.education') }</Text>
-                    {/* <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
-                        <SearchIcon style={styles.headerSearchIcon} />
-                    </TouchableOpacity> */}
                 </View>
+                <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                        <SearchIcon style={styles.headerSearchIcon} />
+                </TouchableOpacity>
 
                 {
                     resourcesMap.map((ele, index) => {
