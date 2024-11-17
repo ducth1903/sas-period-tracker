@@ -9,7 +9,7 @@ const ResourceProvider = (props) => {
     const [globalResources, setGlobalResources ] = useState([])
 
     return (
-        <ResourceContext.Provider value={[globalResources,setGlobalResources]}>
+        <ResourceContext.Provider value={{globalResources,setGlobalResources}}>
             {props.children}
         </ResourceContext.Provider>
     )

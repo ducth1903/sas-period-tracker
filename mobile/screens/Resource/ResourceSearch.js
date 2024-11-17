@@ -16,6 +16,8 @@ import {
 
 import SearchIcon from '../../assets/icons/search.svg'
 import HistoryIcon from '../../assets/icons/history.svg'
+import { ResourceContext } from '../../navigation/ResourcesProvider';
+import { SettingsContext } from '../../navigation/SettingsProvider';
 
 const mockData = [
     {
@@ -86,12 +88,20 @@ const PurpleListItem = ({ item }) => {
 const ResourceSearch = ({ navigation, props }) => {
     const [searchText, setSearchText] = useState('');
     const [showResults, setShowResults] = useState(true);
+    const { selectedSettingsLanguage } = useContext(SettingsContext);
+    const {globalResources,setGlobalResources} = useContext(ResourceContext)
+    const [searchSpace, setSearchSpace] = useState({})
     // ../../assets/icons/search.svg
 
     const handleCancel = () => {
         searchText === '' ? navigation.goBack() : setSearchText('');
         setShowResults(true);
     };
+
+    const handleSearch = () => {
+        
+    }
+
 
     useEffect(() => {
         if (searchText === '') {
@@ -101,6 +111,12 @@ const ResourceSearch = ({ navigation, props }) => {
         }
     }, [searchText]);
 
+    useEffect(() => {
+        // define the search space based on the language
+        setSearchSpace(globalResources.map((obj) => obj[selectedSettingsLanguage])) 
+    },[])
+
+    
     const renderHistoryItem = ({ item }) => (
         <View style={styles.item}>
             <HistoryIcon style={styles.icon}/>
@@ -111,6 +127,7 @@ const ResourceSearch = ({ navigation, props }) => {
             }}>{item.text}</Text>
         </View>
       );
+
 
     return (
         <SafeAreaView>

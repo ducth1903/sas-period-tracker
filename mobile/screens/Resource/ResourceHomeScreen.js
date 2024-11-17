@@ -207,7 +207,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
 
         setIsLoading(false);
         setResourcesMap(resourceMap);
-        setGlobalResources(resourceMap)
+        setGlobalResources([...resourceMap])
     }
 
     async function fetchSingleResource(resource_url) {
@@ -326,7 +326,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
             </SafeAreaView>
         );
     }
-
+    
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView
@@ -334,10 +334,10 @@ const ResourceHomeScreen = ({ navigation, props }) => {
             >
                 <View style={styles.inline}>
                     <Text style={styles.headerText}>{ i18n.t('navigation.education') }</Text>
-                </View>
-                <TouchableOpacity onPress={() => navigation.navigate('ResourceSearch')}>
+                    <TouchableOpacity style={{ justifyContent:"center"}} onPress={() => navigation.navigate('ResourceSearch')}>
                         <SearchIcon style={styles.headerSearchIcon} />
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
 
                 {
                     resourcesMap.map((ele, index) => {
