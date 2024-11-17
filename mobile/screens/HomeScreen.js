@@ -40,9 +40,11 @@ const HomeScreen = () => {
     const [userObj, setUserObj] = useState(null);
     const [periodObj, setPeriodObj] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingButton, setLoadingButton] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [dateCircleArr, setDateCirleArr] = useState(null);
     const [showRecommendationText, setShowRecommendationText] = useState(false);
+    const [hasChanges, setHasChanges] = useState(false);
 
     const FLOWS = [
         { label: i18n.t('flow.none'), key: 'none', selected: false, DefaultIcon: SVG.FlowNoneDefault, SelectedIcon: SVG.FlowNoneSelected },
@@ -281,6 +283,8 @@ const HomeScreen = () => {
     // Update interface and post up-to-date data to server after the user presses "Save"
     const handleSave = () => {
         // Get the current values for flow, mood, symptom, and discharge
+        if (!hasChanges) return;
+        setLoadingButton(true)
         const currentFlow = Object.keys(flowIconEnable).find(key => flowIconEnable[key]) || null;
         const currentMoods = Object.keys(moodIconEnable).filter(key => moodIconEnable[key]);
         const currentSymptoms = Object.keys(symptomIconEnable).filter(key => symptomIconEnable[key]);
@@ -295,6 +299,15 @@ const HomeScreen = () => {
             symptoms: currentSymptoms,
             discharge: currentDischarge
         };
+
+        setTimeout(() => {
+            setLoadingButton(false);
+            setHasChanges(false); 
+            Toast.show({
+                type: 'success',
+                text1: "Saved successfully!"
+            });
+        }, 2000); 
 
         setPeriodDayData(periodData);
         postDayPeriodData(periodData);
@@ -334,6 +347,7 @@ const HomeScreen = () => {
         setMoodIconEnable((prev) => {
             const newState = { ...prev, [moodKey]: !prev[moodKey] };
             setMoodIconEnable(newState);
+            setHasChanges(true);
             return newState;
         });
     };
@@ -343,6 +357,7 @@ const HomeScreen = () => {
             const temp = FLOWS.reduce((acc, { key }) => ({ ...acc, [key]: false }), {});
             const newState = { ...temp, [flowKey]: !prev[flowKey] };
             setFlowIconEnable(newState);
+            setHasChanges(true);
             return newState;
         });
     };
@@ -351,6 +366,7 @@ const HomeScreen = () => {
         setSymptomIconEnable((prev) => {
             const newState = { ...prev, [symptomKey]: !prev[symptomKey] };
             setSymptomIconEnable(newState);
+            setHasChanges(true);
             return newState;
         });
     };
@@ -480,11 +496,15 @@ const HomeScreen = () => {
                 <View className="mt-3 px-6 mb-6">
                     <DynamicNote mode="dates" noteKey={selectedDate}/>
                 </View>
-                <FormButton 
-                    btnTitle="Save" 
-                    isHighlight={true}  // Highlighted button for emphasis
-                    onPress={handleSave} 
-                />
+                <View className="mt-3 px-3 mb-6">
+                    <FormButton 
+                        disabled={!hasChanges || isLoadingButton} 
+                        btnTitle={isLoadingButton ? "Saving..." : "Save"}
+                        isHighlight={hasChanges && !isLoadingButton}
+                        onPress={handleSave}
+                    />
+                </View>
+                
             </ScrollView>
         </SafeAreaView>
     );
