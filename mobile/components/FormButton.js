@@ -11,7 +11,7 @@ const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
             <Pressable {...restProps}>
                 <LinearGradient
                     className="flex-row space-x-3"
-                    colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#FFFFFF', '#FFFFFF']}
+                    colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#ededed', '#e3e3e3']}
                     style={[styles.commonBtnStyle, isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle]}>
                     {iconName && <AntDesign name={iconName} size={24} color="white" />}
                     <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>
@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
 
     // not highlight
     formBtnStyle: {
-        borderWidth: 2,
-        borderColor: '#F59B3F',
+        // borderWidth: 2,
+        // borderColor: '#bababa',
         borderRadius: 25
     },
     formTxtStyle: {
-        color: '#F59B3F'
+        color: '#919191'
     },
 
     // highlight
