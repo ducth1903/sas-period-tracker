@@ -85,29 +85,28 @@ const PurpleListItem = ({ item }) => {
 };
 
 const TitleListItem = (text) => {
-    return (
-        <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
-            <Text className="">{text}</Text>
-        </View>
-    )
-}
+  return (
+    <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
+      <Text className="">{text}</Text>
+    </View>
+  );
+};
 
 const SectionListItem = (section) => {
-    return (
-        <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
-            <Text className="">{text}</Text>
-        </View>
-    )
-}
+  return (
+    <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
+      <Text className="">{text}</Text>
+    </View>
+  );
+};
 
 const ArticleListItem = (article) => {
-    return (
-        <View style={styles.purpleBox}>
-          <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
-        </View>
-      );
-
-}
+  return (
+    <View style={styles.purpleBox}>
+      <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
+    </View>
+  );
+};
 
 const ResourceSearch = ({ navigation, props }) => {
   const [searchText, setSearchText] = useState("");
@@ -139,45 +138,59 @@ const ResourceSearch = ({ navigation, props }) => {
   }, []);
 
   const handleSearch = (searchText) => {
-    console.log(JSON.stringify(searchSpace));
     const titlesArray = [];
     const sectionArray = [];
     const articleArray = [];
-
-    searchSpace.forEach((obj) => {
-      titlesArray.push(obj["topicTitle"]);
-
-      obj["sections"].forEach((section) => {
-        // Correct property name and `forEach`
-        sectionArray.push({
-          sectionId: section["sectionId"],
-          sectionTitle: section["sectionTitle"],
-        });
-
-        section["articles"].forEach((article) => {
-          // Correct method name
-          articleArray.push({
-            articleTitle: article["articleTitle"],
-            articleId: article["articleId"],
-            articleText: article["articleText"],
+    
+    searchSpace.forEach((obj, index) => {
+        if (obj && obj["topicTitle"] !== undefined) {
+          titlesArray.push({ id: index, title: obj["topicTitle"] });
+        }
+      
+        if (obj && Array.isArray(obj["sections"])) {
+          obj["sections"].forEach((section) => {
+            if (section && section["sectionId"] !== undefined && section["sectionTitle"] !== undefined) {
+              sectionArray.push({
+                id: section["sectionId"],
+                title: section["sectionTitle"],
+              });
+            }
+      
+            if (section && Array.isArray(section["articles"])) {
+              section["articles"].forEach((article) => {
+                if (
+                  article &&
+                  article["articleTitle"] !== undefined &&
+                  article["articleId"] !== undefined &&
+                  article["articleText"] !== undefined
+                ) {
+                  articleArray.push({
+                    title: article["articleTitle"],
+                    Id: article["articleId"],
+                    text: article["articleText"],
+                  });
+                }
+              });
+            }
           });
-        });
+        }
       });
-    });
-
+      
     setFoundTitles(
-      titlesArray.filter((title) => title.toLowerCase().includes(searchText))
+      titlesArray.filter((title) =>
+        title["title"].toLowerCase().includes(searchText)
+      )
     );
     setFoundSections(
       sectionArray.filter((section) =>
-        section["sectionTitle"].toLowerCase().includes(searchText)
+        section["title"].toLowerCase().includes(searchText)
       )
     );
     setFoundArticles(
       articleArray.filter(
         (article) =>
-          article["articleTitle"].toLowerCase().includes(searchText) ||
-          article["articleText"].toLowerCase().includes(searchText)
+          article["title"].toLowerCase().includes(searchText) ||
+          article["text"].toLowerCase().includes(searchText)
       )
     );
   };
@@ -197,7 +210,6 @@ const ResourceSearch = ({ navigation, props }) => {
     </View>
   );
 
-  console.log("searchSpace", searchSpace[0]);
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -209,7 +221,10 @@ const ResourceSearch = ({ navigation, props }) => {
             placeholderTextColor="#9B9B9B"
             value={searchText}
             // onChangeText={setSearchText}
-            onChangeText={(text) => handleSearch(text.toLowerCase())}
+            onChangeText={(text) => {
+                setSearchText(text);
+                handleSearch(text.toLowerCase())}
+            }
           />
         </View>
         <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -227,15 +242,44 @@ const ResourceSearch = ({ navigation, props }) => {
             contentContainerStyle={styles.searchHistoryContainer}
           />
         ) : (
-          <FlatList
-            key={"#"}
-            columnWrapperStyle={{ justifyContent: "space-between" }}
-            numColumns={2}
-            data={mockData[0].data}
-            renderItem={({ item }) => <PurpleListItem item={item} />}
-            showsHorizontalScrollIndicator={false}
-            style={{ marginBottom: -15 }}
-          />
+          <View>
+            <View>
+              <Text className="font-semibold text-black py-2">Topics</Text>
+              <FlatList
+                key={"*"}
+                data={foundTitles}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => TitleListItem(item["title"])}
+              />
+            </View>
+            <View>
+              <Text className="font-semibold text-black py-2">Sections</Text>
+              <FlatList
+                key={"*"}
+                data={foundArticles}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => TitleListItem(item["title"])}
+              />
+            </View>
+            <View>
+              <Text className="font-semibold text-black py-2">Articles</Text>
+              <FlatList
+                key={"*"}
+                data={foundArticles}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => TitleListItem(item["title"])}
+              />
+            </View>
+          </View>
+          //   <FlatList
+          //     key={"#"}
+          //     columnWrapperStyle={{ justifyContent: "space-between" }}
+          //     numColumns={2}
+          //     data={mockData[0].data}
+          //     renderItem={({ item }) => <PurpleListItem item={item} />}
+          //     showsHorizontalScrollIndicator={false}
+          //     style={{ marginBottom: -15 }}
+          //   />
         )}
       </View>
     </SafeAreaView>
