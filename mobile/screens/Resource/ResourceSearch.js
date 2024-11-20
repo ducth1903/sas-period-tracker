@@ -86,7 +86,7 @@ const PurpleListItem = ({ item }) => {
 
 const TitleListItem = (text) => {
   return (
-    <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
+    <View className="justify-center text-center rounded-md  mr-3 py-2 px-4 border-solid border-black border-2 bg-purple-300">
       <Text className="">{text}</Text>
     </View>
   );
@@ -94,8 +94,8 @@ const TitleListItem = (text) => {
 
 const SectionListItem = (section) => {
   return (
-    <View className="justify-center text-center rounded-md py-2 px-4  border-solid border-black bg-purple-400">
-      <Text className="">{text}</Text>
+    <View className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300">
+      <Text className="">{section.title}</Text>
     </View>
   );
 };
@@ -103,7 +103,7 @@ const SectionListItem = (section) => {
 const ArticleListItem = (article) => {
   return (
     <View style={styles.purpleBox}>
-      <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
+      <Text style={styles.purpleBoxText}>{article.title}</Text>
     </View>
   );
 };
@@ -236,50 +236,51 @@ const ResourceSearch = ({ navigation, props }) => {
           <FlatList
             key={"_"}
             data={mockData[1].data}
-            numColumns={1}
+            // numColumns={1}
             renderItem={renderHistoryItem}
             keyExtractor={(item) => item.key}
             contentContainerStyle={styles.searchHistoryContainer}
           />
         ) : (
-          <View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+          >
             <View>
               <Text className="font-semibold text-black py-2">Topics</Text>
               <FlatList
+                horizontal
                 key={"*"}
                 data={foundTitles}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => TitleListItem(item["title"])}
               />
             </View>
-            <View>
-              <Text className="font-semibold text-black py-2">Sections</Text>
+            <Text className="font-semibold text-black py-2">Sections</Text>
+            <ScrollView
+                nestedScrollEnabled={true}
+                className={"mt-2" + (foundArticles.length >= 15 ? " h-96" : "")}
+              >
               <FlatList
-                key={"*"}
-                data={foundArticles}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => TitleListItem(item["title"])}
-              />
-            </View>
+                  scrollEnabled={false}
+                  contentContainerStyle={{alignSelf: 'flex-start'}}
+                  key={"*"}
+                  data={foundArticles}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => SectionListItem(item)}
+                  showsVerticalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}
+                />
+            </ScrollView>
             <View>
               <Text className="font-semibold text-black py-2">Articles</Text>
               <FlatList
                 key={"*"}
                 data={foundArticles}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => TitleListItem(item["title"])}
+                renderItem={({ item }) => ArticleListItem(item)}
               />
             </View>
-          </View>
-          //   <FlatList
-          //     key={"#"}
-          //     columnWrapperStyle={{ justifyContent: "space-between" }}
-          //     numColumns={2}
-          //     data={mockData[0].data}
-          //     renderItem={({ item }) => <PurpleListItem item={item} />}
-          //     showsHorizontalScrollIndicator={false}
-          //     style={{ marginBottom: -15 }}
-          //   />
+          </ScrollView>
         )}
       </View>
     </SafeAreaView>
