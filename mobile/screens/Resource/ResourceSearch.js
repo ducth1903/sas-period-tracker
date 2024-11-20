@@ -99,7 +99,11 @@ const ResourceSearch = ({ navigation, props }) => {
   const [showResults, setShowResults] = useState(true);
   const { selectedSettingsLanguage } = useContext(SettingsContext);
   const { globalResources, setGlobalResources } = useContext(ResourceContext);
-  const [searchSpace, setSearchSpace] = useState([]);
+  const [titleSearchSpace, setTitleSearchSpace] = useState([]);
+  const [sectionSearchSpace, setSectionSearchSpace] = useState([]);
+  const [articleSearchSpace, setArticleSearchSpace] = useState([]);
+
+
   const [foundTitles, setFoundTitles] = useState([]);
   const [foundSection, setFoundSections] = useState([]);
   const [foundArticles, setFoundArticles] = useState([]);
@@ -120,7 +124,7 @@ const ResourceSearch = ({ navigation, props }) => {
 
   const navigateTo = (target,filteredResource) => {
     if(target == "section"){
-      navigation.navigate("ResurceConteent",{ resource: filteredResource})
+      navigation.navigate("ResurceContent",{ resource: filteredResource})
     }else{
       navigateTo.navigate("ResourceArticle", {resource : filteredResource})
     }
@@ -147,10 +151,10 @@ const ResourceSearch = ({ navigation, props }) => {
 
   useEffect(() => {
     // define the search space based on the language
-    setSearchSpace(globalResources.map((obj) => obj[selectedSettingsLanguage]));
+    createSearchSpace(globalResources.map((obj) => obj[selectedSettingsLanguage]));
   }, []);
 
-  const handleSearch = (searchText) => {
+  const createSearchSpace = (searchSpace) => {
     const titlesArray = [];
     const sectionArray = [];
     const articleArray = [];
@@ -194,23 +198,29 @@ const ResourceSearch = ({ navigation, props }) => {
       }
     });
 
-    setFoundTitles(
-      titlesArray.filter((title) =>
-        title["title"].toLowerCase().includes(searchText)
-      )
-    );
-    setFoundSections(
-      sectionArray.filter((section) =>
-        section["title"].toLowerCase().includes(searchText)
-      )
-    );
-    setFoundArticles(
-      articleArray.filter(
-        (article) =>
-          article["title"].toLowerCase().includes(searchText) ||
-          article["text"].toLowerCase().includes(searchText)
-      )
-    );
+    setTitleSearchSpace(titlesArray);
+    setSectionSearchSpace(sectionArray);
+    setArticleSearchSpace(articleArray);
+  }
+
+  const handleSearch = (searchText) => {
+    // setFoundTitles(
+    //   titlesArray.filter((title) =>
+    //     title["title"].toLowerCase().includes(searchText)
+    //   )
+    // );
+    // setFoundSections(
+    //   sectionArray.filter((section) =>
+    //     section["sectionTitle"].toLowerCase().includes(searchText)
+    //   )
+    // );
+    // setFoundArticles(
+    //   articleArray.filter(
+    //     (article) =>
+    //       article["articleTitle"].toLowerCase().includes(searchText) ||
+    //       article["articleText"].toLowerCase().includes(searchText)
+    //   )
+    // );
   };
 
   const renderHistoryItem = ({ item }) => (
@@ -228,6 +238,7 @@ const ResourceSearch = ({ navigation, props }) => {
     </View>
   );
 
+  
   return (
     <SafeAreaView>
       <View style={styles.container}>
