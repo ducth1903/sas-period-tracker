@@ -17,6 +17,7 @@ import {
 import SearchIcon from "../../assets/icons/search.svg";
 import HistoryIcon from "../../assets/icons/history.svg";
 import { ResourceContext } from "../../navigation/ResourcesProvider";
+import { useNavigation } from "@react-navigation/native";
 import { SettingsContext } from "../../navigation/SettingsProvider";
 
 const mockData = [
@@ -92,21 +93,6 @@ const TitleListItem = (text) => {
   );
 };
 
-const SectionListItem = (section) => {
-  return (
-    <View className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300">
-      <Text className="">{section.title}</Text>
-    </View>
-  );
-};
-
-const ArticleListItem = (article) => {
-  return (
-    <View style={styles.purpleBox}>
-      <Text style={styles.purpleBoxText}>{article.title}</Text>
-    </View>
-  );
-};
 
 const ResourceSearch = ({ navigation, props }) => {
   const [searchText, setSearchText] = useState("");
@@ -132,6 +118,33 @@ const ResourceSearch = ({ navigation, props }) => {
     }
   }, [searchText]);
 
+  const navigateTo = (target,filteredResource) => {
+    if(target == "section"){
+      navigation.navigate("ResurceConteent",{ resource: filteredResource})
+    }else{
+      navigateTo.navigate("ResourceArticle", {resource : filteredResource})
+    }
+  }
+
+  const SectionListItem = (section) => {
+    return (
+      <View 
+      className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300"
+      onPress={() => navigateTo("section",section)}
+      >
+        <Text className="">{section.sectionTitle}</Text>
+      </View>
+    );
+  };
+  
+  const ArticleListItem = (article) => {
+    return (
+      <View style={styles.purpleBox} onPress={() => navigateTo("article",article)}>
+        <Text style={styles.purpleBoxText}>{article.articleTitle}</Text>
+      </View>
+    );
+  };
+
   useEffect(() => {
     // define the search space based on the language
     setSearchSpace(globalResources.map((obj) => obj[selectedSettingsLanguage]));
@@ -155,8 +168,8 @@ const ResourceSearch = ({ navigation, props }) => {
             section["sectionTitle"] !== undefined
           ) {
             sectionArray.push({
-              id: section["sectionId"],
-              title: section["sectionTitle"],
+              sectionId: section["sectionId"],
+              sectionTitle: section["sectionTitle"],
             });
           }
 
@@ -166,12 +179,13 @@ const ResourceSearch = ({ navigation, props }) => {
                 article &&
                 article["articleTitle"] !== undefined &&
                 article["articleId"] !== undefined &&
-                article["articleText"] !== undefined
+                article["articleText"] !== undefined 
               ) {
                 articleArray.push({
-                  title: article["articleTitle"],
-                  Id: article["articleId"],
-                  text: article["articleText"],
+                  articleTitle: article["articleTitle"],
+                  articleId: article["articleId"],
+                  atricleText: article["articleText"],
+                  articleMedia: article["articleMedia"]
                 });
               }
             });
@@ -247,7 +261,7 @@ const ResourceSearch = ({ navigation, props }) => {
           />
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View>
+            {/* <View>
               <Text className="font-semibold text-black py-2">Topics</Text>
               <FlatList
                 horizontal
@@ -256,7 +270,7 @@ const ResourceSearch = ({ navigation, props }) => {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => TitleListItem(item["title"])}
               />
-            </View>
+            </View> */}
             <Text className="font-semibold text-black py-2">Sections</Text>
             <ScrollView
               nestedScrollEnabled={true}
@@ -283,7 +297,7 @@ const ResourceSearch = ({ navigation, props }) => {
             >
               <FlatList
                 contentContainerStyle={{ alignSelf: "flex-start" }}
-                key={"/rr"}
+                key={"/"}
                 data={foundArticles}
                 numColumns={2}
                 keyExtractor={(item) => item.id}
