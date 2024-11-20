@@ -141,41 +141,45 @@ const ResourceSearch = ({ navigation, props }) => {
     const titlesArray = [];
     const sectionArray = [];
     const articleArray = [];
-    
+
     searchSpace.forEach((obj, index) => {
-        if (obj && obj["topicTitle"] !== undefined) {
-          titlesArray.push({ id: index, title: obj["topicTitle"] });
-        }
-      
-        if (obj && Array.isArray(obj["sections"])) {
-          obj["sections"].forEach((section) => {
-            if (section && section["sectionId"] !== undefined && section["sectionTitle"] !== undefined) {
-              sectionArray.push({
-                id: section["sectionId"],
-                title: section["sectionTitle"],
-              });
-            }
-      
-            if (section && Array.isArray(section["articles"])) {
-              section["articles"].forEach((article) => {
-                if (
-                  article &&
-                  article["articleTitle"] !== undefined &&
-                  article["articleId"] !== undefined &&
-                  article["articleText"] !== undefined
-                ) {
-                  articleArray.push({
-                    title: article["articleTitle"],
-                    Id: article["articleId"],
-                    text: article["articleText"],
-                  });
-                }
-              });
-            }
-          });
-        }
-      });
-      
+      if (obj && obj["topicTitle"] !== undefined) {
+        titlesArray.push({ id: index, title: obj["topicTitle"] });
+      }
+
+      if (obj && Array.isArray(obj["sections"])) {
+        obj["sections"].forEach((section) => {
+          if (
+            section &&
+            section["sectionId"] !== undefined &&
+            section["sectionTitle"] !== undefined
+          ) {
+            sectionArray.push({
+              id: section["sectionId"],
+              title: section["sectionTitle"],
+            });
+          }
+
+          if (section && Array.isArray(section["articles"])) {
+            section["articles"].forEach((article) => {
+              if (
+                article &&
+                article["articleTitle"] !== undefined &&
+                article["articleId"] !== undefined &&
+                article["articleText"] !== undefined
+              ) {
+                articleArray.push({
+                  title: article["articleTitle"],
+                  Id: article["articleId"],
+                  text: article["articleText"],
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+
     setFoundTitles(
       titlesArray.filter((title) =>
         title["title"].toLowerCase().includes(searchText)
@@ -222,9 +226,9 @@ const ResourceSearch = ({ navigation, props }) => {
             value={searchText}
             // onChangeText={setSearchText}
             onChangeText={(text) => {
-                setSearchText(text);
-                handleSearch(text.toLowerCase())}
-            }
+              setSearchText(text);
+              handleSearch(text.toLowerCase());
+            }}
           />
         </View>
         <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
@@ -242,9 +246,7 @@ const ResourceSearch = ({ navigation, props }) => {
             contentContainerStyle={styles.searchHistoryContainer}
           />
         ) : (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-          >
+          <ScrollView showsVerticalScrollIndicator={false}>
             <View>
               <Text className="font-semibold text-black py-2">Topics</Text>
               <FlatList
@@ -257,29 +259,39 @@ const ResourceSearch = ({ navigation, props }) => {
             </View>
             <Text className="font-semibold text-black py-2">Sections</Text>
             <ScrollView
-                nestedScrollEnabled={true}
-                className={"mt-2" + (foundArticles.length >= 15 ? " h-96" : "")}
-              >
+              nestedScrollEnabled={true}
+              className={"mt-2" + (foundArticles.length >= 15 ? " h-96" : "")}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
               <FlatList
-                  scrollEnabled={false}
-                  contentContainerStyle={{alignSelf: 'flex-start'}}
-                  key={"*"}
-                  data={foundArticles}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => SectionListItem(item)}
-                  showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}
-                />
-            </ScrollView>
-            <View>
-              <Text className="font-semibold text-black py-2">Articles</Text>
-              <FlatList
-                key={"*"}
+                contentContainerStyle={{ alignSelf: "flex-start" }}
+                key={"-"}
                 data={foundArticles}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => ArticleListItem(item)}
+                renderItem={({ item }) => SectionListItem(item)}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
               />
-            </View>
+            </ScrollView>
+            <Text className="font-semibold text-black py-2">Articles</Text>
+            <ScrollView
+              nestedScrollEnabled={true}
+              className={"mt-2" + (foundArticles.length >= 15 ? " h-96" : "")}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
+              <FlatList
+                contentContainerStyle={{ alignSelf: "flex-start" }}
+                key={"/rr"}
+                data={foundArticles}
+                numColumns={2}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => ArticleListItem(item)}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+              />
+            </ScrollView>
           </ScrollView>
         )}
       </View>
