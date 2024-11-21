@@ -144,7 +144,7 @@ const ResourceSearch = ({ navigation, props }) => {
   const ArticleListItem = (article) => {
     return (
       <View style={styles.purpleBox} onPress={() => navigateTo("article",article)}>
-        <Text style={styles.purpleBoxText}>{article.articleTitle}</Text>
+        <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
       </View>
     );
   };
@@ -205,22 +205,24 @@ const ResourceSearch = ({ navigation, props }) => {
 
   const handleSearch = (searchText) => {
     // setFoundTitles(
-    //   titlesArray.filter((title) =>
+    //   titleSearchSpace.filter((title) =>
     //     title["title"].toLowerCase().includes(searchText)
     //   )
     // );
-    // setFoundSections(
-    //   sectionArray.filter((section) =>
-    //     section["sectionTitle"].toLowerCase().includes(searchText)
-    //   )
-    // );
-    // setFoundArticles(
-    //   articleArray.filter(
-    //     (article) =>
-    //       article["articleTitle"].toLowerCase().includes(searchText) ||
-    //       article["articleText"].toLowerCase().includes(searchText)
-    //   )
-    // );
+    setFoundSections(
+      sectionSearchSpace.filter((section) =>
+        (section["sectionTitle"] || "").toLowerCase().includes(searchText)
+      )
+    );
+    setFoundArticles(
+      articleSearchSpace.filter(
+        (article) =>
+          (article["articleTitle"] || "").toLowerCase().includes(searchText) ||
+          (article["articleText"] || "").toLowerCase().includes(searchText)
+      )
+    );    
+    console.log(sectionSearchSpace[2])
+    console.log(articleSearchSpace[1])
   };
 
   const renderHistoryItem = ({ item }) => (
@@ -292,7 +294,7 @@ const ResourceSearch = ({ navigation, props }) => {
               <FlatList
                 contentContainerStyle={{ alignSelf: "flex-start" }}
                 key={"-"}
-                data={foundArticles}
+                data={foundSection}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => SectionListItem(item)}
                 showsVerticalScrollIndicator={false}
