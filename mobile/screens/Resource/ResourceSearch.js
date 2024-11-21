@@ -123,7 +123,7 @@ const ResourceSearch = ({ navigation, props }) => {
   }, [searchText]);
 
   const navigateTo = (target,filteredResource) => {
-    // this needs to be fixed 
+    // this needs to be fixed (the issue isn't with navigation.navigate. I need to figure out how to pass the object a little better)
     if(target == "section"){
       navigation.navigate("ResurceContent",{ resource: filteredResource})
     }else{
