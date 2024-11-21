@@ -123,29 +123,30 @@ const ResourceSearch = ({ navigation, props }) => {
   }, [searchText]);
 
   const navigateTo = (target,filteredResource) => {
+    // this needs to be fixed 
     if(target == "section"){
       navigation.navigate("ResurceContent",{ resource: filteredResource})
     }else{
-      navigateTo.navigate("ResourceArticle", {resource : filteredResource})
+      navigation.navigate("ResourceArticle", {resource : filteredResource})
     }
   }
 
   const SectionListItem = (section) => {
     return (
-      <View 
+      <TouchableOpacity
       className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300"
       onPress={() => navigateTo("section",section)}
       >
         <Text className="">{section.sectionTitle}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
   
   const ArticleListItem = (article) => {
     return (
-      <View style={styles.purpleBox} onPress={() => navigateTo("article",article)}>
+      <TouchableOpacity style={styles.purpleBox} onPress={() => navigateTo("article",article)}>
         <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -221,8 +222,12 @@ const ResourceSearch = ({ navigation, props }) => {
           (article["articleText"] || "").toLowerCase().includes(searchText)
       )
     );    
-    console.log(sectionSearchSpace[2])
-    console.log(articleSearchSpace[1])
+
+    console.log(articleSearchSpace.filter(
+      (article) =>
+        (article["articleTitle"] || "").toLowerCase().includes(searchText) ||
+        (article["articleText"] || "").toLowerCase().includes(searchText)
+    ))
   };
 
   const renderHistoryItem = ({ item }) => (
