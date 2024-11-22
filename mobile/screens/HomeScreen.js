@@ -499,7 +499,7 @@ const HomeScreen = () => {
                 <View className="mt-3 px-3 mb-6">
                     <FormButton 
                         disabled={!hasChanges || isLoadingButton} 
-                        btnTitle={isLoadingButton ? "Saving..." : "Save"}
+                        btnTitle={isLoadingButton ? i18n.t('home.save') + "..." : i18n.t('home.save')}
                         isHighlight={hasChanges && !isLoadingButton}
                         onPress={handleSave}
                     />
