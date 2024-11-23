@@ -9,15 +9,23 @@ const FormButton = ({ btnTitle, isHighlight, ...restProps }) => {
     return (
         <View style={styles.container}>
             <Pressable {...restProps}>
-                <LinearGradient
+                <View
                     className="flex-row space-x-3"
-                    colors={isHighlight ? ['#005C6A', '#005C6A'] : ['#FFFFFF', '#FFFFFF']}
-                    style={[styles.commonBtnStyle, isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle]}>
+                    style={[
+                        styles.commonBtnStyle,
+                        isHighlight ? styles.formBtnStyleHighlight : styles.formBtnStyle,
+                    ]}
+                >
                     {iconName && <AntDesign name={iconName} size={24} color="white" />}
-                    <Text style={[styles.commonTxtStyle, isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle]}>
+                    <Text
+                        style={[
+                            styles.commonTxtStyle,
+                            isHighlight ? styles.formTxtStyleHighlight : styles.formTxtStyle,
+                        ]}
+                    >
                         {btnTitle}
                     </Text>
-                </LinearGradient>
+                </View>
             </Pressable>
         </View>
     )
@@ -42,16 +50,16 @@ const styles = StyleSheet.create({
 
     // not highlight
     formBtnStyle: {
-        borderWidth: 2,
-        borderColor: '#F59B3F',
-        borderRadius: 25
+        borderRadius: 25,
+        backgroundColor: '#ededed'
     },
     formTxtStyle: {
-        color: '#F59B3F'
+        color: '#919191'
     },
 
     // highlight
     formBtnStyleHighlight: {
+        backgroundColor: '#005C6A',
         borderRadius: 25
     },
     formTxtStyleHighlight: {
