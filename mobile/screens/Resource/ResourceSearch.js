@@ -222,12 +222,6 @@ const ResourceSearch = ({ navigation, props }) => {
           (article["articleText"] || "").toLowerCase().includes(searchText)
       )
     );    
-
-    console.log(articleSearchSpace.filter(
-      (article) =>
-        (article["articleTitle"] || "").toLowerCase().includes(searchText) ||
-        (article["articleText"] || "").toLowerCase().includes(searchText)
-    ))
   };
 
   const renderHistoryItem = ({ item }) => (
@@ -314,7 +308,7 @@ const ResourceSearch = ({ navigation, props }) => {
               showsHorizontalScrollIndicator={false}
             >
               <FlatList
-                contentContainerStyle={{ alignSelf: "flex-start" }}
+                contentContainerStyle={{ alignSelf: "flex-start",paddingBottom: 120}}
                 key={"/"}
                 data={foundArticles}
                 numColumns={2}
