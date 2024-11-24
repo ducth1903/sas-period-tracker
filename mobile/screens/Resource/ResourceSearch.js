@@ -292,9 +292,9 @@ const ResourceSearch = ({ navigation, props }) => {
             >
               <FlatList
                 contentContainerStyle={{ alignSelf: "flex-start" }}
-                key={"-"}
+                // key={"-"}
                 data={foundSection}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => item.sectionId }
                 renderItem={({ item }) => SectionListItem(item)}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
@@ -309,10 +309,10 @@ const ResourceSearch = ({ navigation, props }) => {
             >
               <FlatList
                 contentContainerStyle={{ alignSelf: "flex-start",paddingBottom: 120}}
-                key={"/"}
+                // key={"/"}
                 data={foundArticles}
                 numColumns={2}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) => item.articleId }
                 renderItem={({ item }) => ArticleListItem(item)}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
