@@ -202,6 +202,11 @@ export const contributors = [
             org:"BUILD UMass"
         },
         {
+            name:"Abhijit Ajit Kamath",
+            role:"Software Developer",
+            org:"BUILD UMass"
+        },
+        {
             name:"Duc Tran",
             role:"Tech Lead Manager",
             org:"Small Acts for Sustainability Collaborator"
