@@ -60,11 +60,11 @@ const LoginScreen = ({ navigation }) => {
   const handlePassword = (inPassword) => {
     setInUserData({
       ...inUserData,
-      password: inPassword,
+      password: inPassword.toLowerCase(),
     });
   };
   const login_with_email = (inEmail, inPassword) => {
-    login(inEmail, inPassword);
+    login(inEmail, inPassword.toLowerCase()); // Ensure lowercase comparison
   };
   const handleEyeClicked = () => {
     setHiddenPassword(!hiddenPassword);
