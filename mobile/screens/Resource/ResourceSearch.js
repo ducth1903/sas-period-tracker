@@ -19,6 +19,7 @@ import HistoryIcon from "../../assets/icons/history.svg";
 import { ResourceContext } from "../../navigation/ResourcesProvider";
 import { useNavigation } from "@react-navigation/native";
 import { SettingsContext } from "../../navigation/SettingsProvider";
+import i18n from "../../translations/i18n";
 
 const mockData = [
   {
@@ -123,11 +124,29 @@ const ResourceSearch = ({ navigation, props }) => {
   }, [searchText]);
 
   const navigateTo = (target,filteredResource) => {
-    // this needs to be fixed (the issue isn't with navigation.navigate. I need to figure out how to pass the object a little better)
     if(target == "section"){
-      navigation.navigate("ResurceContent",{ resource: filteredResource})
+      let paramResource = {};
+
+      // get array of other languages not currently selected
+      let Languages = Object.keys(i18n.translations)
+  
+      // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
+      for (const lang in Languages) {
+        const otherLang = Languages[lang];
+  
+        const introText = filteredResource.parentTopicObject[otherLang].introText;
+        const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
+          (section) => section.sectionId === filteredResource.sectionId
+        );
+        const sectionTitle = matchingSection.sectionTitle;
+        const articles = matchingSection.articles;
+  
+        paramResource[otherLang] = { introText, sectionTitle, articles };
+      }
+
+      navigation.navigate("ResourceContent",{ resource: paramResource})
     }else{
-      navigation.navigate("ResourceArticle", {resource : filteredResource})
+      // navigation.navigate("ResourceArticle", {resource : filteredResource})
     }
   }
 
@@ -135,7 +154,9 @@ const ResourceSearch = ({ navigation, props }) => {
     return (
       <TouchableOpacity
       className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300"
-      onPress={() => navigateTo("section",section)}
+      onPress={() => {
+        // console.log(section)
+        navigateTo("section",section)}}
       >
         <Text className="">{section.sectionTitle}</Text>
       </TouchableOpacity>
@@ -173,6 +194,7 @@ const ResourceSearch = ({ navigation, props }) => {
             section["sectionTitle"] !== undefined
           ) {
             sectionArray.push({
+              parentTopicObject: section["parentTopicObject"],
               sectionId: section["sectionId"],
               sectionTitle: section["sectionTitle"],
             });

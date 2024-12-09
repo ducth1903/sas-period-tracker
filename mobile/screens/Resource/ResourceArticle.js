@@ -115,7 +115,6 @@ const ResourceArticle = ({ route, navigation }) => {
             <View style={Platform.OS === "ios" ? { paddingHorizontal: 30 } : {}}>
                 <View style={styles.topBarInline}>
                     <TouchableOpacity
-                        className="bg-black w-5 h-5"
                         onPress={() => {
                             if (outerResource) {
                                 navigation.navigate('ResourceContent', { resource: outerResource })
