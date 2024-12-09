@@ -124,12 +124,10 @@ const ResourceSearch = ({ navigation, props }) => {
   }, [searchText]);
 
   const navigateTo = (target,filteredResource) => {
+    // get array of other languages not currently selected
+    let Languages = Object.keys(i18n.translations)
     if(target == "section"){
       let paramResource = {};
-
-      // get array of other languages not currently selected
-      let Languages = Object.keys(i18n.translations)
-  
       // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
       for (const lang in Languages) {
         const otherLang = Languages[lang];
@@ -146,7 +144,20 @@ const ResourceSearch = ({ navigation, props }) => {
 
       navigation.navigate("ResourceContent",{ resource: paramResource})
     }else{
-      // navigation.navigate("ResourceArticle", {resource : filteredResource})
+      // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
+      for (const lang in Languages) {
+        const otherLang = Languages[lang];
+  
+        const introText = filteredResource.parentTopicObject[otherLang].introText;
+        const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
+          (section) => section.sectionId === filteredResource.sectionId
+        );
+        const sectionTitle = matchingSection.sectionTitle;
+        const articles = matchingSection.articles;
+  
+        paramResource[otherLang] = { introText, sectionTitle, articles };
+      }
+      navigation.navigate("ResourceContent", {resource : paramResource})
     }
   }
 
@@ -209,6 +220,9 @@ const ResourceSearch = ({ navigation, props }) => {
                 article["articleText"] !== undefined 
               ) {
                 articleArray.push({
+                  parentTopicObject: section["parentTopicObject"],
+                  sectionId: section["sectionId"],
+                  sectionTitle: section["sectionTitle"],
                   articleTitle: article["articleTitle"],
                   articleId: article["articleId"],
                   atricleText: article["articleText"],
