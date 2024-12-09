@@ -126,37 +126,23 @@ const ResourceSearch = ({ navigation, props }) => {
   const navigateTo = (target,filteredResource) => {
     // get array of other languages not currently selected
     let Languages = Object.keys(i18n.translations)
-    if(target == "section"){
-      let paramResource = {};
-      // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
-      for (const lang in Languages) {
-        const otherLang = Languages[lang];
-  
-        const introText = filteredResource.parentTopicObject[otherLang].introText;
-        const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
-          (section) => section.sectionId === filteredResource.sectionId
-        );
-        const sectionTitle = matchingSection.sectionTitle;
-        const articles = matchingSection.articles;
-  
-        paramResource[otherLang] = { introText, sectionTitle, articles };
-      }
+     // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
+     for (const lang in Languages) {
+      const otherLang = Languages[lang];
 
+      const introText = filteredResource.parentTopicObject[otherLang].introText;
+      const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
+        (section) => section.sectionId === filteredResource.sectionId
+      );
+      const sectionTitle = matchingSection.sectionTitle;
+      const articles = matchingSection.articles;
+
+      paramResource[otherLang] = { introText, sectionTitle, articles };
+    }
+    
+    if(target == "section"){
       navigation.navigate("ResourceContent",{ resource: paramResource})
     }else{
-      // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
-      for (const lang in Languages) {
-        const otherLang = Languages[lang];
-  
-        const introText = filteredResource.parentTopicObject[otherLang].introText;
-        const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
-          (section) => section.sectionId === filteredResource.sectionId
-        );
-        const sectionTitle = matchingSection.sectionTitle;
-        const articles = matchingSection.articles;
-  
-        paramResource[otherLang] = { introText, sectionTitle, articles };
-      }
       navigation.navigate("ResourceContent", {resource : paramResource})
     }
   }
