@@ -26,6 +26,7 @@ import BackIcon from '../../assets/icons/back.svg';
 import SaveInitialIcon from '../../assets/icons/save-initial.svg';
 import SaveAfterIcon from '../../assets/icons/save-after.svg';
 import SpeakerIcon from '../../assets/icons/speaker.svg';
+import PauseIcon from "../../assets/icons/pause_symbol.svg";
 
 const ResourceArticle = ({ route, navigation }) => {
     const { outerResource, resource } = route.params;
@@ -169,8 +170,8 @@ const ResourceArticle = ({ route, navigation }) => {
                             style={{ flexDirection: 'column', alignItems: 'center' }}
                             onPress={speakOrPause}
                         >
-                            <SpeakerIcon style={styles.speakerIcon} />
-                            <Text style={styles.labelText}>{i18n.t('education.speak')}</Text>
+                            {!playingAudio ? <SpeakerIcon style={styles.speakerIcon} />: <PauseIcon style={styles.pauseIcon}/> }
+                            <Text style={styles.labelText}>{!playingAudio ? i18n.t('education.speak'): 'pause'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.introText}>
@@ -195,6 +196,7 @@ const ResourceArticle = ({ route, navigation }) => {
 }
 
 const styles = StyleSheet.create({
+    pauseIcon : {width:20, height:20},
     container: {
         width: '100%',
         paddingVertical: StatusBar.currentHeight,
