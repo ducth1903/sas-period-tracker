@@ -407,7 +407,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
       >
         <View style={styles.inline}>
           <TouchableOpacity
-            style={{width: (0.5 * width), ...styles.searchInput}}
+            style={{ ...styles.searchInput}}
             onPress={() => navigation.navigate("ResourceSearch")}
           >
             <Text style={{color: "grey", fontWeight:"600" }}>Search...</Text>
