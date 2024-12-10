@@ -406,13 +406,11 @@ const ResourceHomeScreen = ({ navigation, props }) => {
         }
       >
         <View style={styles.inline}>
-          <Text style={styles.headerText}>
-            {i18n.t("navigation.education")}
-          </Text>
           <TouchableOpacity
-            style={{ justifyContent: "center" }}
+            style={{width: (0.5 * width), ...styles.searchInput}}
             onPress={() => navigation.navigate("ResourceSearch")}
           >
+            <Text style={{color: "grey", fontWeight:"600" }}>Search...</Text>
             <SearchIcon style={styles.headerSearchIcon} />
           </TouchableOpacity>
         </View>
@@ -494,11 +492,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     // marginLeft: 70,
   },
+  searchInput: {
+    backgroundColor: "#EDEEE0",
+    borderRadius: 50,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    height: 50,
+    justifyContent: "space-between",
+    flexDirection:"row", 
+    alignItems: "center",
+    flex: 1,
+    fontSize: 16,
+    color: "#222",
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 5,
+  },
   headerSearchIcon: {
-    width: 30,
-    height: 30,
-    marginTop: 10,
-    marginLeft: 50,
+    width: 20,
+    height: 20,
   },
   inline: {
     display: "flex",
