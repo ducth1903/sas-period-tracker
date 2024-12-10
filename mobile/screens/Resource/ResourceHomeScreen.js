@@ -31,7 +31,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
   const { width, height } = useWindowDimensions();
   const { userId } = useContext(AuthContext);
   const { globalResources, setGlobalResources } = useContext(ResourceContext);
-  const {selectedSettingsLanguage } = useContext(SettingsContext);
+  const { selectedSettingsLanguage } = useContext(SettingsContext);
   const [resourcesMap, setResourcesMap] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -346,9 +346,7 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     return (
       <Pressable
         onPress={() =>
-        { console.log("we are looking at this item right here", JSON.stringify(item))
           navigation.navigate("ResourceArticle", { resource: item })
-        }
         }
       >
         <View style={styles.articleBox} imageStyle={{ borderRadius: 15 }}>
