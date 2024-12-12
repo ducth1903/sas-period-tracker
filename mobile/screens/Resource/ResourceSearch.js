@@ -94,7 +94,6 @@ const TitleListItem = (text) => {
   );
 };
 
-
 const ResourceSearch = ({ navigation, props }) => {
   const [searchText, setSearchText] = useState("");
   const [showResults, setShowResults] = useState(true);
@@ -103,7 +102,6 @@ const ResourceSearch = ({ navigation, props }) => {
   const [titleSearchSpace, setTitleSearchSpace] = useState([]);
   const [sectionSearchSpace, setSectionSearchSpace] = useState([]);
   const [articleSearchSpace, setArticleSearchSpace] = useState([]);
-
 
   const [foundTitles, setFoundTitles] = useState([]);
   const [foundSection, setFoundSections] = useState([]);
@@ -123,46 +121,49 @@ const ResourceSearch = ({ navigation, props }) => {
     }
   }, [searchText]);
 
-  const navigateTo = (target,filteredResource) => {
-    // get array of other languages not currently selected
-    let Languages = Object.keys(i18n.translations)
-     // horribly inefficient, but it works for now :(, also not resilient to there being different education content between languages
-     for (const lang in Languages) {
-      const otherLang = Languages[lang];
-
-      const introText = filteredResource.parentTopicObject[otherLang].introText;
-      const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
-        (section) => section.sectionId === filteredResource.sectionId
-      );
-      const sectionTitle = matchingSection.sectionTitle;
-      const articles = matchingSection.articles;
-
-      paramResource[otherLang] = { introText, sectionTitle, articles };
-    }
-    
-    if(target == "section"){
+  const navigateTo = (target, filteredResource) => {
+      // get array of other languages not currently selected
+      let paramResource = {};
+      let Languages = Object.keys(i18n.translations)
+      for (const lang in Languages) {
+        const otherLang = Languages[lang];
+  
+        const introText = filteredResource.parentTopicObject[otherLang].introText;
+        const matchingSection = filteredResource.parentTopicObject[otherLang].sections.find(
+          (section) => section.sectionId === filteredResource.sectionId
+        );
+        const sectionTitle = matchingSection.sectionTitle;
+        const articles = matchingSection.articles;
+  
+        paramResource[otherLang] = { introText, sectionTitle, articles };
+      }
+    if (target == "section") {
       navigation.navigate("ResourceContent",{ resource: paramResource})
-    }else{
+    } else {
       navigation.navigate("ResourceContent", {resource : paramResource})
     }
-  }
+  };
 
   const SectionListItem = (section) => {
     return (
       <TouchableOpacity
-      className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300"
-      onPress={() => {
-        // console.log(section)
-        navigateTo("section",section)}}
+        className="justify-center text-center rounded-md mb-3 py-2 px-4 border-solid border-black border-2 bg-purple-300"
+        onPress={() => {
+          // console.log(section)
+          navigateTo("section", section);
+        }}
       >
         <Text className="">{section.sectionTitle}</Text>
       </TouchableOpacity>
     );
   };
-  
+
   const ArticleListItem = (article) => {
     return (
-      <TouchableOpacity style={styles.purpleBox} onPress={() => navigateTo("article",article)}>
+      <TouchableOpacity
+        style={styles.purpleBox}
+        onPress={() => navigateTo("article", article)}
+      >
         <Text style={styles.purpleBoxText}>{article["articleTitle"]}</Text>
       </TouchableOpacity>
     );
@@ -170,7 +171,9 @@ const ResourceSearch = ({ navigation, props }) => {
 
   useEffect(() => {
     // define the search space based on the language
-    createSearchSpace(globalResources.map((obj) => obj[selectedSettingsLanguage]));
+    createSearchSpace(
+      globalResources.map((obj) => obj[selectedSettingsLanguage])
+    );
   }, []);
 
   const createSearchSpace = (searchSpace) => {
@@ -203,7 +206,7 @@ const ResourceSearch = ({ navigation, props }) => {
                 article &&
                 article["articleTitle"] !== undefined &&
                 article["articleId"] !== undefined &&
-                article["articleText"] !== undefined 
+                article["articleText"] !== undefined
               ) {
                 articleArray.push({
                   parentTopicObject: section["parentTopicObject"],
@@ -212,7 +215,7 @@ const ResourceSearch = ({ navigation, props }) => {
                   articleTitle: article["articleTitle"],
                   articleId: article["articleId"],
                   atricleText: article["articleText"],
-                  articleMedia: article["articleMedia"]
+                  articleMedia: article["articleMedia"],
                 });
               }
             });
@@ -224,7 +227,7 @@ const ResourceSearch = ({ navigation, props }) => {
     setTitleSearchSpace(titlesArray);
     setSectionSearchSpace(sectionArray);
     setArticleSearchSpace(articleArray);
-  }
+  };
 
   const handleSearch = (searchText) => {
     // setFoundTitles(
@@ -243,7 +246,7 @@ const ResourceSearch = ({ navigation, props }) => {
           (article["articleTitle"] || "").toLowerCase().includes(searchText) ||
           (article["articleText"] || "").toLowerCase().includes(searchText)
       )
-    );    
+    );
   };
 
   const renderHistoryItem = ({ item }) => (
@@ -261,7 +264,6 @@ const ResourceSearch = ({ navigation, props }) => {
     </View>
   );
 
-  
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -316,7 +318,7 @@ const ResourceSearch = ({ navigation, props }) => {
                 contentContainerStyle={{ alignSelf: "flex-start" }}
                 // key={"-"}
                 data={foundSection}
-                keyExtractor={(item, index) => item.sectionId }
+                keyExtractor={(item, index) => item.sectionId}
                 renderItem={({ item }) => SectionListItem(item)}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
@@ -330,11 +332,14 @@ const ResourceSearch = ({ navigation, props }) => {
               showsHorizontalScrollIndicator={false}
             >
               <FlatList
-                contentContainerStyle={{ alignSelf: "flex-start",paddingBottom: 120}}
+                contentContainerStyle={{
+                  alignSelf: "flex-start",
+                  paddingBottom: 120,
+                }}
                 // key={"/"}
                 data={foundArticles}
                 numColumns={2}
-                keyExtractor={(item, index) => item.articleId }
+                keyExtractor={(item, index) => item.articleId}
                 renderItem={({ item }) => ArticleListItem(item)}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
