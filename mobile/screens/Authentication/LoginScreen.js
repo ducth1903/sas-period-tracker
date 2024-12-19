@@ -64,8 +64,9 @@ const LoginScreen = ({ navigation }) => {
     });
   };
   const login_with_email = (inEmail, inPassword) => {
-    login(inEmail, inPassword.toLowerCase()); // Ensure lowercase comparison
+    login(inEmail.toLowerCase(), inPassword); // Convert email to lowercase
   };
+  
   const handleEyeClicked = () => {
     setHiddenPassword(!hiddenPassword);
   };
