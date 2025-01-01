@@ -257,6 +257,9 @@ const PeriodCalendarScreen = ({ props }) => {
 
     const renderDaily = (date) => {
         const data = getDayData(date);
+        if (data && data["symptoms"]) {
+            data["symptoms"] = data["symptoms"].filter(symptom => symptom !== data['discharge']);
+        }
         
         return (
             <View className="flex-col mb-28">
