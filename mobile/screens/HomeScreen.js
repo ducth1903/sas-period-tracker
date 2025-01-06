@@ -45,6 +45,8 @@ const HomeScreen = () => {
     const [dateCircleArr, setDateCirleArr] = useState(null);
     const [showRecommendationText, setShowRecommendationText] = useState(false);
     const [hasChanges, setHasChanges] = useState(false);
+    const [selectedDischarge, setSelectedDischarge] = useState(null);
+
 
     const FLOWS = [
         { label: i18n.t('flow.none'), key: 'none', selected: false, DefaultIcon: SVG.FlowNoneDefault, SelectedIcon: SVG.FlowNoneSelected },
@@ -363,13 +365,36 @@ const HomeScreen = () => {
     };
 
     const toggleSymptom = (symptomKey) => {
-        setSymptomIconEnable((prev) => {
-            const newState = { ...prev, [symptomKey]: !prev[symptomKey] };
-            setSymptomIconEnable(newState);
-            setHasChanges(true);
-            return newState;
-        });
+        if (dischargeKeys.includes(symptomKey)) {
+            if (selectedDischarge === symptomKey) {
+                // Unselect if it's already selected
+                setSymptomIconEnable((prev) => {
+                    const newState = { ...prev, [symptomKey]: false };
+                    setSymptomIconEnable(newState);
+                    setHasChanges(true);
+                    setSelectedDischarge(null);
+                    return newState;
+                });
+            } else {
+                // Select the new discharge and unselect the previous one
+                setSymptomIconEnable((prev) => {
+                    const newState = { ...prev, [selectedDischarge]: false, [symptomKey]: true };
+                    setSymptomIconEnable(newState);
+                    setHasChanges(true);
+                    setSelectedDischarge(symptomKey);
+                    return newState;
+                });
+            }
+        } else {
+            setSymptomIconEnable((prev) => {
+                const newState = { ...prev, [symptomKey]: !prev[symptomKey] };
+                setSymptomIconEnable(newState);
+                setHasChanges(true);
+                return newState;
+            });
+        }
     };
+    
 
     const dayStatus = (num) => {
         // current date is latest that it can be

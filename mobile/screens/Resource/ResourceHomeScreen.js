@@ -117,7 +117,6 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     });
     if (contentResp.ok) {
       content = await contentResp.json();
-      console.log(content[0]["resource_topic"]);
     } else {
       console.log(
         `[ResourceHomeScreen] fail to fetch content with status: ${contentResp.status}`
@@ -132,7 +131,6 @@ const ResourceHomeScreen = ({ navigation, props }) => {
     });
     if (metadataResp.ok) {
       metadata = await metadataResp.json();
-      console.log(metadata["articles_to_media"]["abortions"].length);
     } else {
       console.log(
         `[ResourceHomeScreen] fail to fetch metadata with status: ${metadataResp.status}`
