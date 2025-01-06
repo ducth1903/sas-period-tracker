@@ -79,7 +79,8 @@ const SignupScreen = ({ navigation }) => {
   }, []);
 
   const handleSignUpClicked = () => {
-    if (inUserData.email === "") {
+    const email = inUserData.email.trim().toLowerCase(); // Ensure the email is in lowercase
+    if (email === "") {
       setAuthError(i18n.t('authentication.emailCannotBeEmpty'));
       return;
     }
@@ -110,7 +111,7 @@ const SignupScreen = ({ navigation }) => {
     setFirstName(inUserData.firstName);
     setHasDoneSurvey(false);
     signup(
-      inUserData.email,
+      email,
       inUserData.password,
       inUserData.firstName,
       inUserData.lastName,
