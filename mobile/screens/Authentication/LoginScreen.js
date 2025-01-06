@@ -60,7 +60,7 @@ const LoginScreen = ({ navigation }) => {
   const handlePassword = (inPassword) => {
     setInUserData({
       ...inUserData,
-      password: inPassword.toLowerCase(),
+      password: inPassword,
     });
   };
   const login_with_email = (inEmail, inPassword) => {

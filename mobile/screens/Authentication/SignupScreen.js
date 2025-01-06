@@ -262,7 +262,7 @@ const SignupScreen = ({ navigation }) => {
               keyboardType="email-address"
               value={inUserData.email}
               onChangeText={(inEmail) => {
-                setInUserData({ ...inUserData, email: inEmail.trim().toLowerCase() });
+                setInUserData({ ...inUserData, email: inEmail });
               }}
               onFocus={() => {
                 setShowDateTimePicker(false);
