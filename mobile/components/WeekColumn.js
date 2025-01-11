@@ -28,58 +28,56 @@ const WeekColumn = ({ flow, discharge, symptoms, moods, day }) => {
 
     // TODO: Integrate custom moods
     return (
-        <View className="flex-col mt-3">
-            {/* flow icon for this row */}
-            {
-                (() => 
-                    <View className="h-[70px]">
-                        {SVG.renderFlow(flow, true, 40, 40, 1.5, 0)}
-                        <View style={{ width: 40, overflow: 'hidden' }}>
-                            <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">{flow ? i18n.t(`flow.${flow}`) : i18n.t('analysis.trends.export.notLogged')}</Text>
-                        </View>
+        <View className="flex-col" style={{ 
+                flex: 1, justifyContent: 'flex-start', 
+            }}>
+            {/* Render Flow icon only if it has a value */}
+            {flow && (
+                <View className="h-[70px]">
+                    {SVG.renderFlow(flow, true, 40, 40, 1.5, 0)}
+                    <View style={{ width: 40, overflow: 'hidden' }}>
+                        <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">
+                            {i18n.t(`flow.${flow}`)}
+                        </Text>
                     </View>
-                )()
-            }
-            
-            {/* discharge icon for this row */}
-            {(() => 
+                </View>
+            )}
+
+            {/* Render Discharge icon only if it has a value */}
+            {discharge && (
                 <View className="h-[70px]">
                     {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)}
-                        <View style={{ width: 40, overflow: 'hidden' }}>
-                            <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">{discharge ? i18n.t(`discharge.${discharge}`) : i18n.t('analysis.trends.export.notLogged')}</Text>
-                        </View>
+                    <View style={{ width: 40, overflow: 'hidden' }}>
+                        <Text className="text-[8px] text-center text-greydark font-semibold overflow-hidden">
+                            {i18n.t(`discharge.${discharge}`)}
+                        </Text>
+                    </View>
                 </View>
-            )()}
-            
-            {/* {SVG.renderDischarge(discharge, true, 40, 40, 1.5, 0)} */}
+            )}
 
-            {/* symptoms icons for this row */}
-            {
-                Object.keys(SVG.symptomSVGs.default).map(
-                    (symptom, index) => (
-                        <View className="h-[70px]" key={`symptom-${index}-${day}`}>
-                            {SVG.renderSymptom(`symptom-${symptom}-${day}`, symptom, symptoms ? symptoms.includes(symptom) : false, 40, 40, 1.5, 0)}
-                            <View style={{ width: 40 }}>
-                                <Text className="text-[8px] text-center text-greydark font-semibold inline-block">{i18n.t(`symptoms.${symptom}`)}</Text>
-                            </View>
-                        </View>
-                    )
-                )
-            }
+            {/* Render Symptoms icons only for selected symptoms */}
+            {symptoms && symptoms.length > 0 && symptoms.map((symptom, index) => (
+                <View className="h-[70px]" key={`symptom-${index}-${day}`}>
+                    {SVG.renderSymptom(`symptom-${symptom}-${day}`, symptom, true, 40, 40, 1.5, 0)}
+                    <View style={{ width: 40 }}>
+                        <Text className="text-[8px] text-center text-greydark font-semibold inline-block">
+                            {i18n.t(`symptoms.${symptom}`)}
+                        </Text>
+                    </View>
+                </View>
+            ))}
 
-            {/* moods icons for this row */}
-            {
-                Object.keys(SVG.moodSVGs.default).map(
-                    (mood, index) => (
-                        <View className="h-[70px]" key={`mood-${index}-${day}`}>
-                            {SVG.renderMood(`mood-${mood}-${day}`, mood, moods ? moods.includes(mood) : false, 40, 40, 1.5, 0)}
-                            <View style={{ width: 40 }}>
-                                <Text className="text-[8px] text-center text-greydark font-semibold inline-block">{i18n.t(`moods.${mood}`)}</Text>
-                            </View>
-                        </View>
-                    )
-                )
-            }
+            {/* Render Moods icons only for selected moods */}
+            {moods && moods.length > 0 && moods.map((mood, index) => (
+                <View className="h-[70px]" key={`mood-${index}-${day}`}>
+                    {SVG.renderMood(`mood-${mood}-${day}`, mood, true, 40, 40, 1.5, 0)}
+                    <View style={{ width: 40 }}>
+                        <Text className="text-[8px] text-center text-greydark font-semibold inline-block">
+                            {i18n.t(`moods.${mood}`)}
+                        </Text>
+                    </View>
+                </View>
+            ))}
         </View>
     );
 }
