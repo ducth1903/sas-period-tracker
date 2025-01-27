@@ -505,17 +505,31 @@ const HomeScreen = () => {
                     <Text className="font-semibold text-lg my-1.5">{i18n.t('home.yourSymptoms')}</Text>
                     <ScrollView horizontal={true} className="flex flex-row gap-4 mb-3.5 pb-3">
                         {SYMPTOMS.map(({ key, DefaultIcon, SelectedIcon, label }) => (
-                            <View key={key} className="justify-center items-center">
+                            <View key={key} className="justify-center items-center" style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+                                {/* Render selected or default icon */}
                                 {symptomIconEnable[key] ? (
                                     <SelectedIcon className="shadow shadow-turquoise" onPress={() => toggleSymptom(key)} />
                                 ) : (
                                     <DefaultIcon onPress={() => toggleSymptom(key)} />
                                 )}
-                                <Text className="text-xs text-center mt-1.5 font-light w-[68px]">{label}</Text>
+                                
+                                {/* Render the label text */}
+                                <Text
+                                    className="text-xs text-center mt-1.5 font-light"
+                                    style={{
+                                        maxWidth: 68, // Limit the width of the text
+                                        flexShrink: 1, // Prevent the text from overflowing horizontally
+                                        flexWrap: 'wrap', // Ensure the text wraps when it's too long
+                                        marginTop: 6, // Adds some space between the icon and the text
+                                    }}
+                                >
+                                    {label}
+                                </Text>
                             </View>
                         ))}
                         <View className="mr-1"></View>
                     </ScrollView>
+
                 </View>
 
                 <View className="mt-3 px-6 mb-6">

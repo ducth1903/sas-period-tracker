@@ -218,39 +218,50 @@ const PeriodCalendarScreen = ({ props }) => {
             weekDaysEnglish.forEach((day) => {
                 const date = weekDates[weekDaysEnglish.indexOf(day)];
                 const data = getDayData(date);
+                if (data && data["symptoms"]) {
+                    data["symptoms"] = data["symptoms"].filter(symptom => symptom !== data['discharge']);
+                }
                 weekData[day] = { date, data };
             });
         })
             
         return (
             <View className="flex flex-col mb-28">
-                <View className="flex-row justify-center">
+                <ScrollView 
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingTop: 4 }}  
+                className="mb-[30vh]"
+                >
+                    <View className="flex-row justify-center">
+                        {
+                            weekDaysEnglish.map((day) => {
+                                return (
+                                    <View className="w-[calc(100%/7)] justify-center items-center" key={`weekcolumn-${day}`}>
+                                        <WeekColumn
+                                            flow={weekData[day]["data"] ? weekData[day]["data"]["flow"] : null}
+                                            discharge={weekData[day]["data"] ? weekData[day]["data"]["discharge"] : null}
+                                            symptoms={weekData[day]["data"] ? weekData[day]["data"]["symptoms"] : null}
+                                            moods={weekData[day]["data"] ? weekData[day]["data"]["moods"] : null}
+                                            day={weekDays[weekDaysEnglish.indexOf(day)]}
+                                            key={`weekcolumn-${day}`}
+                                        />
+                                    </View>
+                                );
+                            }
+                            )
+                        }
+                    </View>
+                    
+                    <Text className="text-[20px] font-bold mt-14 mb-2">
+                        { i18n.t('analysis.week.notes') }
+                    </Text>
+
                     {
-                        weekDaysEnglish.map((day) => 
-                            <View className="w-[calc(100%/7)] justify-center items-center" key={`weekcolumn-${day}`}>
-                                <WeekColumn
-                                    flow={weekData[day]["data"] ? weekData[day]["data"]["flow"] : null}
-                                    discharge={weekData[day]["data"] ? weekData[day]["data"]["discharge"] : null}
-                                    symptoms={weekData[day]["data"] ? weekData[day]["data"]["symptoms"] : null}
-                                    moods={weekData[day]["data"] ? weekData[day]["data"]["moods"] : null}
-                                    day={weekDays[weekDaysEnglish.indexOf(day)]}
-                                    key={`weekcolumn-${day}`}
-                                />
-                            </View>
+                        getWeekDates(currDateObject).map((date) => 
+                            <StaticNote mode="dates" noteKey={date} key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}/>
                         )
                     }
-                </View>
-                
-                <Text className="text-[20px] font-bold mt-14 mb-2">
-                    { i18n.t('analysis.week.notes') }
-                </Text>
-
-                {
-                    getWeekDates(currDateObject).map((date) => 
-                        <StaticNote mode="dates" noteKey={date} key={`note-${date.toLocaleString('default', { weekday: 'long' }).toLowerCase()}`}/>
-                    )
-                }
-
+                </ScrollView>
             </View>
         );
     }
